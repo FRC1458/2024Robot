@@ -1,5 +1,5 @@
 package frc.robot.Subsystems;
 
-public final class Swerve {
+public class NavX {
     
 }

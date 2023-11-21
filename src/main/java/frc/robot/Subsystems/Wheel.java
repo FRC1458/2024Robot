@@ -1,5 +1,5 @@
 package frc.robot.Subsystems;
 
-public final class Wheel {
+public final class Wheel{
 
 }

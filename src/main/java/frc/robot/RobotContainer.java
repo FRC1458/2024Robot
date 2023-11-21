@@ -6,17 +6,27 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Subsystems.Arm;
+import frc.robot.Subsystems.Intake;
+import frc.robot.Subsystems.NavX;
+import frc.robot.Subsystems.Swerve;
 
 public class RobotContainer {
-  
-  public RobotContainer() {
-    configureBindings();
-  }
 
-  private void configureBindings() {}
+    private final NavX navx = new NavX();
+    private final Swerve swerve = new Swerve();
+    private final Arm arm = new Arm();
+    private final Intake intake = new Intake();
 
-  public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
-  }
+    public RobotContainer() {
+        configureBindings();
+    }
+
+    private void configureBindings() {
+    }
+
+    public Command getAutonomousCommand() {
+        return Commands.print("No autonomous command configured");
+    }
 
 }
