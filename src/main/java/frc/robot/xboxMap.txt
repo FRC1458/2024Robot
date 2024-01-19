@@ -1,0 +1,17 @@
+Map for xbox buttons
+
+Left joystick: swervedrive movement
+Right joystick(x axis): swervedrive rotate
+
+Button X: Lock wheels
+Button Y: Arm Up
+Button B: Arm Middle
+Button A: Arm Lower
+
+Start button: reset navx
+
+Left trigger: claw state = true
+Right trigger: claw state = false
+
+Left back button(bumper): Arm Retract
+Right back button(bumper): Arm Extend

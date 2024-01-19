@@ -1,106 +1,218 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
+import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxRelativeEncoder.Type;
+
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.swervedrive.SwerveDrive;
+import frc.robot.wrappers.JoystickWrapper;
 
-/**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
- */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
+  enum States {
+      MANUAL,
+      ALIGN,
+      BALANCE
+  }
+
+  States state;
+  private JoystickWrapper leftStick;
+  private JoystickWrapper rightStick;
+  private Controller controller;
+
+  private double regularSpeed;
+  private double boostedSpeed;
+
+  SwerveDrive swerveDrive;
+  Lidar armLidar;
+
+  Limelight limelight;
+  private Balancer balancer;
+  private Aligner aligner;
+  private Autonomous autonomous;
+
+  private final AHRS navX;
+  private final ArmNavX armNavX;
+
+  Timer timer = new Timer();
+  int counter = 0;
+  Solenoid armSolenoid = new Solenoid(4, 3, 2);
+  Solenoid clawSolenoid = new Solenoid(4, 1, 0);
+  Arm arm;
+
+  public Robot() {
+    super(0.03);
+    //leftStick = new JoystickWrapper(0);//uncomment if using them
+    //rightStick = new JoystickWrapper(1);
+    controller = new XboxController();
+
+    navX = new AHRS(SPI.Port.kMXP);
+    armNavX = new ArmNavX(4);
+    swerveDrive = new SwerveDrive(navX);
+    //lidar = new Lidar(RobotConstants.lidarPort);
+    armLidar = new Lidar(RobotConstants.armLidarPort);
+    limelight = new Limelight(0);
+
+    balancer = new Balancer(swerveDrive, navX);
+    aligner = new Aligner(swerveDrive, limelight);
+    autonomous = new Autonomous(balancer);
+
+    regularSpeed = RobotConstants.regularSpeed;
+    boostedSpeed = RobotConstants.boostedSpeed;
+
+    SmartDashboard.putNumber("Robot Speed", regularSpeed);
+
+    arm = new Arm(armSolenoid, clawSolenoid, armNavX);
+
+  }
+
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
   }
 
-  /**
-   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
-   * that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
-   */
   @Override
-  public void robotPeriodic() {}
-
-  /**
-   * This autonomous (along with the chooser code above) shows how to select between different
-   * autonomous modes using the dashboard. The sendable chooser code works with the Java
-   * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the chooser code and
-   * uncomment the getString line to get the auto name from the text box below the Gyro
-   *
-   * <p>You can add additional auto modes by adding additional comparisons to the switch structure
-   * below with additional strings. If using the SendableChooser make sure to add them to the
-   * chooser code above as well.
-   */
-  @Override
-  public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+  public void teleopInit() {
+    state = States.MANUAL;
+    superiorReset();
+    timer.reset();
+    counter = 0;
+    timer.start();
   }
 
-  /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
+  public void teleopPeriodic() {
+    counter ++;
+    if (timer.hasElapsed(5)) {
+      SmartDashboard.putNumber("Refresh Rate (per second)", (counter/5.0));
+      counter = 0;
+      timer.reset();
+    }
+    double xAxis;
+    double yAxis;
+    double rAxis;
+    double x,y,r,speedIncrease;
+    speedIncrease = SmartDashboard.getNumber("Robot Speed", regularSpeed);
+
+    //SmartDashboard.putNumber("Lidar data", lidar.getDistanceCentimeters());
+    SmartDashboard.putNumber("Arm Lidar data", armLidar.getDistanceCentimeters());
+    SmartDashboard.putNumber("Arm NavX angle", armNavX.getPitch());
+    SmartDashboard.putString("State", state.toString());
+    //SmartDashboard.putNumber("Arm Encoder", arm.getEncoder());
+
+    limelight.readPeriodic();
+
+    xAxis = controller.getSwerveX();
+    yAxis = controller.getSwerveY();
+    rAxis = controller.getSwerveR();
+
+
+
+    if (controller.resetNavX()) {
+      superiorReset();
+      swerveDrive.resetNavX();
+      navX.resetDisplacement();
+    }
+
+    if (controller.resetArm()) {
+      arm.reset();
+    }
+
+    if (controller.lockWheels()) {
+      swerveDrive.drive(0.01, 0, 0, true);
+    }
+
+    x = -Math.pow(xAxis, 3) * speedIncrease;
+    y = Math.pow(yAxis, 3) * speedIncrease;
+    r = Math.pow(rAxis, 3) * speedIncrease;
+
+    switch(state) {
+      case MANUAL:
+        manual(x, y, r);
         break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
+      case ALIGN:
+        aligner.align();
+        break;
+      case BALANCE:
+        balancer.balance();
         break;
     }
+
+
+    if (controller.stateManual()) {
+      state = States.MANUAL;
+    }
+    else if (controller.stateAlign()) {
+      aligner.reset();
+      state = States.ALIGN;
+    }
+    else if (controller.stateBalance()) {
+      state = States.BALANCE;
+      balancer.reset();
+    }
+    runArm();
+
+    SmartDashboard.putNumber("NavX Angle", navX.getAngle());
+    SmartDashboard.putNumber("NavX Displacement X", navX.getDisplacementX());
+    SmartDashboard.putNumber("NavX Displacement Y", navX.getDisplacementY());
+    SmartDashboard.putNumber("NavX Displacement Z", navX.getDisplacementZ());
+
   }
 
-  /** This function is called once when teleop is enabled. */
-  @Override
-  public void teleopInit() {}
+  public void runArm() {
+    if (controller.armTop()) {
+      arm.setUp();
+    } else if (controller.armMiddle()) {
+      arm.setMiddle();
+    } else if (controller.armBottom()) {
+      arm.setBottom();
+    }
+    arm.runArm(controller.armDown(), controller.armUp());
 
-  /** This function is called periodically during operator control. */
-  @Override
-  public void teleopPeriodic() {}
+    if (controller.armExtend()) {
+      arm.extendArm();
+    } else if (controller.armRetract()) {
+      arm.retractArm();
+    }
 
-  /** This function is called once when the robot is disabled. */
-  @Override
-  public void disabledInit() {}
+    if (controller.clawOpen()) {//LT=ACCEPT
+      arm.clawAccept();
+    } else if (controller.clawClose()) {//RT=REJECT
+      arm.clawReject();
+    } else arm.clawStop();
 
-  /** This function is called periodically when disabled. */
-  @Override
-  public void disabledPeriodic() {}
+    SmartDashboard.putNumber("Arm Position", arm.encoderPosition());
+    SmartDashboard.putNumber("Robot Pitch", balancer.getPitch());
+  }
 
-  /** This function is called once when test mode is enabled. */
-  @Override
-  public void testInit() {}
+  private void manual(double x, double y, double r) {
+    swerveDrive.drive(x, y, r, true);
+    SmartDashboard.putNumber("rRotationASDF", limelight.getRotation());
+  }
 
-  /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void autonomousInit() {
+    superiorReset();
+  }
 
-  /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void autonomousPeriodic() {
 
-  /** This function is called periodically whilst in simulation. */
-  @Override
-  public void simulationPeriodic() {}
+    //autonomous.autonomous();
+    balancer.balance();
+
+  }
+
+  public void superiorReset() {
+    //swerveDrive.resetNavX();
+    aligner.reset();
+    swerveDrive.setEncoders();
+    balancer.reset();
+  }
 }
