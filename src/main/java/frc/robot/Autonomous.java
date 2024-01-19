@@ -46,7 +46,7 @@ public class Autonomous {
     }
 
     private void scoreStart(){
-        if (finishedScoring = false){  
+        if (!finishedScoring){
              arm.moveToPreset(105);
 
             if (arm.encoderPosition()>103.5) {

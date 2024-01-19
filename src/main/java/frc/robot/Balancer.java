@@ -12,8 +12,8 @@ public class Balancer {
         ORIENT,
         FORWARD,
         CLIMB,
-        TUNINGFORWARD,
-        TUNINGBACKWARD,
+        TUNINGFORWORD,
+        TUNINGBACKWORD,
         LOCK,
         STOP
     }
@@ -43,10 +43,10 @@ public class Balancer {
             case CLIMB:
                 climb();
                 break;
-            case TUNINGFORWARD:
+            case TUNINGFORWORD:
                 tuningForward();
                 break;
-            case TUNINGBACKWARD:
+            case TUNINGBACKWORD:
                 tuningBackward();
                 break;
             case LOCK:
@@ -82,7 +82,7 @@ public class Balancer {
 
     private void climb() {
         swerve.drive(0, -0.2, 0, true); //0,-0.2,0
-        switchState(1.5, States.TUNINGFORWARD);
+        switchState(1.5, States.TUNINGFORWORD);
     }
     
     private void tuningForward() {
@@ -91,7 +91,7 @@ public class Balancer {
         } else if (getPitch() < RobotConstants.balancePitchSmall) {
             switchState(0.5, States.LOCK);
         } else {
-            nextState(States.TUNINGBACKWARD);
+            nextState(States.TUNINGBACKWORD);
         }
     }
 
@@ -101,7 +101,7 @@ public class Balancer {
         } else if (getPitch() > -1 * RobotConstants.balancePitchSmall) {
             switchState(0.5, States.LOCK);
         } else {
-            nextState(States.TUNINGFORWARD);
+            nextState(States.TUNINGFORWORD);
         }
     }
     

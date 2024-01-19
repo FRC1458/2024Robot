@@ -21,7 +21,4 @@ public class Solenoid {
         solenoid.set(Value.kReverse);
     }
 
-    public void off() {
-        solenoid.set(Value.kOff);
-    }
 }

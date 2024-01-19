@@ -4,12 +4,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.wrappers.TalonFXWrapper;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class Arm {
 
     private final Solenoid armSolenoid;
-    private final Solenoid clawSolenoid;
     private final TalonFXWrapper armMotor;
     private armStates state = armStates.IDLE;
     private boolean armExtended = false;
@@ -22,7 +21,7 @@ public class Arm {
     }
 
     public enum intakeStates {
-        ACCCEPT,
+        ACCEPT,
         REJECT,
         STOP
     }
@@ -32,13 +31,12 @@ public class Arm {
     private final static double clawSpeed = .35;
     public final static CANSparkMax claw = new CANSparkMax(clawID, MotorType.kBrushless);
 
-    public Arm(Solenoid armSolenoid, Solenoid clawSolenoid, ArmNavX armnavx) {
+    public Arm(Solenoid armSolenoid) {
         
         claw.clearFaults();
         claw.setIdleMode(com.revrobotics.CANSparkBase.IdleMode.kBrake);
         
         this.armSolenoid = armSolenoid;
-        this.clawSolenoid = clawSolenoid;
         armMotor = new TalonFXWrapper(43, true);
         retractArm();
     }
@@ -78,7 +76,7 @@ public class Arm {
         }
     }
 
-    public void clawAccept() {if (intakeState != intakeStates.ACCCEPT) claw.set(clawSpeed); intakeState = intakeStates.ACCCEPT;}
+    public void clawAccept() {if (intakeState != intakeStates.ACCEPT) claw.set(clawSpeed); intakeState = intakeStates.ACCEPT;}
     public void clawStop() {if (intakeState != intakeStates.STOP) claw.stopMotor(); intakeState = intakeStates.STOP;}
     public void clawReject() {if (intakeState != intakeStates.REJECT) claw.set(-clawSpeed); intakeState = intakeStates.REJECT;}
 

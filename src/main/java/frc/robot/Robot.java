@@ -1,18 +1,12 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxRelativeEncoder.Type;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.swervedrive.SwerveDrive;
-import frc.robot.wrappers.JoystickWrapper;
 
 public class Robot extends TimedRobot {
 
@@ -23,15 +17,12 @@ public class Robot extends TimedRobot {
   }
 
   States state;
-  private JoystickWrapper leftStick;
-  private JoystickWrapper rightStick;
   private Controller controller;
 
   private double regularSpeed;
   private double boostedSpeed;
 
   SwerveDrive swerveDrive;
-  Lidar armLidar;
 
   Limelight limelight;
   private Balancer balancer;
@@ -39,25 +30,19 @@ public class Robot extends TimedRobot {
   private Autonomous autonomous;
 
   private final AHRS navX;
-  private final ArmNavX armNavX;
 
   Timer timer = new Timer();
   int counter = 0;
   Solenoid armSolenoid = new Solenoid(4, 3, 2);
-  Solenoid clawSolenoid = new Solenoid(4, 1, 0);
   Arm arm;
 
   public Robot() {
     super(0.03);
-    //leftStick = new JoystickWrapper(0);//uncomment if using them
-    //rightStick = new JoystickWrapper(1);
     controller = new XboxController();
 
     navX = new AHRS(SPI.Port.kMXP);
-    armNavX = new ArmNavX(4);
     swerveDrive = new SwerveDrive(navX);
     //lidar = new Lidar(RobotConstants.lidarPort);
-    armLidar = new Lidar(RobotConstants.armLidarPort);
     limelight = new Limelight(0);
 
     balancer = new Balancer(swerveDrive, navX);
@@ -69,7 +54,7 @@ public class Robot extends TimedRobot {
 
     SmartDashboard.putNumber("Robot Speed", regularSpeed);
 
-    arm = new Arm(armSolenoid, clawSolenoid, armNavX);
+    arm = new Arm(armSolenoid);
 
   }
 
@@ -101,8 +86,6 @@ public class Robot extends TimedRobot {
     speedIncrease = SmartDashboard.getNumber("Robot Speed", regularSpeed);
 
     //SmartDashboard.putNumber("Lidar data", lidar.getDistanceCentimeters());
-    SmartDashboard.putNumber("Arm Lidar data", armLidar.getDistanceCentimeters());
-    SmartDashboard.putNumber("Arm NavX angle", armNavX.getPitch());
     SmartDashboard.putString("State", state.toString());
     //SmartDashboard.putNumber("Arm Encoder", arm.getEncoder());
 

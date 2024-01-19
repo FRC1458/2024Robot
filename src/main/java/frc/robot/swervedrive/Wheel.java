@@ -3,11 +3,9 @@ package frc.robot.swervedrive;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotConstants;
 
@@ -15,7 +13,7 @@ import frc.robot.RobotConstants;
 public class Wheel {
     private CANSparkMax angleMotor;
     private CANSparkMax speedMotor;
-    private SparkMaxPIDController pidController;
+    private SparkPIDController pidController;
     public final RelativeEncoder encoder;
     private TalonSRX absoluteEncoder;
 
