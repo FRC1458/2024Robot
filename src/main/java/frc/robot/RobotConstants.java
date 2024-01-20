@@ -3,9 +3,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class RobotConstants {
-
-    public final static double armEncoderRatio = 360.0 / 4096 / 100 / 4;
-
+    //swerve stuff
     public final static int frontLeftAngleID = 19;
     public final static int frontRightAngleID = 15;
     public final static int backLeftAngleID = 13;
@@ -36,8 +34,7 @@ public class RobotConstants {
 
     public final static double swerveDriveGearRatio = 12.8;
 
-    public final static double regularSpeed = .5;
-    public final static double boostedSpeed = .75;
+    public final static double speed = .5;
 
     public final static int frontLeftAbsoluteEncoderID = 28;
     public final static int frontRightAbsoluteEncoderID = 18;
@@ -55,16 +52,4 @@ public class RobotConstants {
     public final static Rotation2d backLeftAngle = new Rotation2d(0);
     public final static Rotation2d backRightAngle = new Rotation2d(0);
 
-    public final static double balancePitchStart = 8;
-    public final static double balancePitchHeavy = 12;
-    public final static double balanceSpeedHeavy = .05;
-    public final static double balancePitchSmall = 8;
-
-    public final static double metersToSwerve = 0.0235;
-
-    public enum Position {RIGHT, CENTER, LEFT}
-    public static final Position position = Position.RIGHT;
-    public static final boolean willBalance = true;
-
-    public static final double armSpeed = .35;
 }

@@ -4,37 +4,20 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.swervedrive.SwerveDrive;
 
 public class Robot extends TimedRobot {
 
-  enum States {
-      MANUAL,
-      ALIGN,
-      BALANCE
-  }
+  private final Controller controller;
 
-  States state;
-  private Controller controller;
-
-  private double regularSpeed;
-  private double boostedSpeed;
+  private final double speed;
 
   SwerveDrive swerveDrive;
 
-  Limelight limelight;
-  private Balancer balancer;
-  private Aligner aligner;
-  private Autonomous autonomous;
 
   private final AHRS navX;
 
-  Timer timer = new Timer();
-  int counter = 0;
-  Solenoid armSolenoid = new Solenoid(4, 3, 2);
-  Arm arm;
 
   public Robot() {
     super(0.03);
@@ -42,19 +25,10 @@ public class Robot extends TimedRobot {
 
     navX = new AHRS(SPI.Port.kMXP);
     swerveDrive = new SwerveDrive(navX);
-    //lidar = new Lidar(RobotConstants.lidarPort);
-    limelight = new Limelight(0);
 
-    balancer = new Balancer(swerveDrive, navX);
-    aligner = new Aligner(swerveDrive, limelight);
-    autonomous = new Autonomous(balancer);
+    speed = RobotConstants.speed;
 
-    regularSpeed = RobotConstants.regularSpeed;
-    boostedSpeed = RobotConstants.boostedSpeed;
-
-    SmartDashboard.putNumber("Robot Speed", regularSpeed);
-
-    arm = new Arm(armSolenoid);
+    SmartDashboard.putNumber("Robot Speed", speed);
 
   }
 
@@ -64,32 +38,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    state = States.MANUAL;
-    superiorReset();
-    timer.reset();
-    counter = 0;
-    timer.start();
+    swerveDrive.setEncoders();
   }
 
   @Override
   public void teleopPeriodic() {
-    counter ++;
-    if (timer.hasElapsed(5)) {
-      SmartDashboard.putNumber("Refresh Rate (per second)", (counter/5.0));
-      counter = 0;
-      timer.reset();
-    }
     double xAxis;
     double yAxis;
     double rAxis;
     double x,y,r,speedIncrease;
-    speedIncrease = SmartDashboard.getNumber("Robot Speed", regularSpeed);
-
-    //SmartDashboard.putNumber("Lidar data", lidar.getDistanceCentimeters());
-    SmartDashboard.putString("State", state.toString());
-    //SmartDashboard.putNumber("Arm Encoder", arm.getEncoder());
-
-    limelight.readPeriodic();
+    speedIncrease = SmartDashboard.getNumber("Robot Speed", speed);
 
     xAxis = controller.getSwerveX();
     yAxis = controller.getSwerveY();
@@ -98,104 +56,27 @@ public class Robot extends TimedRobot {
 
 
     if (controller.resetNavX()) {
-      superiorReset();
+      swerveDrive.setEncoders();
       swerveDrive.resetNavX();
       navX.resetDisplacement();
     }
 
-    if (controller.resetArm()) {
-      arm.reset();
-    }
+    x = -xAxis*Math.abs(xAxis) * speedIncrease;
+    y = yAxis*Math.abs(yAxis)* speedIncrease;
+    r = rAxis*Math.abs(rAxis) * speedIncrease;
 
-    if (controller.lockWheels()) {
-      swerveDrive.drive(0.01, 0, 0, true);
-    }
-
-    x = -Math.pow(xAxis, 3) * speedIncrease;
-    y = Math.pow(yAxis, 3) * speedIncrease;
-    r = Math.pow(rAxis, 3) * speedIncrease;
-
-    switch(state) {
-      case MANUAL:
-        manual(x, y, r);
-        break;
-      case ALIGN:
-        aligner.align();
-        break;
-      case BALANCE:
-        balancer.balance();
-        break;
-    }
-
-
-    if (controller.stateManual()) {
-      state = States.MANUAL;
-    }
-    else if (controller.stateAlign()) {
-      aligner.reset();
-      state = States.ALIGN;
-    }
-    else if (controller.stateBalance()) {
-      state = States.BALANCE;
-      balancer.reset();
-    }
-    runArm();
-
-    SmartDashboard.putNumber("NavX Angle", navX.getAngle());
-    SmartDashboard.putNumber("NavX Displacement X", navX.getDisplacementX());
-    SmartDashboard.putNumber("NavX Displacement Y", navX.getDisplacementY());
-    SmartDashboard.putNumber("NavX Displacement Z", navX.getDisplacementZ());
-
-  }
-
-  public void runArm() {
-    if (controller.armTop()) {
-      arm.setUp();
-    } else if (controller.armMiddle()) {
-      arm.setMiddle();
-    } else if (controller.armBottom()) {
-      arm.setBottom();
-    }
-    arm.runArm(controller.armDown(), controller.armUp());
-
-    if (controller.armExtend()) {
-      arm.extendArm();
-    } else if (controller.armRetract()) {
-      arm.retractArm();
-    }
-
-    if (controller.clawOpen()) {//LT=ACCEPT
-      arm.clawAccept();
-    } else if (controller.clawClose()) {//RT=REJECT
-      arm.clawReject();
-    } else arm.clawStop();
-
-    SmartDashboard.putNumber("Arm Position", arm.encoderPosition());
-    SmartDashboard.putNumber("Robot Pitch", balancer.getPitch());
-  }
-
-  private void manual(double x, double y, double r) {
     swerveDrive.drive(x, y, r, true);
-    SmartDashboard.putNumber("rRotationASDF", limelight.getRotation());
+
   }
 
   @Override
   public void autonomousInit() {
-    superiorReset();
+    swerveDrive.setEncoders();
   }
 
   @Override
   public void autonomousPeriodic() {
 
-    //autonomous.autonomous();
-    balancer.balance();
 
-  }
-
-  public void superiorReset() {
-    //swerveDrive.resetNavX();
-    aligner.reset();
-    swerveDrive.setEncoders();
-    balancer.reset();
   }
 }
