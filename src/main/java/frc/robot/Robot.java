@@ -28,8 +28,6 @@ public class Robot extends TimedRobot {
 
     speed = RobotConstants.speed;
 
-    SmartDashboard.putNumber("Robot Speed", speed);
-
   }
 
   @Override
@@ -46,8 +44,7 @@ public class Robot extends TimedRobot {
     double xAxis;
     double yAxis;
     double rAxis;
-    double x,y,r,speedIncrease;
-    speedIncrease = SmartDashboard.getNumber("Robot Speed", speed);
+    double x,y,r;
 
     xAxis = controller.getSwerveX();
     yAxis = controller.getSwerveY();
@@ -55,15 +52,15 @@ public class Robot extends TimedRobot {
 
 
 
-    if (controller.resetNavX()) {
+    if (controller.resetNavXButton()) {
       swerveDrive.setEncoders();
       swerveDrive.resetNavX();
       navX.resetDisplacement();
     }
 
-    x = -xAxis*Math.abs(xAxis) * speedIncrease;
-    y = yAxis*Math.abs(yAxis)* speedIncrease;
-    r = rAxis*Math.abs(rAxis) * speedIncrease;
+    x = -1 * xAxis * Math.abs(xAxis) * speed;
+    y = yAxis * Math.abs(yAxis) * speed;
+    r = rAxis * Math.abs(rAxis) * speed;
 
     swerveDrive.drive(x, y, r, true);
 
