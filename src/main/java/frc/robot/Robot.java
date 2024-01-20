@@ -50,7 +50,10 @@ public class Robot extends TimedRobot {
     yAxis = controller.getSwerveY();
     rAxis = controller.getSwerveR();
 
-
+    SmartDashboard.putNumber("X Acceleration", navX.getWorldLinearAccelX());
+    SmartDashboard.putNumber("Y Acceleration", navX.getWorldLinearAccelY());
+    SmartDashboard.putNumber("Z Acceleration", navX.getWorldLinearAccelZ());
+    SmartDashboard.putNumber("Total xy Acceleration", Math.sqrt(Math.pow(navX.getWorldLinearAccelX(), 2) + Math.pow(navX.getWorldLinearAccelY(), 2)));
 
     if (controller.resetNavXButton()) {
       swerveDrive.setEncoders();

@@ -36,10 +36,10 @@ public class RobotConstants {
 
     public final static double speed = .5;
 
-    public final static int frontLeftAbsoluteEncoderID = 28;
-    public final static int frontRightAbsoluteEncoderID = 18;
-    public final static int backLeftAbsoluteEncoderID = 17;
-    public final static int backRightAbsoluteEncoderID = 27;
+    public final static int frontLeftAbsoluteEncoderID = 13;//13?
+    public final static int frontRightAbsoluteEncoderID = 26;//26?
+    public final static int backLeftAbsoluteEncoderID = 11;//???
+    public final static int backRightAbsoluteEncoderID = 15;//???
 
     // CHANGE ALL THESE VALUES TO REAL NUMBERS
     public final static double frontLeftDistance = 0;
