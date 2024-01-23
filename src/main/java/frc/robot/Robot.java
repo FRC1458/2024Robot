@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
@@ -13,12 +14,12 @@ import frc.robot.wrappers.TalonFXWrapper;
 import frc.robot.wrappers.XboxControllerWrapper;
 
 public class Robot extends TimedRobot {
-  private CANSparkMax motor;
+  private TalonFX motor;
 
   public Robot() {
     super(0.03);
 
-    motor = new CANSparkMax(15, CANSparkLowLevel.MotorType.kBrushed);
+    motor = new TalonFX(15);
   }
   @Override
   public void robotInit() {
