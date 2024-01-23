@@ -43,7 +43,6 @@ public class SwerveDrive {
 
         speeds = new ChassisSpeeds();
 
-
     }
 
     public void drive(double x, double y, double r, boolean fieldOriented) {
@@ -71,27 +70,28 @@ public class SwerveDrive {
 
     }
 
-    public double turnToAngle(double goalAngle, double angle) {
-        double error = 2.0;
-
-        double diff = (angle - goalAngle) % 360;
-
-        if (Math.abs(diff) > 180) {
-            diff = diff - 360 * Math.signum(diff);
-        }
-
-        double realGoalAngle = (angle - diff);
-
-        if (Math.abs(angle - realGoalAngle) > error) {
-            if (angle > realGoalAngle) {
-                return -.1;
-            } else {
-                return .1;
-            }
-        }
-        return 0;
-
-    }
+//unused - delete?
+//    public double turnToAngle(double goalAngle, double angle) {
+//        double error = 2.0;
+//
+//        double diff = (angle - goalAngle) % 360;
+//
+//        if (Math.abs(diff) > 180) {
+//            diff = diff - 360 * Math.signum(diff);
+//        }
+//
+//        double realGoalAngle = (angle - diff);
+//
+//        if (Math.abs(angle - realGoalAngle) > error) {
+//            if (angle > realGoalAngle) {
+//                return -.1;
+//            } else {
+//                return .1;
+//            }
+//        }
+//        return 0;
+//
+//    }
 
     public void setEncoders() {
         frontLeft.setEncoders(RobotConstants.frontLeftAngleOffset);
