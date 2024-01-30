@@ -15,6 +15,7 @@ public class Wheel {
     private CANSparkMax speedMotor;
     private SparkPIDController pidController;
     public final RelativeEncoder encoder;
+    private final RelativeEncoder driveEncoder;
     private TalonSRX absoluteEncoder;
 
     private double relativeOffset = 0;
@@ -30,7 +31,10 @@ public class Wheel {
 
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr;
 
+    PID betterPID = new PID();
+
     public Wheel(int angleMotorID, int speedMotorID, int absoluteEncoderID, String wheelName, double offset) {
+
         this.angleMotor = new CANSparkMax(angleMotorID, MotorType.kBrushless);
         this.speedMotor = new CANSparkMax(speedMotorID, MotorType.kBrushless);
         this.absoluteEncoder = new TalonSRX(absoluteEncoderID);
@@ -42,6 +46,8 @@ public class Wheel {
 
         pidController = angleMotor.getPIDController();
         encoder = angleMotor.getEncoder();
+        driveEncoder = speedMotor.getEncoder();
+
 
         kIz = 0;
         kFF = 0.000156;
@@ -61,6 +67,15 @@ public class Wheel {
         pidController.setSmartMotionMinOutputVelocity(minVel, smartMotionSlot);
         pidController.setSmartMotionMaxAccel(maxAcc, smartMotionSlot);
         pidController.setSmartMotionAllowedClosedLoopError(allowedErr, smartMotionSlot);
+        
+
+        SmartDashboard.putNumber(wheelName + " Offset", offset);
+
+    }
+
+    public void setPID(double p, double i, double d, double iScaling) {
+        betterPID.setPID(p, i, d);
+        betterPID.setiScaling(iScaling);
     }
 
     public void drive(double speed, double goalAngle) {
@@ -89,10 +104,15 @@ public class Wheel {
         if (speed != 0 || diagnostic) {
             pidController.setReference(realGoalRotations, CANSparkMax.ControlType.kPosition);
         }
-        speedMotor.set(speed);
+
+        betterPID.setTarget(RobotConstants.maxSwerveSpeed * speed); //3 casualties (1/25)
+        double velocity = driveEncoder.getVelocity();
+
+        speedMotor.set(-betterPID.update(velocity));
     }
 
     public void setEncoders(double offset) {
+        offset = SmartDashboard.getNumber(wheelName + " Offset", offset);
         //SmartDashboard.putNumber(wheelName + " set pos rel", encoder.getPosition());
         double absolutePosition = offset + (absoluteEncoder.getSelectedSensorPosition(0) % 4096) * RobotConstants.swerveDriveGearRatio / 4096.0;
 
@@ -106,4 +126,10 @@ public class Wheel {
     public double getAbsoluteEncoderValue() {
         return ((absoluteEncoder.getSelectedSensorPosition(0) % 4096) * RobotConstants.swerveDriveGearRatio / 4096.0);
     }
+
+    public double getVelocity() {
+        return driveEncoder.getVelocity();
+
+    }
+
 }

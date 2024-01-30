@@ -9,5 +9,7 @@ public interface Controller {
      double getSwerveY();
 
      boolean resetNavXButton();
+     boolean getButtonX();
+     boolean getButtonA();
 
 }
