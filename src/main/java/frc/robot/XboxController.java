@@ -35,4 +35,15 @@ public class XboxController implements Controller {
     public double getSwerveY() {
         return xbox.getLeftY();
     }
+
+    @Override
+    public boolean getButtonX() {
+        return xbox.getXButton();
+    }
+
+    @Override
+    public boolean getButtonA() {
+        return xbox.getAButton();
+    }
+
 }

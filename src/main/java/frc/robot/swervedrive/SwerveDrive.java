@@ -19,12 +19,24 @@ public class SwerveDrive {
     SwerveDriveOdometry odometry;
     private final AHRS navX;
 
+    private double maxVelocity = -1;
+
     public SwerveDrive(AHRS navX) {
         this.navX = navX;
         frontLeft = new Wheel(RobotConstants.frontLeftAngleID, RobotConstants.frontLeftSpeedID, RobotConstants.frontLeftAbsoluteEncoderID, "Front Left (1)", RobotConstants.frontLeftAngleOffset);
         frontRight = new Wheel(RobotConstants.frontRightAngleID, RobotConstants.frontRightSpeedID, RobotConstants.frontRightAbsoluteEncoderID, "Front Right (2)", RobotConstants.frontRightAngleOffset);
         backLeft = new Wheel(RobotConstants.backLeftAngleID, RobotConstants.backLeftSpeedID, RobotConstants.backLeftAbsoluteEncoderID, "Back Left (3)", RobotConstants.backLeftAngleOffset);
         backRight = new Wheel(RobotConstants.backRightAngleID, RobotConstants.backRightSpeedID, RobotConstants.backRightAbsoluteEncoderID, "Back Right (4)", RobotConstants.backRightAngleOffset);
+
+        SmartDashboard.putNumber("SwerveKP: ", 0.0001);
+        SmartDashboard.putNumber("SwerveKI: ", 0.00001);
+        SmartDashboard.putNumber("SwerveKD: ", 0.0001);
+        SmartDashboard.putNumber("Swerve iScaling: ", 20);
+        
+        frontLeft.setPID(0.0001, 0.00001, 0.0001, 20);
+        frontRight.setPID(0.0001, 0.00001, 0.0001, 20);
+        backRight.setPID(0.0001, 0.00001, 0.0001, 20);
+        backLeft.setPID(0.0001, 0.00001, 0.0001, 20);
 
         Translation2d frontLeftLocation = new Translation2d(RobotConstants.frontLeftXMeters, RobotConstants.frontLeftYMeters);
         Translation2d frontRightLocation = new Translation2d(RobotConstants.frontRightXMeters, RobotConstants.frontRightYMeters);
@@ -43,12 +55,29 @@ public class SwerveDrive {
 
         speeds = new ChassisSpeeds();
 
+
     }
 
     public void drive(double x, double y, double r, boolean fieldOriented) {
+
+        SmartDashboard.putNumber("Gyro Angle", navX.getAngle());
+
         speeds.vxMetersPerSecond = x;
         speeds.vyMetersPerSecond = y;
         speeds.omegaRadiansPerSecond = r;
+
+        double KP = SmartDashboard.getNumber("SwerveKP: ", 0.0001);
+        double KI = SmartDashboard.getNumber("SwerveKI: ", 0);
+        double KD = SmartDashboard.getNumber("SwerveKD: ", 0.0001);
+        double iScaling = SmartDashboard.getNumber("Swerve iScaling: ", 20);
+
+
+
+
+        frontLeft.setPID(KP, KI, KD, iScaling);
+        frontRight.setPID(KP, KI, KD, iScaling);
+        backRight.setPID(KP, KI, KD, iScaling);
+        backLeft.setPID(KP, KI, KD, iScaling);
 
         if (fieldOriented) {
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(x, y, r, Rotation2d.fromDegrees(-(navX.getYaw())));
@@ -68,30 +97,36 @@ public class SwerveDrive {
         backLeft.drive(states[2].speedMetersPerSecond, states[2].angle.getDegrees());
         backRight.drive(states[3].speedMetersPerSecond, states[3].angle.getDegrees());
 
+        double absVelocity = Math.abs(frontLeft.getVelocity());
+        if(absVelocity > maxVelocity){
+            maxVelocity = absVelocity;
+        }
+        SmartDashboard.putNumber("(FL) Max Velocity: ", maxVelocity);
+        SmartDashboard.putNumber("(FL) Abs Enc Val", frontLeft.getAbsoluteEncoderValue());
+
     }
 
-//unused - delete?
-//    public double turnToAngle(double goalAngle, double angle) {
-//        double error = 2.0;
-//
-//        double diff = (angle - goalAngle) % 360;
-//
-//        if (Math.abs(diff) > 180) {
-//            diff = diff - 360 * Math.signum(diff);
-//        }
-//
-//        double realGoalAngle = (angle - diff);
-//
-//        if (Math.abs(angle - realGoalAngle) > error) {
-//            if (angle > realGoalAngle) {
-//                return -.1;
-//            } else {
-//                return .1;
-//            }
-//        }
-//        return 0;
-//
-//    }
+    public double turnToAngle(double goalAngle, double angle) {
+        double error = 2.0;
+
+        double diff = (angle - goalAngle) % 360;
+
+        if (Math.abs(diff) > 180) {
+            diff = diff - 360 * Math.signum(diff);
+        }
+
+        double realGoalAngle = (angle - diff);
+
+        if (Math.abs(angle - realGoalAngle) > error) {
+            if (angle > realGoalAngle) {
+                return -.1;
+            } else {
+                return .1;
+            }
+        }
+        return 0;
+
+    }
 
     public void setEncoders() {
         frontLeft.setEncoders(RobotConstants.frontLeftAngleOffset);
@@ -103,4 +138,9 @@ public class SwerveDrive {
     public void resetNavX() {
         navX.reset();
     }
+
+    public void resetMaxVel() {
+        maxVelocity = -1;
+    }
+
 }

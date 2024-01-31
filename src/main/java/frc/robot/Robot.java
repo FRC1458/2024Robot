@@ -60,13 +60,16 @@ public class Robot extends TimedRobot {
       swerveDrive.resetNavX();
       navX.resetDisplacement();
     }
-
     x = -1 * xAxis * Math.abs(xAxis) * speed;
     y = yAxis * Math.abs(yAxis) * speed;
     r = rAxis * Math.abs(rAxis) * speed;
 
     swerveDrive.drive(x, y, r, true);
 
+      if(controller.getButtonX()){
+        swerveDrive.resetMaxVel();
+      }
+    
   }
 
   @Override

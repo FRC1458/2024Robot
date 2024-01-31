@@ -34,7 +34,7 @@ public class RobotConstants {
 
     public final static double swerveDriveGearRatio = 12.8;
 
-    public final static double speed = .5;
+    public final static double speed = 1;
 
     public final static int frontLeftAbsoluteEncoderID = 13;//13?
     public final static int frontRightAbsoluteEncoderID = 26;//26?
@@ -52,4 +52,5 @@ public class RobotConstants {
     public final static Rotation2d backLeftAngle = new Rotation2d(0);
     public final static Rotation2d backRightAngle = new Rotation2d(0);
 
+    public final static double maxSwerveSpeed = 6200;
 }
