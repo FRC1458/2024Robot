@@ -11,5 +11,6 @@ public interface Controller {
      boolean resetNavXButton();
      boolean getButtonX();
      boolean getButtonA();
-
+     boolean getRightTrigger();
+     boolean getLeftTrigger();
 }

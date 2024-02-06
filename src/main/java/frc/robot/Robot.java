@@ -15,6 +15,11 @@ public class Robot extends TimedRobot {
 
   SwerveDrive swerveDrive;
 
+  Intake intake;
+  Plumbing plumbing;
+  Shooter shooter;
+  
+
 
   private final AHRS navX;
 
@@ -25,6 +30,9 @@ public class Robot extends TimedRobot {
 
     navX = new AHRS(SPI.Port.kMXP);
     swerveDrive = new SwerveDrive(navX);
+    intake = new Intake();
+    plumbing = new Plumbing();
+    shooter = new Shooter();
 
     speed = RobotConstants.speed;
 
@@ -69,6 +77,19 @@ public class Robot extends TimedRobot {
       if(controller.getButtonX()){
         swerveDrive.resetMaxVel();
       }
+      if(controller.getRightTrigger()){
+        shooter.shoot();
+      }
+      else{
+        shooter.stop();
+      }
+      if(controller.getLeftTrigger()){
+        plumbing.eject();
+      }
+      else{
+        plumbing.clog();
+      }
+      
     
   }
 

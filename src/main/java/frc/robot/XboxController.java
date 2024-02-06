@@ -46,4 +46,13 @@ public class XboxController implements Controller {
         return xbox.getAButton();
     }
 
+    @Override
+    public boolean getRightTrigger() {
+        return (xbox.getRightTriggerAxis() > 0.7);
+    }
+    
+    public boolean getLeftTrigger() {
+        return (xbox.getLeftTriggerAxis() > 0.7);
+    }
+
 }

@@ -3,24 +3,21 @@ package frc.robot;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-public class Intake {
+public class Plumbing {
     private final TalonFX motor;
    
-    public Intake() {
+    public Plumbing() {
         motor = new TalonFX(0);
         motor.clearStickyFaults();
-        motor.setNeutralMode(NeutralModeValue.Coast);
-   }
-
-   public void slurp() {
-        motor.set(RobotConstants.intakeMotorSpeed);
+        motor.setNeutralMode(NeutralModeValue.Brake);
    }
 
    public void eject() {
-        motor.set(-RobotConstants.intakeMotorSpeed);
+        motor.set(RobotConstants.PlumbingMotorSpeed);
    }
 
-   public void stop() {
+   public void clog(){
         motor.set(0);
    }
+
 }
