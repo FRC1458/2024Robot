@@ -18,7 +18,8 @@ public class Robot extends TimedRobot {
   Intake intake;
   Plumbing plumbing;
   Shooter shooter;
-  
+
+  private boolean intakeOn;
 
 
   private final AHRS navX;
@@ -74,23 +75,34 @@ public class Robot extends TimedRobot {
 
     swerveDrive.drive(x, y, r, true);
 
-      if(controller.getButtonX()){
-        swerveDrive.resetMaxVel();
+    if(controller.getButtonX()){
+      swerveDrive.resetMaxVel();
+    }
+
+    if (controller.getButtonAPressed()){ //toggle intake on/off
+      intakeOn = !intakeOn;
+      if (intakeOn) {
+        intake.slurp();
       }
-      if(controller.getRightTrigger()){
-        shooter.shoot();
+      else {
+        intake.stop();
       }
-      else{
-        shooter.stop();
-      }
-      if(controller.getLeftTrigger()){
-        plumbing.eject();
-      }
-      else{
-        plumbing.clog();
-      }
-      
-    
+    }
+
+    if(controller.getLeftTrigger()){ //rev up shooter motors, to be changed
+      shooter.shoot();
+    }
+    else{
+      shooter.stop();
+    }
+
+    if(controller.getRightTrigger()){ //"shoot" the piece into the spinning shooter
+      plumbing.eject();
+    }
+    else{
+      plumbing.clog();
+    }
+
   }
 
   @Override

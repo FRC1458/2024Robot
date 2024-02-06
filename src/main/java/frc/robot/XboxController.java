@@ -42,8 +42,8 @@ public class XboxController implements Controller {
     }
 
     @Override
-    public boolean getButtonA() {
-        return xbox.getAButton();
+    public boolean getButtonAPressed() {
+        return xbox.getAButtonPressed();
     }
 
     @Override

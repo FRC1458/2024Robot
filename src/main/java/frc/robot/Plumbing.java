@@ -13,7 +13,7 @@ public class Plumbing {
    }
 
    public void eject() {
-        motor.set(RobotConstants.PlumbingMotorSpeed);
+        motor.set(RobotConstants.plumbingMotorSpeed);
    }
 
    public void clog(){

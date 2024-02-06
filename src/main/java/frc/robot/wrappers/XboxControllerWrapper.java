@@ -130,4 +130,9 @@ public class XboxControllerWrapper extends Wrapper{
     public void setRumble(double val) {
         setRumble(val);
     }
+
+    public boolean getAButtonPressed() {
+        if (isInitialized) return xbox.getAButtonPressed();
+        return false;
+    }
 }
