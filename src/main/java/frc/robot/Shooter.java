@@ -1,35 +1,37 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 
 public class Shooter {
-   private final TalonFX motor1;
-   private final TalonFX motor2;
-   
-   
+   private final TalonFX rightShooter;
+   private final TalonFX leftShooter;
+
+   private final SlewRateLimiter rightFilter;
+   private final SlewRateLimiter leftFilter;
    
     public Shooter() {
-        motor1 = new TalonFX(0);
-        motor2 = new TalonFX(0);
-        motor1.clearStickyFaults();
-        motor2.clearStickyFaults();
-        motor1.setNeutralMode(NeutralModeValue.Coast);
-        motor2.setNeutralMode(NeutralModeValue.Coast);
+        rightShooter = new TalonFX(RobotConstants.rightShooterMotorID);
+        leftShooter = new TalonFX(RobotConstants.leftShooterMotorID);
+        rightShooter.clearStickyFaults();
+        leftShooter.clearStickyFaults();
+        rightShooter.setNeutralMode(NeutralModeValue.Coast);
+        leftShooter.setNeutralMode(NeutralModeValue.Coast);
+        rightFilter = new SlewRateLimiter(RobotConstants.shooterSpeed/RobotConstants.shooterRampUpTime);
+        leftFilter = new SlewRateLimiter(RobotConstants.shooterSpeed/RobotConstants.shooterRampUpTime);
    }
 
-   public void start() {
-        setRPM(0.5);
+   public void shoot() {
+        rightShooter.set(rightFilter.calculate(RobotConstants.shooterSpeed * -1));
+        leftShooter.set(leftFilter.calculate(RobotConstants.shooterSpeed));
    }
 
    public void stop() {
-        setRPM(0);
+        rightShooter.set(0);
+        leftShooter.set(0);
    }
 
-   private void setRPM(double rpm) {
-        motor1.set(-1*rpm);
-        motor2.set(rpm);
-   }
+
 
 }

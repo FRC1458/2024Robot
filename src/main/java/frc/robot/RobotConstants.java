@@ -53,4 +53,15 @@ public class RobotConstants {
     public final static Rotation2d backRightAngle = new Rotation2d(0);
 
     public final static double maxSwerveSpeed = 6200;
+
+    public final static int intakeMotorID = 30;
+    public final static int plumbingMotorID = 31;
+    public final static int rightShooterMotorID = 32;
+    public final static int leftShooterMotorID = 33;
+
+    public final static double intakeMotorSpeed = 0.25; //speeds between 0 and 1
+    public final static double plumbingMotorSpeed = 0.25; //can be changed, can also possibly just use intakeMotorSpeed for plumbing motor as well
+    public final static double shooterSpeed = 0.75;
+
+    public final static double shooterRampUpTime = 1; //in seconds
 }
