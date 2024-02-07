@@ -7,7 +7,7 @@ public class Plumbing {
     private final TalonFX motor;
    
     public Plumbing() {
-        motor = new TalonFX(0);
+        motor = new TalonFX(RobotConstants.plumbingMotorID);
         motor.clearStickyFaults();
         motor.setNeutralMode(NeutralModeValue.Brake);
    }
