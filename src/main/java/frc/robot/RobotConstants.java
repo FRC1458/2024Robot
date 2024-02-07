@@ -64,4 +64,18 @@ public class RobotConstants {
     public final static double shooterSpeed = 0.75;
 
     public final static double shooterRampUpTime = 1; //in seconds
+
+    //can be changed later to dynamically choose based on auto
+    public final static double initialXPos = 0;
+    public final static double initialYPos = 0;
+
+    //maybe change
+    //bigger number = less trusting of model state estimate
+    public final static double PositionStdDevX = 0.1;
+    public final static double PositionStdDevY = 0.1;
+    public final static double PositionStdDevTheta = 10;
+
+    public final static double LimelightStdDevX = 5;
+    public final static double LimelightStdDevY = 5;
+    public final static double LimelightStdDevTheta = 500;
 }

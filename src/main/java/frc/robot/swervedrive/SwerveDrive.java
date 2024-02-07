@@ -1,10 +1,13 @@
 package frc.robot.swervedrive;
 
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotConstants;
 
@@ -16,8 +19,19 @@ public class SwerveDrive {
     public final Wheel backLeft;
     public final Wheel backRight;
     SwerveDriveKinematics kinematics;
-    SwerveDriveOdometry odometry;
+    //SwerveDriveOdometry odometry;
+    SwerveDrivePoseEstimator odometry;
     private final AHRS navX;
+
+    Translation2d frontLeftLocation;
+    Translation2d frontRightLocation;
+    Translation2d backLeftLocation;
+    Translation2d backRightLocation;
+
+    SwerveModulePosition frontLeftPosition;
+    SwerveModulePosition frontRightPosition;
+    SwerveModulePosition backLeftPosition;
+    SwerveModulePosition backRightPosition;
 
     private double maxVelocity = -1;
 
@@ -38,24 +52,36 @@ public class SwerveDrive {
         backRight.setPID(0.0001, 0.00001, 0.0001, 20);
         backLeft.setPID(0.0001, 0.00001, 0.0001, 20);
 
-        Translation2d frontLeftLocation = new Translation2d(RobotConstants.frontLeftXMeters, RobotConstants.frontLeftYMeters);
-        Translation2d frontRightLocation = new Translation2d(RobotConstants.frontRightXMeters, RobotConstants.frontRightYMeters);
-        Translation2d backLeftLocation = new Translation2d(RobotConstants.backLeftXMeters, RobotConstants.backLeftYMeters);
-        Translation2d backRightLocation = new Translation2d(RobotConstants.backRightXMeters, RobotConstants.backRightYMeters);
+        frontLeftLocation = new Translation2d(RobotConstants.frontLeftXMeters, RobotConstants.frontLeftYMeters);
+        frontRightLocation = new Translation2d(RobotConstants.frontRightXMeters, RobotConstants.frontRightYMeters);
+        backLeftLocation = new Translation2d(RobotConstants.backLeftXMeters, RobotConstants.backLeftYMeters);
+        backRightLocation = new Translation2d(RobotConstants.backRightXMeters, RobotConstants.backRightYMeters);
 
-        SwerveModulePosition frontLeftPosition = new SwerveModulePosition(RobotConstants.frontLeftDistance, RobotConstants.frontLeftAngle);
-        SwerveModulePosition frontRightPosition = new SwerveModulePosition(RobotConstants.frontRightDistance, RobotConstants.frontRightAngle);
-        SwerveModulePosition backLeftPosition = new SwerveModulePosition(RobotConstants.backLeftDistance, RobotConstants.backLeftAngle);
-        SwerveModulePosition backRightPosition = new SwerveModulePosition(RobotConstants.backRightDistance, RobotConstants.backRightAngle);
+        frontLeftPosition = new SwerveModulePosition(RobotConstants.frontLeftDistance, RobotConstants.frontLeftAngle);
+        frontRightPosition = new SwerveModulePosition(RobotConstants.frontRightDistance, RobotConstants.frontRightAngle);
+        backLeftPosition = new SwerveModulePosition(RobotConstants.backLeftDistance, RobotConstants.backLeftAngle);
+        backRightPosition = new SwerveModulePosition(RobotConstants.backRightDistance, RobotConstants.backRightAngle);
         SwerveModulePosition[] positions = {frontLeftPosition, frontRightPosition, backLeftPosition, backRightPosition};
 
         kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
 
-        odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(), positions, new Pose2d(5.0, 13.5, new Rotation2d()));
-
+        //odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(), positions, new Pose2d(5.0, 13.5, new Rotation2d()));
+        //odometry not used??? also not assigned properly? check w/mentor before using
+        odometry = new SwerveDrivePoseEstimator(kinematics,
+                Rotation2d.fromDegrees(navX.getAngle()),
+                positions,
+                new Pose2d(RobotConstants.initialXPos, RobotConstants.initialYPos, Rotation2d.fromDegrees(navX.getAngle())),
+                VecBuilder.fill(RobotConstants.PositionStdDevX, RobotConstants.PositionStdDevY, Units.degreesToRadians(RobotConstants.PositionStdDevTheta)),
+                VecBuilder.fill(RobotConstants.LimelightStdDevX, RobotConstants.LimelightStdDevY, Units.degreesToRadians(RobotConstants.LimelightStdDevTheta)));
         speeds = new ChassisSpeeds();
 
 
+    }
+    public SwerveModulePosition[] getModulePositions() {
+        return new SwerveModulePosition[]{frontLeftPosition, frontRightPosition, backLeftPosition, backRightPosition};
+    }
+    public Pose2d updateOdometry() {
+        return odometry.update(Rotation2d.fromDegrees(navX.getAngle()), getModulePositions());
     }
 
     public void drive(double x, double y, double r, boolean fieldOriented) {
@@ -106,6 +132,7 @@ public class SwerveDrive {
 
     }
 
+    //delete this?
     public double turnToAngle(double goalAngle, double angle) {
         double error = 2.0;
 
@@ -135,8 +162,9 @@ public class SwerveDrive {
         backRight.setEncoders(RobotConstants.backRightAngleOffset);
     }
 
-    public void resetNavX() {
+    public void resetNavX(Pose2d currentRobotPosition) {
         navX.reset();
+        odometry.resetPosition(Rotation2d.fromDegrees(navX.getAngle()), getModulePositions(), currentRobotPosition);
     }
 
     public void resetMaxVel() {

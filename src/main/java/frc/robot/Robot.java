@@ -2,6 +2,8 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,6 +16,7 @@ public class Robot extends TimedRobot {
   private final double speed;
 
   SwerveDrive swerveDrive;
+  Pose2d robotPosition;
 
   Intake intake;
   Plumbing plumbing;
@@ -41,7 +44,17 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    swerveDrive.resetNavX(new Pose2d(RobotConstants.initialXPos, RobotConstants.initialYPos, Rotation2d.fromDegrees(navX.getAngle())));
   }
+
+  @Override
+  public void robotPeriodic() {
+    robotPosition = swerveDrive.updateOdometry();
+    //check and make sure it works
+    SmartDashboard.putNumber("RobotXPos", robotPosition.getX());
+    SmartDashboard.putNumber("RobotYPos", robotPosition.getY());
+  }
+
 
   @Override
   public void teleopInit() {
@@ -59,6 +72,7 @@ public class Robot extends TimedRobot {
     yAxis = controller.getSwerveY();
     rAxis = controller.getSwerveR();
 
+    //check acceleration for acceleration limiter? otherwise can delete next 4 lines
     SmartDashboard.putNumber("X Acceleration", navX.getWorldLinearAccelX());
     SmartDashboard.putNumber("Y Acceleration", navX.getWorldLinearAccelY());
     SmartDashboard.putNumber("Z Acceleration", navX.getWorldLinearAccelZ());
@@ -66,7 +80,7 @@ public class Robot extends TimedRobot {
 
     if (controller.resetNavXButton()) {
       swerveDrive.setEncoders();
-      swerveDrive.resetNavX();
+      swerveDrive.resetNavX(robotPosition);
       navX.resetDisplacement();
     }
     x = -1 * xAxis * Math.abs(xAxis) * speed;
