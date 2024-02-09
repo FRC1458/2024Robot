@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotConstants;
 
 public class SwerveDrive {
-
     ChassisSpeeds speeds;
     public final Wheel frontLeft;
     public final Wheel frontRight;
@@ -165,6 +164,7 @@ public class SwerveDrive {
     public void resetNavX(Pose2d currentRobotPosition) {
         navX.reset();
         odometry.resetPosition(Rotation2d.fromDegrees(navX.getAngle()), getModulePositions(), currentRobotPosition);
+        SmartDashboard.putNumber("Swervedrive position: " + odometry.getEstimatedPosition());
     }
 
     public void resetMaxVel() {
