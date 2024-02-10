@@ -3,17 +3,14 @@ package frc.robot.wrappers;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-
 public class LimelightWrapper extends Wrapper {
 
     NetworkTable limelight;
-    
+
     NetworkTableEntry tx;
     NetworkTableEntry ty;
     NetworkTableEntry ta;
@@ -36,7 +33,7 @@ public class LimelightWrapper extends Wrapper {
         if (isInitialized) return tx.getDouble(0.0);
         return 0;
     }
-    
+
     public double gety() {
         if (isInitialized) return ty.getDouble(0.0);
         return 0;
@@ -46,7 +43,6 @@ public class LimelightWrapper extends Wrapper {
         if (isInitialized) return ta.getDouble(0.0);
         return 0;
     }
-    
+
 
 }
-

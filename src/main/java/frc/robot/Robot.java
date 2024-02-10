@@ -1,5 +1,10 @@
 package frc.robot;
 
+import frc.robot.trajectory.*;
+
+import java.io.File;
+import java.io.FilenameFilter;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
@@ -69,8 +74,10 @@ public class Robot extends TimedRobot {
       if(controller.getButtonX()){
         swerveDrive.resetMaxVel();
       }
-    
+
   }
+
+  public TrajectoryDatabase trajHandler = new TrajectoryDatabase();
 
   @Override
   public void autonomousInit() {
@@ -79,7 +86,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-
-
+    //System.out.println(trajHandler.sample(trajHandler.getCurrentTimestamp()));
   }
 }
