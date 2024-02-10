@@ -23,10 +23,10 @@ public class Autonomous {
         this.robotPos = robotPos;
         shooter = new Shooter();
 
-        swerve = new Swerve(navX);
+        swerve = new SwerveDrive(navX);
     }
 
-    public thing() {
+    public void thing() {
         shooter.shoot();
         swerve.drive(0.25, 0, 0, true); 
         
