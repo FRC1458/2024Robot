@@ -164,7 +164,7 @@ public class SwerveDrive {
     public void resetNavX(Pose2d currentRobotPosition) {
         navX.reset();
         odometry.resetPosition(Rotation2d.fromDegrees(navX.getAngle()), getModulePositions(), currentRobotPosition);
-        SmartDashboard.putNumber("Swervedrive position: " + odometry.getEstimatedPosition());
+        //SmartDashboard.putNumber("Swervedrive position: ",  odometry.getEstimatedPosition());
     }
 
     public void resetMaxVel() {
