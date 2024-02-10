@@ -6,12 +6,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.swervedrive.SwerveDrive;
 
 public class Robot extends TimedRobot {
 
-  private final Controller controller;
+  private final XboxController xbox;
 
   private final double speed;
 
@@ -19,23 +20,23 @@ public class Robot extends TimedRobot {
   Pose2d robotPosition;
 
   Intake intake;
-  Plumbing plumbing;
+  Feeder feeder;
   Shooter shooter;
 
   private boolean intakeOn;
-
+  private boolean feederOn;
 
   private final AHRS navX;
 
 
   public Robot() {
     super(0.03);
-    controller = new XboxController();
+    xbox = new XboxController(0);
 
     navX = new AHRS(SPI.Port.kMXP);
     swerveDrive = new SwerveDrive(navX);
     intake = new Intake();
-    plumbing = new Plumbing();
+    feeder = new Feeder();
     shooter = new Shooter();
 
     speed = RobotConstants.speed;
@@ -68,9 +69,9 @@ public class Robot extends TimedRobot {
     double rAxis;
     double x,y,r;
 
-    xAxis = controller.getSwerveX();
-    yAxis = controller.getSwerveY();
-    rAxis = controller.getSwerveR();
+    xAxis = xbox.getLeftX();
+    yAxis = xbox.getLeftY();
+    rAxis = xbox.getRightX();
 
     //check acceleration for acceleration limiter? otherwise can delete next 4 lines
     SmartDashboard.putNumber("X Acceleration", navX.getWorldLinearAccelX());
@@ -78,7 +79,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Z Acceleration", navX.getWorldLinearAccelZ());
     SmartDashboard.putNumber("Total xy Acceleration", Math.sqrt(Math.pow(navX.getWorldLinearAccelX(), 2) + Math.pow(navX.getWorldLinearAccelY(), 2)));
 
-    if (controller.resetNavXButton()) {
+    if (xbox.getStartButton()) {
       swerveDrive.setEncoders();
       swerveDrive.resetNavX(robotPosition);
       navX.resetDisplacement();
@@ -89,33 +90,10 @@ public class Robot extends TimedRobot {
 
     swerveDrive.drive(x, y, r, true);
 
-    if(controller.getButtonX()){
+    if(xbox.getXButton()){
       swerveDrive.resetMaxVel();
     }
 
-    if (controller.getButtonAPressed()){ //toggle intake on/off
-      intakeOn = !intakeOn;
-      if (intakeOn) {
-        intake.slurp();
-      }
-      else {
-        intake.stop();
-      }
-    }
-
-    if(controller.getLeftTrigger()){ //rev up shooter motors, to be changed
-      shooter.shoot();
-    }
-    else{
-      shooter.stop();
-    }
-
-    if(controller.getRightTrigger()){ //"shoot" the piece into the spinning shooter
-      plumbing.eject();
-    }
-    else{
-      plumbing.clog();
-    }
 
   }
 

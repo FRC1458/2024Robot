@@ -3,20 +3,20 @@ package frc.robot;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-public class Plumbing {
+public class Feeder {
     private final TalonFX motor;
    
-    public Plumbing() {
-        motor = new TalonFX(RobotConstants.plumbingMotorID);
+    public Feeder() {
+        motor = new TalonFX(0);
         motor.clearStickyFaults();
         motor.setNeutralMode(NeutralModeValue.Brake);
    }
 
    public void eject() {
-        motor.set(RobotConstants.plumbingMotorSpeed);
+        motor.set(RobotConstants.feederMotorSpeed);
    }
 
-   public void clog(){
+   public void stop(){
         motor.set(0);
    }
 
