@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    robotPosition = swerveDrive.updateOdometry();
+    // robotPosition = swerveDrive.updateOdometry();
     //check and make sure it works
     SmartDashboard.putNumber("RobotXPos", robotPosition.getX());
     SmartDashboard.putNumber("RobotYPos", robotPosition.getY());
