@@ -14,7 +14,7 @@ public class IFSManual implements IFS {
 
     
     
-    public IFSManual(Shooter shooter, Feeder feeder, Intake intake, XboxController xbox) {
+    public IFSManual(Intake intake, Feeder feeder, Shooter shooter, XboxController xbox) {
         this.shooter = shooter;
         this.feeder = feeder;
         this.intake = intake;
@@ -34,14 +34,14 @@ public class IFSManual implements IFS {
           }
       
           if(xbox.getLeftTriggerAxis() > 0.7){ //rev up shooter motors, to be changed
-            shooter.shoot();
+            shooter.scoreSpeakerPID();
           }
           else{
             shooter.stop();
           }
       
           if(xbox.getRightTriggerAxis() > 0.7){ //"shoot" the piece into the spinning shooter
-            feeder.eject();
+            feeder.feed();
             intake.slurp();
             feederOn = true;
           }

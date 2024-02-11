@@ -16,15 +16,14 @@ public class Robot extends TimedRobot {
 
   private final double speed;
 
+  private final IFS ifs;
+
   SwerveDrive swerveDrive;
   Pose2d robotPosition;
 
   Intake intake;
   Feeder feeder;
   Shooter shooter;
-
-  private boolean intakeOn;
-  private boolean feederOn;
 
   private final AHRS navX;
 
@@ -41,6 +40,7 @@ public class Robot extends TimedRobot {
 
     speed = RobotConstants.speed;
 
+    ifs = new IFSManual(intake, feeder, shooter, xbox);
   }
 
   @Override
@@ -52,8 +52,8 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     // robotPosition = swerveDrive.updateOdometry();
     //check and make sure it works
-    SmartDashboard.putNumber("RobotXPos", robotPosition.getX());
-    SmartDashboard.putNumber("RobotYPos", robotPosition.getY());
+    // SmartDashboard.putNumber("RobotXPos", robotPosition.getX());
+    // SmartDashboard.putNumber("RobotYPos", robotPosition.getY());
   }
 
 
@@ -94,7 +94,7 @@ public class Robot extends TimedRobot {
       swerveDrive.resetMaxVel();
     }
 
-
+    ifs.update();
   }
 
   @Override

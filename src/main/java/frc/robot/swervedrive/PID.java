@@ -49,4 +49,10 @@ public class PID {
 
         return output;
     }
+
+
+    public double update(double current, double target) {
+        setTarget(target);
+        return update(current);
+    }
 }

@@ -7,13 +7,13 @@ public class Feeder {
     private final TalonFX motor;
    
     public Feeder() {
-        motor = new TalonFX(0);
+        motor = new TalonFX(RobotConstants.feederMotorID);
         motor.clearStickyFaults();
         motor.setNeutralMode(NeutralModeValue.Brake);
    }
 
-   public void eject() {
-        motor.set(RobotConstants.feederMotorSpeed);
+   public void feed() {
+        motor.set(-RobotConstants.feederMotorSpeed);
    }
 
    public void stop(){

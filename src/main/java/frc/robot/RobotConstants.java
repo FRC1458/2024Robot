@@ -4,15 +4,15 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 public class RobotConstants {
     //swerve stuff
-    public final static int frontLeftAngleID = 19;
-    public final static int frontRightAngleID = 15;
-    public final static int backLeftAngleID = 13;
-    public final static int backRightAngleID = 4;
+    public final static int frontLeftAngleID = 17;
+    public final static int frontRightAngleID = 13;
+    public final static int backLeftAngleID = 15;
+    public final static int backRightAngleID = 19;
     
-    public final static int frontLeftSpeedID = 9;
-    public final static int frontRightSpeedID = 5;
-    public final static int backLeftSpeedID = 3;
-    public final static int backRightSpeedID = 7;
+    public final static int frontLeftSpeedID = 7;
+    public final static int frontRightSpeedID = 3;
+    public final static int backLeftSpeedID = 5;
+    public final static int backRightSpeedID = 9;
     
     public final static double frontLeftAngleOffset = -5.05;
     public final static double frontRightAngleOffset = 4.4;
@@ -36,10 +36,10 @@ public class RobotConstants {
 
     public final static double speed = 1;
 
-    public final static int frontLeftAbsoluteEncoderID = 13;//13?
-    public final static int frontRightAbsoluteEncoderID = 26;//26?
-    public final static int backLeftAbsoluteEncoderID = 11;//???
-    public final static int backRightAbsoluteEncoderID = 15;//???
+    public final static int frontLeftAbsoluteEncoderID = 27;
+    public final static int frontRightAbsoluteEncoderID = 23;
+    public final static int backLeftAbsoluteEncoderID = 25;
+    public final static int backRightAbsoluteEncoderID = 29;
 
     // CHANGE ALL THESE VALUES TO REAL NUMBERS
     public final static double frontLeftDistance = 0;
@@ -54,14 +54,16 @@ public class RobotConstants {
 
     public final static double maxSwerveSpeed = 6200;
 
-    public final static int intakeMotorID = 30;
-    public final static int feederMotorID = 31;
-    public final static int rightShooterMotorID = 32;
-    public final static int leftShooterMotorID = 33;
+    public final static int intakeMotorID = 33;
+    public final static int feederMotorID = 34;
+    public final static int rightShooterMotorID = 31;
+    public final static int leftShooterMotorID = 32;
 
     public final static double intakeMotorSpeed = 0.25; //speeds between 0 and 1
     public final static double feederMotorSpeed = 0.25; //can be changed, can also possibly just use intakeMotorSpeed for feeder motor as well
     public final static double shooterSpeed = 0.75;
+    public final static double shooterPIDSpeed = 30;
+    
 
     public final static double shooterRampUpTime = 1; //in seconds
 

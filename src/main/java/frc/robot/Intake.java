@@ -13,11 +13,11 @@ public class Intake {
    }
 
    public void slurp() {
-        intakeMotor.set(RobotConstants.intakeMotorSpeed);
+        intakeMotor.set(-RobotConstants.intakeMotorSpeed);
    }
 
    public void eject() {
-        intakeMotor.set(-RobotConstants.intakeMotorSpeed);
+        intakeMotor.set(RobotConstants.intakeMotorSpeed);
    }
 
    public void stop() {
