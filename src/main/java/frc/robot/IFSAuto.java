@@ -12,40 +12,52 @@ public class IFSAuto implements IFS {
 
     private boolean shootingRunning = false;
 
-    private Timer timer;
+    private Timer timerShoot;
+    private boolean isShooting;
 
-    public IFSAuto(Shooter shooter, Feeder feeder, Intake intake, XboxController xbox) {
+    public IFSAuto(Intake intake, Feeder feeder, Shooter shooter, XboxController xbox) {
         this.shooter = shooter;
         this.feeder = feeder;
         this.intake = intake;
         this.xbox = xbox;
+        timerShoot = new Timer();
+        isShooting = false;
+        
     }
 
     @Override
     public void update() {
-       if (xbox.getRightTriggerAxis() > 0.7 && !shootingRunning) {
-            shootingRunning = true;
-            timer.start();
-            shooter.scoreSpeakerPID();
-       } else if (xbox.getRightTriggerAxis() > 0.7) {
-            run();
-       } else {
+        if (xbox.getAButton()) { //Turn intake on
+            intake.slurp();
+          }
+          else {
+            intake.stop();
+          }
+
+        if(xbox.getBButtonPressed()) {
+            isShooting = true;
+            timerShoot.restart();
+            Shooter.scoreSpeakerPID();
+
+        }
+
+        if(isShooting && timerShoot.hasElapsed(1)) {
+            feeder.feed();
+            intake.slurp();
+        }
+
+        if(isShooting && timerShoot.hasElapsed(2)){
             stop();
-            shootingRunning = false;
-            timer.stop();
-            timer.reset();
-       }
-    }
+            isShooting = false;
+            timerShoot.stop();
+        }
 
-    public void run() {
-        intake.slurp();
-        feeder.feed();
-        
-    }
-
-    public void stop() {
+    public void stop(){
         shooter.stop();
-        intake.stop();
         feeder.stop();
+        intake.stop();
     }
+
+    }
+  
 }
