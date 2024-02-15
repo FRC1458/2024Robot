@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.swervedrive.PID;
 
 public class Shooter {
@@ -46,7 +47,7 @@ public class Shooter {
           rightShooter.getConfigurator().apply(talonConfig);
           leftShooter.getConfigurator().apply(talonConfig);
 
-          double p = 0.05;
+          double p = 0.025;
           rightPID.setPID(p, 0, 0);
           leftPID.setPID(p, 0, 0);
 
@@ -68,7 +69,11 @@ public class Shooter {
      public void scoreSpeakerPID() {
           // rightShooter.setControl(targetSpeed(shooterPIDSpeed));
           // leftShooter.setControl(targetSpeed(-shooterPIDSpeed));
-          rightShooter.set(rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
-          leftShooter.set(-leftPID.update(leftShooter.getVelocity().getValue(), shooterPIDSpeed));
+          SmartDashboard.putNumber("Right Shooter RPM", rightShooter.getVelocity().getValueAsDouble());
+          //SmartDashboard.putNumber("Left Shooter RPM", leftShooter.getVelocity().getValueAsDouble());
+          SmartDashboard.putNumber("Right Shooter Voltage", rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
+          //SmartDashboard.putNumber("Left Shooter Voltage", leftPID.update(leftShooter.getVelocity().getValue(), shooterPIDSpeed));
+          rightShooter.set(0.9);//rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
+          leftShooter.set(-0.9);
      }
 }

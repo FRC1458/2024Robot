@@ -14,10 +14,10 @@ public class RobotConstants {
     public final static int backLeftSpeedID = 5;
     public final static int backRightSpeedID = 9;
     
-    public final static double frontLeftAngleOffset = -5.05;
-    public final static double frontRightAngleOffset = 4.4;
-    public final static double backLeftAngleOffset = 0.5;
-    public final static double backRightAngleOffset = -.15;
+    public final static double frontLeftAngleOffset = -.15;
+    public final static double frontRightAngleOffset = 0.5;
+    public final static double backLeftAngleOffset = 4.4;
+    public final static double backRightAngleOffset = -5.05;
 
     public final static double kP = 0.1;
     public final static double kI = 0.000001;
@@ -59,7 +59,7 @@ public class RobotConstants {
     public final static int rightShooterMotorID = 31;
     public final static int leftShooterMotorID = 32;
 
-    public final static double intakeMotorSpeed = 0.25; //speeds between 0 and 1
+    public final static double intakeMotorSpeed = 0.45; //speeds between 0 and 1
     public final static double feederMotorSpeed = 0.25; //can be changed, can also possibly just use intakeMotorSpeed for feeder motor as well
     public final static double shooterSpeed = 0.75;
     public final static double shooterPIDSpeed = 30;
