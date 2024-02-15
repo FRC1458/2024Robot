@@ -23,16 +23,13 @@ public class IFSManual implements IFS {
 
     @Override
     public void update() {
-        if (xbox.getAButtonPressed()){ //toggle intake on/off
-            intakeOn = !intakeOn;
-            if (intakeOn) {
-              intake.slurp();
-            }
-            else {
-              intake.stop();
-            }
-          }
-      
+        if (xbox.getAButton()){ //Turn intake on
+          intake.slurp();
+        }
+        else {
+          intake.stop();
+        }
+        
           if(xbox.getLeftTriggerAxis() > 0.7){ //rev up shooter motors, to be changed
             shooter.scoreSpeakerPID();
           }

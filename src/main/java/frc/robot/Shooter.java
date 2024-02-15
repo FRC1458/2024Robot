@@ -28,8 +28,8 @@ public class Shooter {
           leftShooter.clearStickyFaults();
           rightShooter.setNeutralMode(Coast);
           leftShooter.setNeutralMode(Coast);
-          rightFilter = new SlewRateLimiter(shooterSpeed/shooterRampUpTime);
-          leftFilter = new SlewRateLimiter(shooterSpeed/shooterRampUpTime);
+          rightFilter = new SlewRateLimiter(RobotConstants.shooterSpeedSpeaker/shooterRampUpTime);
+          leftFilter = new SlewRateLimiter(RobotConstants.shooterSpeedSpeaker/shooterRampUpTime);
           rightPID = new PID();
           leftPID = new PID();
           configurePID();
@@ -54,8 +54,8 @@ public class Shooter {
      }
 
      public void shoot() {
-          rightShooter.set(rightFilter.calculate(shooterSpeed * -1));
-          leftShooter.set(leftFilter.calculate(shooterSpeed));
+          rightShooter.set(rightFilter.calculate(RobotConstants.shooterSpeedSpeaker * -1));
+          leftShooter.set(leftFilter.calculate(RobotConstants.shooterSpeedSpeaker));
      }
 
      public void stop() {
@@ -73,7 +73,7 @@ public class Shooter {
           //SmartDashboard.putNumber("Left Shooter RPM", leftShooter.getVelocity().getValueAsDouble());
           SmartDashboard.putNumber("Right Shooter Voltage", rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
           //SmartDashboard.putNumber("Left Shooter Voltage", leftPID.update(leftShooter.getVelocity().getValue(), shooterPIDSpeed));
-          rightShooter.set(0.9);//rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
-          leftShooter.set(-0.9);
+          rightShooter.set(RobotConstants.shooterSpeedSpeaker);//rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
+          leftShooter.set(-RobotConstants.shooterSpeedSpeaker);
      }
 }
