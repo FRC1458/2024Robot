@@ -18,7 +18,7 @@ public class Intake {
     public void slurp(double speed) {intakeMotor.set(-speed);} //consistency with feeder (normal speed is slower so note doesn't get stuck as often, remove this method once that problem is fixed)
 
    public void spit() {
-        intakeMotor.set(RobotConstants.intakeMotorSpeed);
+        intakeMotor.set(RobotConstants.intakeMotorSpeed / 2); // play with speeds to find what works
    } //test if this can remove stuck notes from intake
 
    public void stop() {
