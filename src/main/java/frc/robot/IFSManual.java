@@ -26,12 +26,18 @@ public class IFSManual implements IFS {
         if (xbox.getAButton()){ //Turn intake on
           intake.slurp();
         }
+        else if (xbox.getYButton()) {
+            intake.spit();
+        }
         else {
           intake.stop();
         }
         
           if(xbox.getLeftTriggerAxis() > 0.7){ //rev up shooter motors, to be changed
-            shooter.scoreSpeakerPID();
+            shooter.scoreSpeakerPID(RobotConstants.shooterSpeedSpeaker);
+          }
+          else if (xbox.getLeftBumper()) {
+              shooter.scoreSpeakerPID(RobotConstants.shooterSpeedAmp);
           }
           else{
             shooter.stop();
@@ -39,7 +45,7 @@ public class IFSManual implements IFS {
       
           if(xbox.getRightTriggerAxis() > 0.7){ //"shoot" the piece into the spinning shooter
             feeder.feed();
-            intake.slurp();
+            intake.slurp(RobotConstants.feederMotorSpeed);
             feederOn = true;
           }
           else{

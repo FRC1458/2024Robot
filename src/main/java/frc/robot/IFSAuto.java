@@ -30,14 +30,23 @@ public class IFSAuto implements IFS {
         if (xbox.getAButton()) { //Turn intake on
             intake.slurp();
           }
+        else if (xbox.getYButton()) {
+            intake.spit();
+        }
           else {
             intake.stop();
           }
 
-        if(xbox.getBButtonPressed()) {
+
+        if(xbox.getRightBumper() || xbox.getLeftBumper()) {
             isShooting = true;
             timerShoot.restart();
-            Shooter.scoreSpeakerPID();
+            if (xbox.getRightBumper()) {
+                shooter.scoreSpeakerPID(RobotConstants.shooterSpeedSpeaker);
+            }
+            else {
+                shooter.scoreSpeakerPID(RobotConstants.shooterSpeedAmp);
+            }
 
         }
 
@@ -52,12 +61,12 @@ public class IFSAuto implements IFS {
             timerShoot.stop();
         }
 
+
+    }
     public void stop(){
         shooter.stop();
         feeder.stop();
         intake.stop();
-    }
-
     }
   
 }
