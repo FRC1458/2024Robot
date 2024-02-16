@@ -105,7 +105,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
 
     swerveDrive.setEncoders();
-    auto = new Autonomous();
+    auto = new Autonomous(swerveDrive);
   }
 
   @Override
