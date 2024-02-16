@@ -50,12 +50,12 @@ public class IFSAuto implements IFS {
 
         }
 
-        if(isShooting && timerShoot.hasElapsed(1)) {
+        if(isShooting && timerShoot.hasElapsed(0.5)) {
             feeder.feed();
             intake.slurp();
         }
 
-        if(isShooting && timerShoot.hasElapsed(2)){
+        if(isShooting && timerShoot.hasElapsed(1)){
             stop();
             isShooting = false;
             timerShoot.stop();

@@ -37,6 +37,7 @@ public class Autonomous {
             if (timer.hasElapsed(2)) {
                 timer.stop();
                 swerve.drive(0, 0, 0, true);
+                break;
             }
         }
     }

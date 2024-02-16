@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
 
     speed = RobotConstants.speed;
 
-    ifs = new IFSManual(intake, feeder, shooter, xbox);
+    ifs = new IFSAuto(intake, feeder, shooter, xbox);
   }
 
   @Override
@@ -72,6 +72,8 @@ public class Robot extends TimedRobot {
     xAxis = xbox.getLeftX();
     yAxis = xbox.getLeftY();
     rAxis = xbox.getRightX();
+
+    shooter.checkPID();
 
     //check acceleration for acceleration limiter? otherwise can delete next 4 lines
     SmartDashboard.putNumber("X Acceleration", navX.getWorldLinearAccelX());
