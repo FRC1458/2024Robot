@@ -27,6 +27,8 @@ public class Robot extends TimedRobot {
 
   private final AHRS navX;
 
+  Autonomous auto;
+
 
   public Robot() {
     super(0.03);
@@ -99,12 +101,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+
     swerveDrive.setEncoders();
+    auto = new Autonomous();
   }
 
   @Override
   public void autonomousPeriodic() {
-
+    auto.thing();
 
   }
 }

@@ -14,48 +14,42 @@ import edu.wpi.first.wpilibj.Timer;
 
 
 public class Autonomous {
-    private Pose2d robotPos;
     private SwerveDrivePoseEstimator odometry;
-    private Shooter shooter;
     private SwerveDrive swerve;
-    private final Feeder feeder;
     private final Intake intake;
+    private final Feeder feeder;
+    private final Shooter shooter;
 
-    public Autonomous(Pose2d robotPos, AHRS navX) {
-        this.robotPos = robotPos;
-        shooter = new Shooter();
-        swerve = new SwerveDrive(navX);
-        feeder = new Feeder();
+    private final Timer timer;
+    public Autonomous() {
         intake = new Intake();
+        feeder = new Feeder();
+        shooter = new Shooter();
+        timer = new Timer();
     }
 
     public void thing() {
-        shooter.shoot();
-        swerve.drive(-0.02, 0, 0, true);
-
-        timer(4);
-
-        intake.slurp();
-        swerve.drive(-0.02, 0, 0, true);
-
-        timer(4);
-
-        feeder.feed();
-        timer(1);
-        feeder.stop();
-        shooter.shoot();
-        timer(1);
-        shooter.stop();
-    }
-
-    public void timer(int sec) {
-        Timer timer = new Timer();
-        timer.start();
-
-        while (true) {
-            if (timer.hasElapsed(sec)) {
-                timer.stop();
-            }
+        if (!timer.hasElapsed(1)) {
+            shooter.shoot();
+        }
+        if(timer.hasElapsed(0.75) && !timer.hasElapsed(1)) {
+            feeder.feed();
+        }
+        if (timer.hasElapsed(1) && !timer.hasElapsed(4)) {
+            swerve.drive(-0.02, 0, 0, true);
+        }
+        if (timer.hasElapsed(3) && !timer.hasElapsed(4)) {
+            intake.slurp();
+        }
+        if (timer.hasElapsed(4.25) && !timer.hasElapsed(7.25)) {
+            swerve.drive(0.02, 0, 0, true);
+        }
+        if (timer.hasElapsed(6.5) && !timer.hasElapsed(7.5)) {
+            shooter.shoot();
+        }
+        if (timer.hasElapsed(7.25) && !timer.hasElapsed(7.5)) {
+            feeder.feed();
         }
     }
+
 }
