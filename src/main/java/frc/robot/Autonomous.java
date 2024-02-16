@@ -18,25 +18,43 @@ public class Autonomous {
     private SwerveDrivePoseEstimator odometry;
     private Shooter shooter;
     private SwerveDrive swerve;
+    private final Feeder feeder;
+    private final Intake intake;
 
     public Autonomous(Pose2d robotPos, AHRS navX) {
         this.robotPos = robotPos;
         shooter = new Shooter();
-
         swerve = new SwerveDrive(navX);
+        feeder = new Feeder();
+        intake = new Intake();
     }
 
     public void thing() {
         shooter.shoot();
-        swerve.drive(0.25, 0, 0, true); 
-        
+        swerve.drive(-0.02, 0, 0, true);
+
+        timer(4);
+
+        intake.slurp();
+        swerve.drive(-0.02, 0, 0, true);
+
+        timer(4);
+
+        feeder.feed();
+        timer(1);
+        feeder.stop();
+        shooter.shoot();
+        timer(1);
+        shooter.stop();
+    }
+
+    public void timer(int sec) {
         Timer timer = new Timer();
         timer.start();
 
         while (true) {
-            if (timer.hasElapsed(2)) {
+            if (timer.hasElapsed(sec)) {
                 timer.stop();
-                swerve.drive(0, 0, 0, true);
             }
         }
     }
