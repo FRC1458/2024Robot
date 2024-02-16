@@ -4,7 +4,7 @@ public class PID {
     private double kP;
     private double kI;
     private double kD;
-    private double target;
+    private double target = 0;
     private double iScaling = 20;
     
     private long previousTime = -1;

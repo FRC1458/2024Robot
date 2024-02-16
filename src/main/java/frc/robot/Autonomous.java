@@ -21,7 +21,7 @@ public class Autonomous {
     private final Shooter shooter;
 
     private final Timer timer;
-    public Autonomous() {
+    public Autonomous(SwerveDrive swerve) {
         intake = new Intake();
         feeder = new Feeder();
         shooter = new Shooter();

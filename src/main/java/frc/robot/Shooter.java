@@ -28,6 +28,7 @@ public class Shooter {
           leftShooter.clearStickyFaults();
           rightShooter.setNeutralMode(Coast);
           leftShooter.setNeutralMode(Coast);
+          leftShooter.setInverted(true);
           rightFilter = new SlewRateLimiter(RobotConstants.shooterSpeedSpeaker/shooterRampUpTime);
           leftFilter = new SlewRateLimiter(RobotConstants.shooterSpeedSpeaker/shooterRampUpTime);
           rightPID = new PID();
@@ -60,20 +61,32 @@ public class Shooter {
 
      public void stop() {
           rightShooter.set(0);
+          rightPID.setTarget(0);
           leftShooter.set(0);
+          leftPID.setTarget(0);
           // rightShooter.setControl(targetSpeed(0));
           // leftShooter.setControl(targetSpeed(0));
+
+     }
+
+     public void checkPID() {
+          SmartDashboard.putNumber("Right Shooter RPM", rightShooter.getVelocity().getValueAsDouble());
+          SmartDashboard.putNumber("Left Shooter RPM", leftShooter.getVelocity().getValueAsDouble());
+          SmartDashboard.putNumber("Right Shooter Voltage", rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
+          SmartDashboard.putNumber("Left Shooter Voltage", leftPID.update(leftShooter.getVelocity().getValue(), shooterPIDSpeed));
 
      }
 
      public void scoreSpeakerPID(double speed) {
           // rightShooter.setControl(targetSpeed(shooterPIDSpeed));
           // leftShooter.setControl(targetSpeed(-shooterPIDSpeed));
-          SmartDashboard.putNumber("Right Shooter RPM", rightShooter.getVelocity().getValueAsDouble());
+          //SmartDashboard.putNumber("Right Shooter RPM", rightShooter.getVelocity().getValueAsDouble());
           //SmartDashboard.putNumber("Left Shooter RPM", leftShooter.getVelocity().getValueAsDouble());
-          SmartDashboard.putNumber("Right Shooter Voltage", rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
+          //SmartDashboard.putNumber("Right Shooter Voltage", rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
           //SmartDashboard.putNumber("Left Shooter Voltage", leftPID.update(leftShooter.getVelocity().getValue(), shooterPIDSpeed));
           rightShooter.set(speed);//rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
-          leftShooter.set(-speed);
+          leftShooter.set(speed);
+          leftPID.setTarget(speed);
+          rightPID.setTarget(speed);
      }
 }
