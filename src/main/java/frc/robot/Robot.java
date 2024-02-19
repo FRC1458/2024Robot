@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
 
     speed = RobotConstants.speed;
 
-    ifs = new IFSAuto(intake, feeder, shooter, xbox);
+    ifs = new IFSManual(intake, feeder, shooter, xbox);
   }
 
   @Override

@@ -48,9 +48,14 @@ public class Shooter {
           rightShooter.getConfigurator().apply(talonConfig);
           leftShooter.getConfigurator().apply(talonConfig);
 
+          
+
           double p = 0.025;
           rightPID.setPID(p, 0, 0);
           leftPID.setPID(p, 0, 0);
+
+          rightPID.setMaxAccel(0.1);
+          leftPID.setMaxAccel(0.1);
 
      }
 
@@ -84,9 +89,9 @@ public class Shooter {
           //SmartDashboard.putNumber("Left Shooter RPM", leftShooter.getVelocity().getValueAsDouble());
           //SmartDashboard.putNumber("Right Shooter Voltage", rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
           //SmartDashboard.putNumber("Left Shooter Voltage", leftPID.update(leftShooter.getVelocity().getValue(), shooterPIDSpeed));
-          rightShooter.set(speed);//rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
-          leftShooter.set(speed);
-          leftPID.setTarget(speed);
-          rightPID.setTarget(speed);
+          //rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
+          leftShooter.set(leftPID.update(leftShooter.getVelocity().getValueAsDouble(), speed));
+          rightShooter.set(rightPID.update(rightShooter.getVelocity().getValueAsDouble(), speed));
+          
      }
 }
