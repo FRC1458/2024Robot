@@ -19,7 +19,7 @@ public class Robot extends TimedRobot {
   public Robot() {
     super(0.03);
 
-    motor = new TalonFX(15);
+    motor = new TalonFX(43);
   }
   @Override
   public void robotInit() {
@@ -29,8 +29,9 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void teleopPeriodic() {
-    motor.set(0.1);
+    motor.set(SmartDashboard.getNumber("motor speed (percent)", 0.25));
   }
+
   @Override
   public void autonomousInit() {
   }
