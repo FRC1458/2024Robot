@@ -8,12 +8,17 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.swervedrive.PID;
+
 
 public class Shooter {
    private final TalonFX rightShooter;
    private final TalonFX leftShooter;
+   private final TalonFX pivot;
+
+   private final DigitalInput pivotLimSwitch;
 
    private final SlewRateLimiter rightFilter;
    private final SlewRateLimiter leftFilter;
@@ -22,15 +27,25 @@ public class Shooter {
    private final PID leftPID;
    
      public Shooter() {
+
           rightShooter = new TalonFX(rightShooterMotorID);
           leftShooter = new TalonFX(leftShooterMotorID);
+          pivot = new TalonFX(pivotMotorID);
+
           rightShooter.clearStickyFaults();
           leftShooter.clearStickyFaults();
+          pivot.clearStickyFaults();
+          
           rightShooter.setNeutralMode(Coast);
           leftShooter.setNeutralMode(Coast);
+          
           leftShooter.setInverted(true);
+
+          pivotLimSwitch = new DigitalInput(pivotLimSwitchChannel);
+          
           rightFilter = new SlewRateLimiter(RobotConstants.shooterSpeedSpeaker/shooterRampUpTime);
           leftFilter = new SlewRateLimiter(RobotConstants.shooterSpeedSpeaker/shooterRampUpTime);
+          
           rightPID = new PID();
           leftPID = new PID();
           configurePID();
@@ -93,5 +108,13 @@ public class Shooter {
           leftShooter.set(leftPID.update(leftShooter.getVelocity().getValueAsDouble(), speed));
           rightShooter.set(rightPID.update(rightShooter.getVelocity().getValueAsDouble(), speed));
           
+     }
+
+     public void pivotSpeed(double speed) {
+          pivot.set(speed);
+     }
+
+     public void limSwitchCheck() {
+          SmartDashboard.putBoolean("Limit Switch Pivot: ", pivotLimSwitch.get());
      }
 }

@@ -58,6 +58,9 @@ public class RobotConstants {
     public final static int feederMotorID = 34;
     public final static int rightShooterMotorID = 31;
     public final static int leftShooterMotorID = 32;
+    public final static int pivotMotorID = 35;
+
+    public final static int pivotLimSwitchChannel = 0;
 
     public final static double intakeMotorSpeed = 0.25; //speeds between 0 and 1
     public final static double feederMotorSpeed = 0.3; //can be changed, can also possibly just use intakeMotorSpeed for feeder motor as well
