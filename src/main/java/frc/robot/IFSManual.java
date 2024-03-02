@@ -1,11 +1,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IFSManual implements IFS {
     private final Shooter shooter;
     private final Feeder feeder;
-    //private final Intake intake;
+    private final Intake intake;
 
     private final XboxController xbox;
 
@@ -17,22 +18,32 @@ public class IFSManual implements IFS {
     public IFSManual(Intake intake, Feeder feeder, Shooter shooter, XboxController xbox) {
         this.shooter = shooter;
         this.feeder = feeder;
-       // this.intake = intake;
+        this.intake = intake;
         this.xbox = xbox;
     }
 
     @Override
     public void update() {
         if (xbox.getAButton()){ //Turn intake on
-          //intake.slurp();
+          intake.slurp();
         }
         else if (xbox.getYButton()) {
-           // intake.spit();
+          intake.spit();
         }
         else {
-          //intake.stop();
+          intake.stop();
         }
         
+        if(xbox.getPOV() == 90) {
+          shooter.pivotSpeed(0.0001);
+        }
+        else if(xbox.getPOV() == 270) {
+          shooter.pivotSpeed(-0.0001);
+        }
+        else {
+          shooter.pivotSpeed(0);
+        }
+
           if(xbox.getLeftTriggerAxis() > 0.7){ //rev up shooter motors, to be changed
             shooter.scoreSpeakerPID(RobotConstants.shooterSpeedSpeaker);
           }
@@ -45,14 +56,14 @@ public class IFSManual implements IFS {
       
           if(xbox.getRightTriggerAxis() > 0.7){ //"shoot" the piece into the spinning shooter
             feeder.feed();
-            //intake.slurp(RobotConstants.feederMotorSpeed);
+            intake.slurp(RobotConstants.feederMotorSpeed);
             feederOn = true;
           }
           else{
             feeder.stop();
             if(feederOn){
               feederOn = false;
-              //intake.stop();
+              intake.stop();
             }
           }
           
