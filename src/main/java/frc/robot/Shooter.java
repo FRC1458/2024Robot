@@ -63,11 +63,10 @@ public class Shooter {
           rightShooter.getConfigurator().apply(talonConfig);
           leftShooter.getConfigurator().apply(talonConfig);
 
-          leftPID.initDebug("Left Shooter");
-
-          double p = 0.025;
+          double p = 20;
           rightPID.setPID(p, 0, 0);
           leftPID.setPID(p, 0, 0);
+         leftPID.initDebug("Left Shooter");
 
           // ~0.5 secs ramp up
           rightPID.setMaxAccel(10000);
@@ -101,13 +100,13 @@ public class Shooter {
      public void scoreSpeakerPID(double speed) {
           // rightShooter.setControl(targetSpeed(shooterPIDSpeed));
           // leftShooter.setControl(targetSpeed(-shooterPIDSpeed));
-          //SmartDashboard.putNumber("Right Shooter RPM", rightShooter.getVelocity().getValueAsDouble());
-          //SmartDashboard.putNumber("Left Shooter RPM", leftShooter.getVelocity().getValueAsDouble());
+          SmartDashboard.putNumber("Right Shooter RPM", rightShooter.getVelocity().getValueAsDouble());
+          SmartDashboard.putNumber("Left Shooter RPM", leftShooter.getVelocity().getValueAsDouble());
           //SmartDashboard.putNumber("Right Shooter Voltage", rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
           //SmartDashboard.putNumber("Left Shooter Voltage", leftPID.update(leftShooter.getVelocity().getValue(), shooterPIDSpeed));
           //rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
-         double pl = leftPID.update(leftShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPM) / MAX_SHOOTER_RPM;
          updatePID();
+         double pl = leftPID.update(leftShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPM) / MAX_SHOOTER_RPM;
          SmartDashboard.putNumber("Percentage Left", pl);
           leftShooter.set(-pl);
           rightShooter.set(rightPID.update(rightShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPM) / MAX_SHOOTER_RPM);
@@ -116,6 +115,7 @@ public class Shooter {
 
      public void updatePID() {
          leftPID.updatePID("Left Shooter");
+         rightPID.updatePID("Left Shooter");
      }
 
      public void pivotSpeed(double speed) {

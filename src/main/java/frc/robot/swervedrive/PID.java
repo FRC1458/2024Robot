@@ -8,8 +8,7 @@ public class PID {
     private double kD;
     private double target = 0;
     private double iScaling = 20;
-    
-    private long previousTime = -1;
+
     private double previousDistance = -1;
     private double accumError = 0;
     private double previousOutput = 0;
@@ -43,24 +42,26 @@ public class PID {
     
     public double update(double current){
         double distance = current - target;
-        long time = System.currentTimeMillis();
-        accumError = accumError * (1 - 1/iScaling) + distance;
+        accumError = accumError * (1 - 1 / Math.max(1, iScaling)) + distance;
         
-        if (previousTime == -1){
-            previousTime = time - 20;
+        if (previousDistance == -1) {
             previousDistance = distance;
         }
 
-        double output = distance * kP + accumError * kI - (distance - previousDistance) / (time - previousTime) * kD;
+        double output = distance * kP + accumError * kI - (distance - previousDistance) / 20 * kD;
         
         if(maxAccel > 0) {
+            SmartDashboard.putNumber("Output", output);
+            SmartDashboard.putNumber("Prev Output", previousOutput);
+            SmartDashboard.putNumber("Max Accel", maxAccel); // 500
+            SmartDashboard.putNumber("Block 2", Math.abs(previousOutput) + maxAccel);
             output = Math.min(Math.abs(output), Math.abs(previousOutput) + maxAccel) * Math.signum(output);
+            SmartDashboard.putNumber("Final Output", output);
         }
-        
-        previousTime = time;    
-        previousDistance  = distance;
+
+        previousDistance = distance;
         previousOutput = output;
-        
+        SmartDashboard.putNumber("Final Prev Output", previousOutput);
 
         return output;
     }
@@ -72,17 +73,17 @@ public class PID {
     }
 
     public void initDebug(String name) {
-        SmartDashboard.putNumber(name + " P", 0);
-        SmartDashboard.putNumber(name + " I", 0);
-        SmartDashboard.putNumber(name + " D", 0);
-        SmartDashboard.putNumber(name + " iScaling", 0);
+        SmartDashboard.putNumber(name + " P", kP);
+        SmartDashboard.putNumber(name + " I", kI);
+        SmartDashboard.putNumber(name + " D", kD);
+        SmartDashboard.putNumber(name + " iScaling", iScaling);
     }
 
     public void updatePID(String name) {
-        kP = SmartDashboard.getNumber(name + " P", 0);
-        kI = SmartDashboard.getNumber(name + " I", 0);
-        kD = SmartDashboard.getNumber(name + " D", 0);
-        iScaling = SmartDashboard.getNumber(name + " iScaling", 0);
+        kP = SmartDashboard.getNumber(name + " P", kP);
+        kI = SmartDashboard.getNumber(name + " I", kI);
+        kD = SmartDashboard.getNumber(name + " D", kD);
+        iScaling = SmartDashboard.getNumber(name + " iScaling", iScaling);
     }
 
 }

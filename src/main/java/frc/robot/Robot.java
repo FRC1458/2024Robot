@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.swervedrive.PID;
 import frc.robot.swervedrive.SwerveDrive;
 
 public class Robot extends TimedRobot {
@@ -114,4 +115,26 @@ public class Robot extends TimedRobot {
     auto.thing();
 
   }
+
+
+
+  final  PID pid = new PID();
+  double v = 0;
+
+  @Override
+  public void testInit() {
+    pid.setPID(20, 0, 0);
+    pid.setiScaling(20);
+    pid.setMaxAccel(10000);
+  }
+
+  @Override
+  public void testPeriodic() {
+      double out = pid.update(0, 5000);
+      System.out.println(out);
+  }
+
+
+
+
 }
