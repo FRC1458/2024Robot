@@ -85,4 +85,5 @@ public class RobotConstants {
     public final static double LimelightStdDevX = 5;
     public final static double LimelightStdDevY = 5;
     public final static double LimelightStdDevTheta = 500;
+    public static final double MAX_SHOOTER_RPM = 5600;
 }

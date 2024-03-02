@@ -39,7 +39,7 @@ public class Shooter {
           rightShooter.setNeutralMode(Coast);
           leftShooter.setNeutralMode(Coast);
           
-          leftShooter.setInverted(true);
+          //leftShooter.setInverted(true);
 
           pivotLimSwitch = new DigitalInput(pivotLimSwitchChannel);
           
@@ -63,14 +63,15 @@ public class Shooter {
           rightShooter.getConfigurator().apply(talonConfig);
           leftShooter.getConfigurator().apply(talonConfig);
 
-          
+          leftPID.initDebug("Left Shooter");
 
           double p = 0.025;
           rightPID.setPID(p, 0, 0);
           leftPID.setPID(p, 0, 0);
 
-          rightPID.setMaxAccel(0.1);
-          leftPID.setMaxAccel(0.1);
+          // ~0.5 secs ramp up
+          rightPID.setMaxAccel(10000);
+          leftPID.setMaxAccel(10000);
 
      }
 
@@ -105,9 +106,16 @@ public class Shooter {
           //SmartDashboard.putNumber("Right Shooter Voltage", rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
           //SmartDashboard.putNumber("Left Shooter Voltage", leftPID.update(leftShooter.getVelocity().getValue(), shooterPIDSpeed));
           //rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
-          leftShooter.set(leftPID.update(leftShooter.getVelocity().getValueAsDouble(), speed));
-          rightShooter.set(rightPID.update(rightShooter.getVelocity().getValueAsDouble(), speed));
-          
+         double pl = leftPID.update(leftShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPM) / MAX_SHOOTER_RPM;
+         updatePID();
+         SmartDashboard.putNumber("Percentage Left", pl);
+          leftShooter.set(-pl);
+          rightShooter.set(rightPID.update(rightShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPM) / MAX_SHOOTER_RPM);
+
+     }
+
+     public void updatePID() {
+         leftPID.updatePID("Left Shooter");
      }
 
      public void pivotSpeed(double speed) {

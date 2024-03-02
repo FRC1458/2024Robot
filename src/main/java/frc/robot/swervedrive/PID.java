@@ -1,5 +1,7 @@
 package frc.robot.swervedrive;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class PID {
     private double kP;
     private double kI;
@@ -33,8 +35,8 @@ public class PID {
         this.iScaling = iScaling;
     }
 
-    public void setMaxAccel(double speed){
-        this.maxAccel = maxAccel;
+    public void setMaxAccel(double maxAccel) {
+        this.maxAccel = maxAccel * 0.02;
     }
 
 
@@ -45,16 +47,15 @@ public class PID {
         accumError = accumError * (1 - 1/iScaling) + distance;
         
         if (previousTime == -1){
-            previousTime = time;
-            previousDistance  = distance;    
+            previousTime = time - 20;
+            previousDistance = distance;
         }
-
 
         double output = distance * kP + accumError * kI - (distance - previousDistance) / (time - previousTime) * kD;
         
         if(maxAccel > 0) {
             output = Math.min(Math.abs(output), Math.abs(previousOutput) + maxAccel) * Math.signum(output);
-        }       
+        }
         
         previousTime = time;    
         previousDistance  = distance;
@@ -70,5 +71,18 @@ public class PID {
         return update(current);
     }
 
+    public void initDebug(String name) {
+        SmartDashboard.putNumber(name + " P", 0);
+        SmartDashboard.putNumber(name + " I", 0);
+        SmartDashboard.putNumber(name + " D", 0);
+        SmartDashboard.putNumber(name + " iScaling", 0);
+    }
+
+    public void updatePID(String name) {
+        kP = SmartDashboard.getNumber(name + " P", 0);
+        kI = SmartDashboard.getNumber(name + " I", 0);
+        kD = SmartDashboard.getNumber(name + " D", 0);
+        iScaling = SmartDashboard.getNumber(name + " iScaling", 0);
+    }
 
 }

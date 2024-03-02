@@ -11,14 +11,23 @@ import frc.robot.swervedrive.SwerveDrive;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.util.StateMachine;
+
+import static frc.robot.Autonomous.AutoState.*;
 
 
 public class Autonomous {
+
+    public enum AutoState{SPINSHOOTER, SHOOTSTORED, GOTONOTE1, SHOOTNOTE1, GOTONOTE2, SHOOTNOTE2}
+
     private SwerveDrivePoseEstimator odometry;
     private SwerveDrive swerve;
     private final Intake intake;
     private final Feeder feeder;
     private final Shooter shooter;
+
+
+    private final StateMachine<AutoState> states = new StateMachine(SPINSHOOTER);
 
     private final Timer timer;
     public Autonomous(SwerveDrive swerve) {
@@ -27,6 +36,15 @@ public class Autonomous {
         shooter = new Shooter();
         timer = new Timer();
     }
+
+    public void autoInit() {
+        states.addTimerState(SPINSHOOTER, 750, SHOOTSTORED, shooter::shoot);
+        states.addTimerState(SHOOTSTORED, 250, GOTONOTE1, () -> {
+            shooter.shoot();
+            feeder.feed();
+        });
+    }
+
 
     public void thing() {
         if (!timer.hasElapsed(1)) {
