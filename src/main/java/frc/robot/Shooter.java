@@ -89,14 +89,6 @@ public class Shooter {
 
      }
 
-     public void checkPID() {
-          SmartDashboard.putNumber("Right Shooter RPM", rightShooter.getVelocity().getValueAsDouble());
-          SmartDashboard.putNumber("Left Shooter RPM", leftShooter.getVelocity().getValueAsDouble());
-          SmartDashboard.putNumber("Right Shooter Voltage", rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
-          SmartDashboard.putNumber("Left Shooter Voltage", leftPID.update(leftShooter.getVelocity().getValue(), shooterPIDSpeed));
-
-     }
-
      public void scoreSpeakerPID(double speed) {
           // rightShooter.setControl(targetSpeed(shooterPIDSpeed));
           // leftShooter.setControl(targetSpeed(-shooterPIDSpeed));
