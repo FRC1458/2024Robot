@@ -34,8 +34,6 @@ public class RobotConstants {
 
     public final static double swerveDriveGearRatio = 12.8;
 
-    public final static double speed = 1;
-
     public final static int frontLeftAbsoluteEncoderID = 27;
     public final static int frontRightAbsoluteEncoderID = 23;
     public final static int backLeftAbsoluteEncoderID = 25;
@@ -62,10 +60,11 @@ public class RobotConstants {
 
     public final static int pivotLimSwitchChannel = 0;
 
-    public final static double intakeMotorSpeed = 0.25; //speeds between 0 and 1
-    public final static double feederMotorSpeed = 0.3; //can be changed, can also possibly just use intakeMotorSpeed for feeder motor as well
+    public final static double intakeMotorSpeed = 0.6; //speeds between 0 and 1
+    public final static double feederMotorSpeed = 0.4; //can be changed, can also possibly just use intakeMotorSpeed for feeder motor as well
     public final static double shooterSpeedSpeaker = 0.7;
-    public final static double shooterSpeedAmp = 0.12;
+    public final static double shooterSpeedAmp = 0.175;
+    public final static double PIVOT_DOWN_SPEED = 0.02;
 
     public final static double shooterPIDSpeed = 30;
     
@@ -85,5 +84,7 @@ public class RobotConstants {
     public final static double LimelightStdDevX = 5;
     public final static double LimelightStdDevY = 5;
     public final static double LimelightStdDevTheta = 500;
-    public static final double MAX_SHOOTER_RPM = 5600;
+    public static final double MAX_SHOOTER_RPS = 88;
+
+    public final static double MAX_PIVOT_SPEED = 0.035;
 }

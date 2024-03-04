@@ -16,6 +16,10 @@ public class Feeder {
         motor.set(-RobotConstants.feederMotorSpeed);
    }
 
+   public void reverse() {
+        motor.set(RobotConstants.feederMotorSpeed);
+   }
+
    public void stop(){
         motor.set(0);
    }

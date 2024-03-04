@@ -34,21 +34,21 @@ public class IFSManual implements IFS {
           intake.stop();
         }
         
-        if(xbox.getPOV() == 90) {
-          shooter.pivotSpeed(0.0001);
+        if(xbox.getPOV() == 0) {
+          shooter.moveUp();
         }
-        else if(xbox.getPOV() == 270) {
-          shooter.pivotSpeed(-0.0001);
+        else if(xbox.getPOV() == 180) {
+          shooter.moveDown();
         }
         else {
-          shooter.pivotSpeed(0);
+          shooter.stopPivot();
         }
 
           if(xbox.getLeftTriggerAxis() > 0.7){ //rev up shooter motors, to be changed
-            shooter.scoreSpeakerPID(RobotConstants.shooterSpeedSpeaker);
+            shooter.shootSpeaker();
           }
           else if (xbox.getLeftBumper()) {
-              shooter.scoreSpeakerPID(RobotConstants.shooterSpeedAmp);
+              shooter.shootAmp();
           }
           else{
             shooter.stop();

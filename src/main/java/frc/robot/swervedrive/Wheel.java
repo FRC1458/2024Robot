@@ -108,7 +108,7 @@ public class Wheel {
         betterPID.setTarget(RobotConstants.maxSwerveSpeed * speed); //3 casualties (1/25)
         double velocity = driveEncoder.getVelocity();
 
-        speedMotor.set(Math.abs(speed) < .05 ? 0 : -betterPID.update(velocity));
+        speedMotor.set(Math.abs(speed) < .03 ? 0 : -betterPID.update(velocity));
 
     }
 

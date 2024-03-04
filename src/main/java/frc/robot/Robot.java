@@ -4,18 +4,18 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.swervedrive.SwerveDrive;
+import frc.robot.util.StateMachine;
 
 public class Robot extends TimedRobot {
   
 
   private final XboxController xbox;
-
-  private final double speed;
 
   private final IFS ifs;
 
@@ -28,11 +28,11 @@ public class Robot extends TimedRobot {
 
   private final AHRS navX;
 
-  Autonomous auto;
+  StateMachine<BasicAuto.AutoStates> auto;
 
 
   public Robot() {
-    super(0.03);
+    super(0.02);
     xbox = new XboxController(0);
 
     navX = new AHRS(SPI.Port.kMXP);
@@ -41,9 +41,9 @@ public class Robot extends TimedRobot {
     feeder = new Feeder();
     shooter = new Shooter();
 
-    speed = RobotConstants.speed;
+    //ifs = new IFSManual(intake, feeder, shooter, xbox);
+    ifs = new IFSAuto(intake, feeder, shooter, xbox);
 
-    ifs = new IFSManual(intake, feeder, shooter, xbox);
   }
 
   @Override
@@ -87,14 +87,15 @@ public class Robot extends TimedRobot {
       swerveDrive.resetNavX(robotPosition);
       navX.resetDisplacement();
     }
-    x = -1 * xAxis * Math.abs(xAxis) * speed;
-    y = yAxis * Math.abs(yAxis) * speed;
-    r = rAxis * Math.abs(rAxis) * speed;
+    x = -xAxis * Math.abs(xAxis);
+    y = yAxis * Math.abs(yAxis);
+    r = rAxis * Math.abs(rAxis);
 
     swerveDrive.drive(x, y, r, true);
 
     if(xbox.getXButton()){
       swerveDrive.resetMaxVel();
+      shooter.stopPivot();
     }
 
     ifs.update();
@@ -102,15 +103,25 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-
     swerveDrive.setEncoders();
-    auto = new Autonomous(swerveDrive);
+    auto = BasicAuto.getStateMachine(feeder, shooter, swerveDrive);
+    auto.reset();
   }
 
   @Override
   public void autonomousPeriodic() {
-    auto.thing();
+    auto.run();
+  }
 
+  AnalogInput noteSensor = new AnalogInput(0);
+  @Override
+  public void testInit() {
+    noteSensor.setAverageBits(4);
+  }
+
+  @Override
+  public void testPeriodic() {
+    SmartDashboard.putNumber("Note Sensor Value", noteSensor.getAverageVoltage());
   }
 
 }

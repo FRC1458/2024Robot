@@ -38,9 +38,9 @@ public class Autonomous {
     }
 
     public void autoInit() {
-        states.addTimerState(SPINSHOOTER, 750, SHOOTSTORED, shooter::shoot);
+        states.addTimerState(SPINSHOOTER, 750, SHOOTSTORED, shooter::shootSpeaker);
         states.addTimerState(SHOOTSTORED, 250, GOTONOTE1, () -> {
-            shooter.shoot();
+            shooter.shootSpeaker();
             feeder.feed();
         });
     }
@@ -48,7 +48,7 @@ public class Autonomous {
 
     public void thing() {
         if (!timer.hasElapsed(1)) {
-            shooter.shoot();
+            shooter.shootSpeaker();
         }
         if(timer.hasElapsed(0.75) && !timer.hasElapsed(1)) {
             feeder.feed();
@@ -63,7 +63,7 @@ public class Autonomous {
             swerve.drive(0.02, 0, 0, true);
         }
         if (timer.hasElapsed(6.5) && !timer.hasElapsed(7.5)) {
-            shooter.shoot();
+            shooter.shootSpeaker();
         }
         if (timer.hasElapsed(7.25) && !timer.hasElapsed(7.5)) {
             feeder.feed();

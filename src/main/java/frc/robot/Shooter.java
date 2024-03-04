@@ -2,26 +2,21 @@ package frc.robot;
 
 import static com.ctre.phoenix6.signals.NeutralModeValue.Coast;
 import static frc.robot.RobotConstants.*;
-import static frc.robot.util.MotorUtil.targetSpeed;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.motors.Pivot;
 import frc.robot.swervedrive.PID;
 
 
 public class Shooter {
    private final TalonFX rightShooter;
    private final TalonFX leftShooter;
-   private final TalonFX pivot;
+   private final Pivot pivot;
 
    private final DigitalInput pivotLimSwitch;
-
-   private final SlewRateLimiter rightFilter;
-   private final SlewRateLimiter leftFilter;
 
    private final PID rightPID;
    private final PID leftPID;
@@ -30,21 +25,15 @@ public class Shooter {
 
           rightShooter = new TalonFX(rightShooterMotorID);
           leftShooter = new TalonFX(leftShooterMotorID);
-          pivot = new TalonFX(pivotMotorID);
+          pivot = new Pivot();
 
           rightShooter.clearStickyFaults();
           leftShooter.clearStickyFaults();
-          pivot.clearStickyFaults();
           
           rightShooter.setNeutralMode(Coast);
           leftShooter.setNeutralMode(Coast);
-          
-          //leftShooter.setInverted(true);
 
           pivotLimSwitch = new DigitalInput(pivotLimSwitchChannel);
-          
-          rightFilter = new SlewRateLimiter(RobotConstants.shooterSpeedSpeaker/shooterRampUpTime);
-          leftFilter = new SlewRateLimiter(RobotConstants.shooterSpeedSpeaker/shooterRampUpTime);
           
           rightPID = new PID();
           leftPID = new PID();
@@ -52,66 +41,71 @@ public class Shooter {
      }
 
      public void configurePID() {
-          TalonFXConfiguration talonConfig = new TalonFXConfiguration();
-          talonConfig.MotionMagic.MotionMagicAcceleration = 160;
-          talonConfig.MotionMagic.MotionMagicJerk = 1600;
 
-          talonConfig.Slot0.kP = 1;
-          talonConfig.Slot0.kI = 0;
-          talonConfig.Slot0.kD = 0.1;
+          rightPID.setPID(0.42, 0, 0);
+          leftPID.setPID(3, 0.15, 0.4);
+         //leftPID.initDebug("Left Shooter");
+         //rightPID.initDebug("Right Shooter");
 
-          rightShooter.getConfigurator().apply(talonConfig);
-          leftShooter.getConfigurator().apply(talonConfig);
+          rightPID.setMaxAccel(180);
+          leftPID.setMaxAccel(180);
 
-          double p = 20;
-          rightPID.setPID(p, 0, 0);
-          leftPID.setPID(p, 0, 0);
-         leftPID.initDebug("Left Shooter");
-
-          // ~0.5 secs ramp up
-          rightPID.setMaxAccel(10000);
-          leftPID.setMaxAccel(10000);
-
-     }
-
-     public void shoot() {
-          rightShooter.set(rightFilter.calculate(RobotConstants.shooterSpeedSpeaker * -1));
-          leftShooter.set(leftFilter.calculate(RobotConstants.shooterSpeedSpeaker));
      }
 
      public void stop() {
           rightShooter.set(0);
-          rightPID.setTarget(0);
           leftShooter.set(0);
-          leftPID.setTarget(0);
-          // rightShooter.setControl(targetSpeed(0));
-          // leftShooter.setControl(targetSpeed(0));
+         rightPID.reset();
+         leftPID.reset();
 
      }
 
-     public void scoreSpeakerPID(double speed) {
-          // rightShooter.setControl(targetSpeed(shooterPIDSpeed));
-          // leftShooter.setControl(targetSpeed(-shooterPIDSpeed));
-          SmartDashboard.putNumber("Right Shooter RPM", rightShooter.getVelocity().getValueAsDouble());
-          SmartDashboard.putNumber("Left Shooter RPM", leftShooter.getVelocity().getValueAsDouble());
-          //SmartDashboard.putNumber("Right Shooter Voltage", rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
-          //SmartDashboard.putNumber("Left Shooter Voltage", leftPID.update(leftShooter.getVelocity().getValue(), shooterPIDSpeed));
-          //rightPID.update(rightShooter.getVelocity().getValue(), shooterPIDSpeed));
-         updatePID();
-         double pl = leftPID.update(leftShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPM) / MAX_SHOOTER_RPM;
+     public void setPivotSpeed(double speed) {
+         pivot.setSpeed(Math.signum(speed) * Math.min(Math.abs(speed), 0.035));
+     }
+
+     public void moveUp() {
+         setPivotSpeed(MAX_PIVOT_SPEED);
+     }
+
+     public void moveDown() {
+         setPivotSpeed(-PIVOT_DOWN_SPEED);
+     }
+
+     public void stopPivot() {
+         pivot.hold();
+     }
+
+     private void setSpeed(double speed) {
+          SmartDashboard.putNumber("Right Shooter RPS", rightShooter.getVelocity().getValueAsDouble());
+          SmartDashboard.putNumber("Left Shooter RPS", leftShooter.getVelocity().getValueAsDouble());
+         //updatePID();
+
+         double pl = leftPID.update(leftShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPS) / MAX_SHOOTER_RPS;
          SmartDashboard.putNumber("Percentage Left", pl);
           leftShooter.set(-pl);
-          rightShooter.set(rightPID.update(rightShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPM) / MAX_SHOOTER_RPM);
 
+          double pr = rightPID.update(rightShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPS) / MAX_SHOOTER_RPS;
+         SmartDashboard.putNumber("Percentage Right", pr);
+          rightShooter.set(pr);
+
+     }
+
+     public void shootSpeaker() {
+         setSpeed(shooterSpeedSpeaker);
+     }
+
+     public void shootAmp() {
+         setSpeed(shooterSpeedAmp);
      }
 
      public void updatePID() {
          leftPID.updatePID("Left Shooter");
-         rightPID.updatePID("Left Shooter");
+         rightPID.updatePID("Right Shooter");
      }
 
-     public void pivotSpeed(double speed) {
-          pivot.set(speed);
+     public void displayPivot() {
+         SmartDashboard.putNumber("Pivot Position", pivot.getPosition());
      }
 
      public void limSwitchCheck() {

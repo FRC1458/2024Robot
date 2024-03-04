@@ -51,12 +51,7 @@ public class PID {
         double output = distance * kP + accumError * kI - (distance - previousDistance) / 20 * kD;
         
         if(maxAccel > 0) {
-            SmartDashboard.putNumber("Output", output);
-            SmartDashboard.putNumber("Prev Output", previousOutput);
-            SmartDashboard.putNumber("Max Accel", maxAccel); // 500
-            SmartDashboard.putNumber("Block 2", Math.abs(previousOutput) + maxAccel);
             output = Math.min(Math.abs(output), Math.abs(previousOutput) + maxAccel) * Math.signum(output);
-            SmartDashboard.putNumber("Final Output", output);
         }
 
         previousDistance = distance;
@@ -86,4 +81,10 @@ public class PID {
         iScaling = SmartDashboard.getNumber(name + " iScaling", iScaling);
     }
 
+    public void reset() {
+        previousDistance = -1;
+        accumError = 0;
+        previousOutput = 0;
+        target = 0;
+    }
 }

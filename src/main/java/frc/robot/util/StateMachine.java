@@ -47,6 +47,13 @@ public class StateMachine<S> {
         });
     }
 
+    public void addOffState(S state, BasicState function) {
+        addState(state, (ts) -> {
+            function.run();
+            return null;
+        });
+    }
+
     public void reset() {
         timestamp = System.currentTimeMillis();
         currentState = defaultState;
@@ -64,7 +71,5 @@ public class StateMachine<S> {
             timestamp = System.currentTimeMillis();
         }
     }
-
-
 
 }

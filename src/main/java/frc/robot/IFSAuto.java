@@ -1,72 +1,84 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.util.StateMachine;
+import static frc.robot.IFSAuto.ShootState.*;
 
 public class IFSAuto implements IFS {
+
     private final Shooter shooter;
     private final Feeder feeder;
     private final Intake intake;
 
+    public enum ShootState {OFF, SPIN_UP, SHOOT}
+
     private final XboxController xbox;
-
-    private boolean shootingRunning = false;
-
-    private Timer timerShoot;
-    private boolean isShooting;
+    private final StateMachine<ShootState> stateMachine = new StateMachine<>(ShootState.SPIN_UP);
 
     public IFSAuto(Intake intake, Feeder feeder, Shooter shooter, XboxController xbox) {
+
         this.shooter = shooter;
         this.feeder = feeder;
         this.intake = intake;
         this.xbox = xbox;
-        timerShoot = new Timer();
-        isShooting = false;
-        
+
+        initStateMachine();
+
+    }
+
+    public void initStateMachine() {
+        stateMachine.addTimerState(SPIN_UP, 750, SHOOT, this::spinUp);
+        stateMachine.addTimerState(SHOOT, 500, OFF, this::shoot);
+        stateMachine.addOffState(OFF, shooter::stop);
     }
 
     @Override
     public void update() {
+        updateIntake();
+        updatePivot();
+        updateShooter();
+    }
+
+    public void updateShooter() {
+        if (xbox.getRightBumperPressed() || xbox.getLeftBumperPressed()) stateMachine.reset();
+        if (xbox.getRightBumper() || xbox.getLeftBumper()) stateMachine.run();
+        else shooter.stop();
+    }
+
+    private void spinUp() {
+        if (xbox.getRightBumper()) shooter.shootSpeaker();
+        else shooter.shootAmp();
+    }
+
+    private void shoot() {
+        spinUp();
+        feeder.feed();
+        intake.slurp();
+    }
+
+    private void updateIntake() {
         if (xbox.getAButton()) { //Turn intake on
             intake.slurp();
-          }
-        else if (xbox.getYButton()) {
+            feeder.stop();
+        } else if (xbox.getYButton()) {
             intake.spit();
-        }
-          else {
+            feeder.reverse();
+        } else {
             intake.stop();
-          }
-
-
-        if(xbox.getRightBumper() || xbox.getLeftBumper()) {
-            isShooting = true;
-            timerShoot.restart();
-            if (xbox.getRightBumper()) {
-                shooter.scoreSpeakerPID(RobotConstants.shooterSpeedSpeaker);
-            }
-            else {
-                shooter.scoreSpeakerPID(RobotConstants.shooterSpeedAmp);
-            }
-
+            feeder.stop();
         }
-
-        if(isShooting && timerShoot.hasElapsed(0.5)) {
-            feeder.feed();
-            intake.slurp();
-        }
-
-        if(isShooting && timerShoot.hasElapsed(1)){
-            stop();
-            isShooting = false;
-            timerShoot.stop();
-        }
-
-
     }
-    public void stop(){
-        shooter.stop();
-        feeder.stop();
-        intake.stop();
+
+    private void updatePivot() {
+        shooter.displayPivot();
+        if(xbox.getPOV() == 0) {
+            shooter.moveUp();
+        } else if(xbox.getPOV() == 180) {
+            shooter.moveDown();
+        } else {
+            shooter.stopPivot();
+        }
     }
   
 }
