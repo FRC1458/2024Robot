@@ -11,7 +11,7 @@ public class IFSAuto implements IFS {
     private final Feeder feeder;
     private final Intake intake;
 
-    public enum ShootState {OFF, SPIN_UP, SHOOT}
+    public enum ShootState {ANGLE, SPIN_UP, SHOOT, OFF}
 
     private final XboxController xbox;
     private final StateMachine<ShootState> stateMachine = new StateMachine<>(ShootState.SPIN_UP);
@@ -28,7 +28,8 @@ public class IFSAuto implements IFS {
     }
 
     public void initStateMachine() {
-        stateMachine.addTimerState(SPIN_UP, 750, SHOOT, this::spinUp);
+        stateMachine.addTimerState(SPIN_UP, 750, ANGLE, this::spinUp);
+        stateMachine.addBoolState(ANGLE, SHOOT, shooter::pivotToSpeaker);
         stateMachine.addTimerState(SHOOT, 500, OFF, this::shoot);
         stateMachine.addOffState(OFF, shooter::stop);
     }
@@ -49,6 +50,7 @@ public class IFSAuto implements IFS {
     private void spinUp() {
         if (xbox.getRightBumper()) shooter.shootSpeaker();
         else shooter.shootAmp();
+        shooter.pivotToSpeaker();
     }
 
     private void shoot() {

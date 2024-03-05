@@ -5,7 +5,6 @@ import static frc.robot.RobotConstants.*;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.motors.Pivot;
 import frc.robot.swervedrive.PID;
@@ -15,8 +14,6 @@ public class Shooter {
    private final TalonFX rightShooter;
    private final TalonFX leftShooter;
    private final Pivot pivot;
-
-   private final DigitalInput pivotLimSwitch;
 
    private final PID rightPID;
    private final PID leftPID;
@@ -32,8 +29,6 @@ public class Shooter {
           
           rightShooter.setNeutralMode(Coast);
           leftShooter.setNeutralMode(Coast);
-
-          pivotLimSwitch = new DigitalInput(pivotLimSwitchChannel);
           
           rightPID = new PID();
           leftPID = new PID();
@@ -88,8 +83,28 @@ public class Shooter {
           double pr = rightPID.update(rightShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPS) / MAX_SHOOTER_RPS;
          SmartDashboard.putNumber("Percentage Right", pr);
           rightShooter.set(pr);
-
      }
+
+     private boolean pivotTo(double desiredPosition) {
+        double position = pivot.getPosition();
+        SmartDashboard.putNumber("Desired Position", desiredPosition);
+        SmartDashboard.putNumber("Position", position);
+        if (position < -desiredPosition + 0.25) moveUp();
+        else if (position > -desiredPosition - 0.25) moveDown();
+        else {
+            stopPivot();
+            return true;
+        }
+        return false;
+     }
+
+    public boolean pivotToSpeaker() {
+        return pivotTo(-1.8);
+    }
+
+    public boolean pivotToAmp() {
+        return pivotTo(-1);
+    }
 
      public void shootSpeaker() {
          setSpeed(shooterSpeedSpeaker);
@@ -108,7 +123,4 @@ public class Shooter {
          SmartDashboard.putNumber("Pivot Position", pivot.getPosition());
      }
 
-     public void limSwitchCheck() {
-          SmartDashboard.putBoolean("Limit Switch Pivot: ", pivotLimSwitch.get());
-     }
 }
