@@ -5,6 +5,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -111,17 +112,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     auto.run();
-  }
-
-  AnalogInput noteSensor = new AnalogInput(0);
-  @Override
-  public void testInit() {
-    noteSensor.setAverageBits(4);
-  }
-
-  @Override
-  public void testPeriodic() {
-    SmartDashboard.putNumber("Note Sensor Value", noteSensor.getAverageVoltage());
   }
 
 }

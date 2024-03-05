@@ -9,7 +9,7 @@ public class Feeder {
     public Feeder() {
         motor = new TalonFX(RobotConstants.feederMotorID);
         motor.clearStickyFaults();
-        motor.setNeutralMode(NeutralModeValue.Brake);
+        motor.setNeutralMode(NeutralModeValue.Coast);
    }
 
    public void feed() {

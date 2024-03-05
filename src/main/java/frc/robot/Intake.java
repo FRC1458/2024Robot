@@ -9,7 +9,7 @@ public class Intake {
     public Intake() {
         intakeMotor = new TalonFX(RobotConstants.intakeMotorID);
         intakeMotor.clearStickyFaults();
-        intakeMotor.setNeutralMode(NeutralModeValue.Coast);
+        intakeMotor.setNeutralMode(NeutralModeValue.Brake);
    }
 
    public void slurp() {
