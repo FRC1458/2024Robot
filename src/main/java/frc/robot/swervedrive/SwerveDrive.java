@@ -171,4 +171,16 @@ public class SwerveDrive {
         maxVelocity = -1;
     }
 
+    public SwerveDriveKinematics getKinematics() {
+        return kinematics;
+    }
+    public Rotation2d navxAngle() {
+        return Rotation2d.fromDegrees(navX.getAngle());
+    }
+    public SwerveModulePosition[] getPositions() {
+        SwerveModulePosition[] positions = {frontLeftPosition, frontRightPosition, backLeftPosition, backRightPosition};
+        return positions;
+    }
+
+
 }
