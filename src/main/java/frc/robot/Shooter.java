@@ -89,8 +89,11 @@ public class Shooter {
         double position = pivot.getPosition();
         SmartDashboard.putNumber("Desired Position", desiredPosition);
         SmartDashboard.putNumber("Position", position);
-        if (position < -desiredPosition + 0.25) moveUp();
-        else if (position > -desiredPosition - 0.25) moveDown();
+        SmartDashboard.putBoolean("Move Up?", position > desiredPosition + 0.25);
+        SmartDashboard.putBoolean("Move Down?", position < desiredPosition - 0.25);
+
+        if (position > desiredPosition + 0.25) moveUp();
+        else if (position < desiredPosition - 0.25) moveDown();
         else {
             stopPivot();
             return true;
