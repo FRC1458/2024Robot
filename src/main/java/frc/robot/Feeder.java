@@ -24,4 +24,8 @@ public class Feeder {
         motor.set(0);
    }
 
+public void assist() {
+     motor.set(-RobotConstants.feederAssistMotorSpeed);
+}
+
 }

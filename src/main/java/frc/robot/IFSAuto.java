@@ -1,7 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.StateMachine;
 import static frc.robot.IFSAuto.ShootState.*;
 
@@ -10,6 +10,7 @@ public class IFSAuto implements IFS {
     private final Shooter shooter;
     private final Feeder feeder;
     private final Intake intake;
+    private final Timer feederAssist = new Timer();
 
     public enum ShootState {ANGLE, SPIN_UP, SHOOT, OFF}
 
@@ -60,9 +61,12 @@ public class IFSAuto implements IFS {
     }
 
     private void updateIntake() {
-        if (xbox.getAButton()) { //Turn intake on
+        if (xbox.getAButton()) {
             intake.slurp();
             feeder.stop();
+            feederAssist.reset();
+        } else if (!feederAssist.hasElapsed(0.25)) {
+            feeder.assist();
         } else if (xbox.getYButton()) {
             intake.spit();
             feeder.reverse();
