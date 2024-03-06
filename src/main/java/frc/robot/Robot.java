@@ -4,6 +4,8 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SPI;
@@ -31,6 +33,9 @@ public class Robot extends TimedRobot {
 
   StateMachine<BasicAuto.AutoStates> auto;
 
+  private AddressableLED led;
+  private AddressableLEDBuffer ledBuffer;
+
 
   public Robot() {
     super(0.02);
@@ -50,6 +55,12 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     swerveDrive.resetNavX(new Pose2d(RobotConstants.initialXPos, RobotConstants.initialYPos, Rotation2d.fromDegrees(navX.getAngle())));
+    led = new AddressableLED(0);
+    ledBuffer = new AddressableLEDBuffer(60);
+    led.setLength(ledBuffer.getLength());
+
+    led.setData(ledBuffer);
+    led.start();
   }
 
   @Override
@@ -112,6 +123,14 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     auto.run();
+  }
+
+  @Override
+  public void testInit() {
+    for (var i = 0; i < ledBuffer.getLength(); i++) {
+      ledBuffer.setRGB(i, 255, 0, 0);
+    }
+    led.setData(ledBuffer);
   }
 
 }
