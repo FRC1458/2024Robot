@@ -88,4 +88,7 @@ public class RobotConstants {
     public static final double MAX_SHOOTER_RPS = 88;
 
     public final static double MAX_PIVOT_SPEED = 0.035;
+
+    public final static double autoSpeed = 5; //max speed, in m/s
+    public final static double autoAngVel = 720; //assuming degrees
 }
