@@ -6,6 +6,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotConstants;
 
@@ -32,6 +36,15 @@ public class Wheel {
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr;
 
     PID betterPID = new PID();
+
+
+    private double WHEEL_RAD = Units.inchesToMeters(2);
+    private double ANGLE_TO_DRIVE_RATIO = 3.584;
+    private double DRIVE_RATIO = 8.14; // L1
+
+    private RelativeEncoder driveEnc;
+    private double angleMarker;
+
 
     public Wheel(int angleMotorID, int speedMotorID, int absoluteEncoderID, String wheelName, double offset) {
 
@@ -70,6 +83,11 @@ public class Wheel {
         
 
         SmartDashboard.putNumber(wheelName + " Offset", offset);
+
+
+        driveEnc = speedMotor.getEncoder();
+        resetOdometry();
+
 
     }
 
@@ -132,5 +150,25 @@ public class Wheel {
         return driveEncoder.getVelocity();
 
     }
+
+
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(
+            (driveEnc.getPosition() - ANGLE_TO_DRIVE_RATIO * (encoder.getPosition() - angleMarker)) / DRIVE_RATIO * 2 * Math.PI * WHEEL_RAD,
+            Rotation2d.fromRotations(((encoder.getPosition() - relativeOffset) / RobotConstants.swerveDriveGearRatio))
+        );
+    }
+
+    public void resetOdometry() {
+        driveEnc.setPosition(0);
+        angleMarker = encoder.getPosition();
+    }
+
+    public void displayPosition() {
+        SwerveModulePosition position = getPosition();
+        SmartDashboard.putNumber(wheelName + " Distance", position.distanceMeters);
+        SmartDashboard.putNumber(wheelName + " Angle", position.angle.getRotations());
+    }
+
 
 }
