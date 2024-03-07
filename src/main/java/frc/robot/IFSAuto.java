@@ -12,7 +12,7 @@ public class IFSAuto implements IFS {
     private final Intake intake;
     private final Timer feederAssist = new Timer();
 
-    public enum ShootState {ANGLE, SPIN_UP, SHOOT, OFF}
+    public enum ShootState {ANGLE, SPIN_UP, SHOOT}
 
     private final XboxController xbox;
     private final StateMachine<ShootState> speakerMachine = new StateMachine<>(SPIN_UP);
@@ -33,25 +33,23 @@ public class IFSAuto implements IFS {
     public void initStateMachines() {
         speakerMachine.addTimerState(SPIN_UP, 750, ANGLE, this::spinUpSpeaker);
         speakerMachine.addBoolState(ANGLE, SHOOT, () -> {
-            spinUpSpeaker();
+            shooter.shootSpeaker();
             return shooter.pivotPointBlank();
         });
-        speakerMachine.addTimerState(SHOOT, 500, OFF, () -> {
+        speakerMachine.addOffState(SHOOT,  () -> {
             spinUpSpeaker();
             shoot();
         });
-        speakerMachine.addOffState(OFF, shooter::stop);
 
         ampMachine.addTimerState(SPIN_UP, 750, ANGLE, this::spinUpAmp);
         ampMachine.addBoolState(ANGLE, SHOOT, () -> {
-            spinUpAmp();
+            shooter.shootAmp();
             return shooter.pivotToAmp();
         });
-        ampMachine.addTimerState(SHOOT, 500, OFF, () -> {
+        ampMachine.addOffState(SHOOT, () -> {
             spinUpAmp();
             shoot();
         });
-        ampMachine.addOffState(OFF, shooter::stop);
     }
 
 
@@ -74,7 +72,7 @@ public class IFSAuto implements IFS {
 
     private void spinUpSpeaker() {
         shooter.shootSpeaker();
-        shooter.pivotToSpeaker();
+        shooter.pivotPointBlank();
     }
 
     private void spinUpAmp() {
