@@ -161,10 +161,8 @@ public class SwerveDrive {
         backRight.setEncoders(RobotConstants.backRightAngleOffset);
     }
 
-    public void resetNavX(Pose2d currentRobotPosition) {
+    public void resetNavX() {
         navX.reset();
-        //odometry.resetPosition(Rotation2d.fromDegrees(navX.getAngle()), getModulePositions(), currentRobotPosition);
-        //SmartDashboard.putNumber("Swervedrive position: ",  odometry.getEstimatedPosition());
     }
 
     public void resetMaxVel() {

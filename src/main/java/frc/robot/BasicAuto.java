@@ -6,20 +6,23 @@ import static frc.robot.BasicAuto.AutoStates.*;
 
 public class BasicAuto {
 
-    public enum AutoStates {SPIN_UP, PIVOT, SHOOT, MOVE, END}
+    public enum AutoStates {RESET_ENCODERS, SPIN_UP, PIVOT, SHOOT, MOVE, END}
 
     public static StateMachine<AutoStates> getStateMachine(Feeder feeder, Shooter shooter, SwerveDrive swerveDrive) {
-        StateMachine<AutoStates> stateMachine = new StateMachine<>(SPIN_UP);
+        StateMachine<AutoStates> stateMachine = new StateMachine<>(RESET_ENCODERS);
+        stateMachine.addBoolState(RESET_ENCODERS, SPIN_UP, () -> {
+            return true;
+        });
         stateMachine.addTimerState(SPIN_UP, 750, PIVOT, shooter::shootSpeaker);
         stateMachine.addBoolState(PIVOT, SHOOT, () -> {
             shooter.shootSpeaker();
-            return shooter.pivotToSpeaker();
+            return shooter.pivotPointBlank();
         });
         stateMachine.addTimerState(SHOOT, 500, MOVE, () -> {
             shooter.shootSpeaker();
             feeder.feed();
         });
-        stateMachine.addTimerState(MOVE, 1000, END, () -> {
+        stateMachine.addTimerState(MOVE, 2250, END, () -> {
             feeder.stop();
             shooter.stop();
             swerveDrive.drive(0, 0.3, 0, true);

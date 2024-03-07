@@ -33,6 +33,9 @@ public class Shooter {
           rightPID = new PID();
           leftPID = new PID();
           configurePID();
+
+          SmartDashboard.putNumber("AMP Pivot Position", -4.3);
+          SmartDashboard.putNumber("AMP Shooter Speed", .14);
      }
 
      public void configurePID() {
@@ -56,7 +59,7 @@ public class Shooter {
      }
 
      public void setPivotSpeed(double speed) {
-         pivot.setSpeed(Math.signum(speed) * Math.min(Math.abs(speed), 0.035));
+         pivot.setSpeed(Math.signum(speed) * Math.min(Math.abs(speed), 0.05));
      }
 
      public void moveUp() {
@@ -89,8 +92,8 @@ public class Shooter {
         double position = pivot.getPosition();
         SmartDashboard.putNumber("Desired Position", desiredPosition);
         SmartDashboard.putNumber("Position", position);
-        SmartDashboard.putBoolean("Move Up?", position > desiredPosition + 0.25);
-        SmartDashboard.putBoolean("Move Down?", position < desiredPosition - 0.25);
+        SmartDashboard.putBoolean("Move Up?", position > desiredPosition + 0.05);
+        SmartDashboard.putBoolean("Move Down?", position < desiredPosition - 0.05);
 
         if (position > desiredPosition + 0.25) moveUp();
         else if (position < desiredPosition - 0.25) moveDown();
@@ -104,9 +107,12 @@ public class Shooter {
     public boolean pivotToSpeaker() {
         return pivotTo(-1.8);
     }
+    public boolean pivotPointBlank() {
+         return pivotTo(-4.3);
+    }
 
     public boolean pivotToAmp() {
-        return pivotTo(-1);
+        return pivotTo(SmartDashboard.getNumber("AMP Pivot Position", -4.3));
     }
 
      public void shootSpeaker() {
@@ -114,7 +120,7 @@ public class Shooter {
      }
 
      public void shootAmp() {
-         setSpeed(shooterSpeedAmp);
+         setSpeed(SmartDashboard.getNumber("AMP Shooter Speed", .14));
      }
 
      public void updatePID() {

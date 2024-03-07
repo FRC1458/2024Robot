@@ -61,7 +61,7 @@ public class RobotConstants {
     public final static int pivotLimSwitchChannel = 0;
 
     public final static double intakeMotorSpeed = 0.6; //speeds between 0 and 1
-    public final static double feederMotorSpeed = 0.4; //can be changed, can also possibly just use intakeMotorSpeed for feeder motor as well
+    public final static double feederMotorSpeed = 0.6; //can be changed, can also possibly just use intakeMotorSpeed for feeder motor as well
     public final static double feederAssistMotorSpeed = 0.1;
     public final static double shooterSpeedSpeaker = 0.7;
     public final static double shooterSpeedAmp = 0.175;
@@ -87,7 +87,7 @@ public class RobotConstants {
     public final static double LimelightStdDevTheta = 500;
     public static final double MAX_SHOOTER_RPS = 88;
 
-    public final static double MAX_PIVOT_SPEED = 0.035;
+    public final static double MAX_PIVOT_SPEED = 0.05;
 
     public final static double autoSpeed = 5; //max speed, in m/s
     public final static double autoAngVel = 720; //assuming degrees

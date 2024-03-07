@@ -10,7 +10,7 @@ import static frc.robot.RobotConstants.*;
 
 public class Pivot {
     
-    private static final double MAX_SPEED = -0.035;
+    private static final double MAX_SPEED = -0.05;
     private Double holdingPosition = null;
     private double kP = 0.00000001;
     private final TalonFX pivot = new TalonFX(RobotConstants.pivotMotorID);
@@ -40,7 +40,7 @@ public class Pivot {
     }
 
     private void set(double speed) {
-        if (Math.abs(speed) > 0.035) pivot.stopMotor();
+        if (Math.abs(speed) > 0.05) pivot.stopMotor();
         else pivot.set(Math.signum(speed) * Math.min(Math.abs(speed), MAX_SPEED));
     }
 

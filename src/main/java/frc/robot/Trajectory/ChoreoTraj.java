@@ -6,6 +6,7 @@ import com.choreo.lib.ChoreoTrajectoryState;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.swervedrive.SwerveDrive;
 
 import static frc.robot.RobotConstants.autoSpeed;
@@ -43,19 +44,6 @@ public class ChoreoTraj implements Trajectory {
         if (timestamp / 1000.0 > trajectory.getTotalTime()) return true;
         ChoreoTrajectoryState state = trajectory.sample(timestamp/1000.0);
         swerveDrive.drive(state.velocityX / autoSpeed, state.velocityY / autoSpeed, state.angularVelocity / autoAngVel, true);
-        return false;
-    }
-
-    public boolean sampleWithPositionPIDs(long timestamp) {
-        if (timestamp / 1000.0 > trajectory.getTotalTime()) return true;
-        ChoreoTrajectoryState state = trajectory.sample(timestamp/1000.0);
-        currentPose = swerveOdometry.update(swerveDrive.navxAngle(), swerveDrive.getPositions());
-        errorX = state.x - currentPose.getX();
-        errorY = state.y - currentPose.getY();
-        errorTheta = state.heading - currentPose.getRotation().getRadians();
-        if (errorTheta > Math.PI ) errorTheta -= 2 * Math.PI;
-        else if (errorTheta < -Math.PI) errorTheta += 2 * Math.PI;
-        swerveDrive.drive(xPID.calculate(errorX), yPID.calculate(errorY), thetaPID.calculate(errorTheta), true);
         return false;
     }
 }

@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    swerveDrive.resetNavX(new Pose2d(RobotConstants.initialXPos, RobotConstants.initialYPos, Rotation2d.fromDegrees(navX.getAngle())));
+    swerveDrive.resetNavX();
     led = new AddressableLED(0);
     ledBuffer = new AddressableLEDBuffer(60);
     led.setLength(ledBuffer.getLength());
@@ -88,6 +88,7 @@ public class Robot extends TimedRobot {
     yAxis = xbox.getLeftY();
     rAxis = xbox.getRightX();
 
+
     //check acceleration for acceleration limiter? otherwise can delete next 4 lines
     SmartDashboard.putNumber("X Acceleration", navX.getWorldLinearAccelX());
     SmartDashboard.putNumber("Y Acceleration", navX.getWorldLinearAccelY());
@@ -96,12 +97,12 @@ public class Robot extends TimedRobot {
 
     if (xbox.getStartButton()) {
       swerveDrive.setEncoders();
-      swerveDrive.resetNavX(robotPosition);
+      swerveDrive.resetNavX();
       navX.resetDisplacement();
     }
     x = -xAxis * Math.abs(xAxis);
     y = yAxis * Math.abs(yAxis);
-    r = rAxis * Math.abs(rAxis);
+    r = -rAxis * Math.abs(rAxis);
 
     swerveDrive.drive(x, y, r, true);
 
@@ -115,6 +116,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    swerveDrive.resetNavX();
     swerveDrive.setEncoders();
     auto = BasicAuto.getStateMachine(feeder, shooter, swerveDrive);
     auto.reset();
