@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Trajectory.ChoreoTraj;
 import frc.robot.swervedrive.SwerveDrive;
 import frc.robot.util.StateMachine;
 
@@ -33,9 +35,12 @@ public class Robot extends TimedRobot {
 
   StateMachine<BasicAuto.AutoStates> auto;
 
+  ChoreoTraj trajectory;
+
   private AddressableLED led;
   private AddressableLEDBuffer ledBuffer;
 
+  Timer timer = new Timer();
 
   public Robot() {
     super(0.02);
@@ -129,10 +134,19 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    for (var i = 0; i < ledBuffer.getLength(); i++) {
-      ledBuffer.setRGB(i, 255, 0, 0);
-    }
-    led.setData(ledBuffer);
+    swerveDrive.resetNavX();
+    swerveDrive.setEncoders();
+    trajectory = new ChoreoTraj("8ft", swerveDrive);
+    timer.reset();
   }
+
+  @Override
+  public void testPeriodic() {
+    timer.start();
+    SmartDashboard.putBoolean("Auto Done", trajectory.sample((long)(1000*timer.get())));
+
+  }
+
+
 
 }
