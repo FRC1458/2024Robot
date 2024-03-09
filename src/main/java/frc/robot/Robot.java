@@ -125,28 +125,35 @@ public class Robot extends TimedRobot {
     swerveDrive.setEncoders();
     auto = BasicAuto.getStateMachine(feeder, shooter, swerveDrive);
     auto.reset();
+
+    // swerveDrive.resetNavX();
+    // swerveDrive.setEncoders();
+    // timer.reset();
+
+
   }
 
   @Override
   public void autonomousPeriodic() {
     auto.run();
+       
+    // timer.start();
+    // SmartDashboard.putBoolean("Auto Done", trajectory.sample((long)(1000*timer.get())));
+
   }
 
   @Override
   public void testInit() {
-    swerveDrive.resetNavX();
-    swerveDrive.setEncoders();
-    trajectory = new ChoreoTraj("8ft", swerveDrive);
-    timer.reset();
+    // swerveDrive.resetNavX();
+    // swerveDrive.setEncoders();
+    // trajectory = new ChoreoTraj("8ft", swerveDrive);
+    // timer.reset();
   }
 
   @Override
   public void testPeriodic() {
-    timer.start();
-    SmartDashboard.putBoolean("Auto Done", trajectory.sample((long)(1000*timer.get())));
-
+    // timer.start();
+    // SmartDashboard.putBoolean("Auto Done", trajectory.sample((long)(1000*timer.get())));
   }
-
-
 
 }

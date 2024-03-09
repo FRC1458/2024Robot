@@ -36,6 +36,8 @@ public class Shooter {
 
           SmartDashboard.putNumber("AMP Pivot Position", -4.3);
           SmartDashboard.putNumber("AMP Shooter Speed", .14);
+          SmartDashboard.putNumber("Pivot Test Angle", -4.3);
+
      }
 
      public void configurePID() {
@@ -102,6 +104,10 @@ public class Shooter {
             return true;
         }
         return false;
+     }
+
+     public boolean pivotToTest() {
+        return pivotTo(SmartDashboard.getNumber("Pivot Test Angle", -4.3));
      }
 
     public boolean pivotToSpeaker() {

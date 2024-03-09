@@ -21,6 +21,7 @@ public class Pivot {
         pivot.clearStickyFaults();
         pivot.setNeutralMode(NeutralModeValue.Brake);
         pivotToggle = resetSwitch.get();
+        pivot.setPosition(4);
     }
 
     public void setSpeed(double speed) {
@@ -32,6 +33,7 @@ public class Pivot {
         } else set(speed);
 
         if (!resetSwitch.get() && pivotToggle) {
+            SmartDashboard.putNumber("Old Pivot Position", pivot.getPosition().getValueAsDouble());
             pivot.setPosition(0);
             pivotToggle = false;
         }

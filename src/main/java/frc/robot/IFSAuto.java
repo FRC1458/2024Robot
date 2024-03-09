@@ -34,7 +34,7 @@ public class IFSAuto implements IFS {
         speakerMachine.addTimerState(SPIN_UP, 750, ANGLE, this::spinUpSpeaker);
         speakerMachine.addBoolState(ANGLE, SHOOT, () -> {
             shooter.shootSpeaker();
-            return shooter.pivotPointBlank();
+            return shooter.pivotToTest();//shooter.pivotPointBlank();
         });
         speakerMachine.addOffState(SHOOT,  () -> {
             spinUpSpeaker();
@@ -72,7 +72,7 @@ public class IFSAuto implements IFS {
 
     private void spinUpSpeaker() {
         shooter.shootSpeaker();
-        shooter.pivotPointBlank();
+        shooter.pivotToTest();//shooter.pivotPointBlank();
     }
 
     private void spinUpAmp() {
