@@ -123,10 +123,11 @@ public class Wheel {
             pidController.setReference(realGoalRotations, CANSparkMax.ControlType.kPosition);
         }
 
-        betterPID.setTarget(RobotConstants.maxSwerveSpeed * speed); //3 casualties (1/25)
-        double velocity = driveEncoder.getVelocity();
-
-        speedMotor.set(Math.abs(speed) < .03 ? 0 : -betterPID.update(velocity));
+        //betterPID.setTarget(RobotConstants.maxSwerveSpeed * speed); //3 casualties (1/25)
+        //double velocity = driveEncoder.getVelocity();
+        //speedMotor.set(Math.abs(speed) < .03 ? 0 : -betterPID.update(velocity));
+        
+        speedMotor.set(speed);
 
     }
 

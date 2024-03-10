@@ -128,6 +128,7 @@ public class Robot extends TimedRobot {
 
     // swerveDrive.resetNavX();
     // swerveDrive.setEncoders();
+    // trajectory = new ChoreoTraj("8ft", swerveDrive);
     // timer.reset();
 
 

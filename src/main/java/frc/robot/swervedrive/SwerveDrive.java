@@ -132,25 +132,28 @@ public class SwerveDrive {
     }
 
     //delete this?
-    public double turnToAngle(double goalAngle, double angle) {
-        double error = 2.0;
+    public boolean turnToAngle(double goalAngle) {
 
+        double angle = navX.getYaw();
+        double kP = 0.015;
+
+        double error = 3.0;
         double diff = (angle - goalAngle) % 360;
 
         if (Math.abs(diff) > 180) {
             diff = diff - 360 * Math.signum(diff);
         }
 
-        double realGoalAngle = (angle - diff);
+        double realGoalAngle = angle - diff;
 
         if (Math.abs(angle - realGoalAngle) > error) {
-            if (angle > realGoalAngle) {
-                return -.1;
-            } else {
-                return .1;
-            }
+
+            double speed = Math.min(kP * Math.abs(diff), 0.5);
+            drive(0, 0, (angle > realGoalAngle) ? speed : -speed, true);
+            return false;
         }
-        return 0;
+        drive(0, 0, 0, false);
+        return true;
 
     }
 
