@@ -1,4 +1,4 @@
-package frc.robot.Trajectory;
+/*package frc.robot.Trajectory;
 
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
@@ -47,3 +47,4 @@ public class ChoreoTraj implements Trajectory {
         return false;
     }
 }
+*/

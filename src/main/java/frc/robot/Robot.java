@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.swervedrive.SwerveDrive;
@@ -18,21 +20,24 @@ import frc.robot.util.StateMachine;
 public class Robot extends TimedRobot {
   
 
+
   private final XboxController xbox;
 
   private final IFS ifs;
 
   SwerveDrive swerveDrive;
   Pose2d robotPosition;
+  Ultrasonic rangeFinder;
 
   Intake intake;
   Feeder feeder;
   Shooter shooter;
 
+
   private final AHRS navX;
 
   StateMachine<BasicAuto.AutoStates> auto;
-
+  private int count;
   private AddressableLED led;
   private AddressableLEDBuffer ledBuffer;
 
@@ -40,6 +45,7 @@ public class Robot extends TimedRobot {
   public Robot() {
     super(0.02);
     xbox = new XboxController(0);
+    count = 0;
 
     navX = new AHRS(SPI.Port.kMXP);
     swerveDrive = new SwerveDrive(navX);
@@ -49,6 +55,7 @@ public class Robot extends TimedRobot {
 
     //ifs = new IFSManual(intake, feeder, shooter, xbox);
     ifs = new IFSAuto(intake, feeder, shooter, xbox);
+    rangeFinder = new Ultrasonic(1, 2);
 
   }
 
@@ -56,7 +63,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     swerveDrive.resetNavX();
     led = new AddressableLED(0);
-    ledBuffer = new AddressableLEDBuffer(60);
+    ledBuffer = new AddressableLEDBuffer(300);
     led.setLength(ledBuffer.getLength());
 
     led.setData(ledBuffer);
@@ -129,10 +136,24 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    for (var i = 0; i < ledBuffer.getLength(); i++) {
-      ledBuffer.setRGB(i, 255, 0, 0);
-    }
-    led.setData(ledBuffer);
+      for(int i = 0; i < ledBuffer.getLength(); i++) {
+      ledBuffer.setHSV(i, i % 180, 255, 255);
+      
+      }
+      led.setData(ledBuffer);
+
+  }
+
+  @Override
+  public void testPeriodic() {
+    
+    double distanceMillimeters = rangeFinder.getRangeMM();
+    SmartDashboard.putNumber("Distance", distanceMillimeters);
+      for(int i = 0; i < ledBuffer.getLength(); i++) {
+      ledBuffer.setHSV(i, (count + i) % 180, 255, 255);
+      }
+      led.setData(ledBuffer);
+      count++;
   }
 
 }
