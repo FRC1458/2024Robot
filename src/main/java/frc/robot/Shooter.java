@@ -6,6 +6,7 @@ import static frc.robot.RobotConstants.*;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.motors.FixedPivot;
 import frc.robot.motors.Pivot;
 import frc.robot.swervedrive.PID;
 
@@ -22,7 +23,7 @@ public class Shooter {
 
           rightShooter = new TalonFX(rightShooterMotorID);
           leftShooter = new TalonFX(leftShooterMotorID);
-          pivot = new Pivot();
+          pivot = new FixedPivot(-4.3);
 
           rightShooter.clearStickyFaults();
           leftShooter.clearStickyFaults();
@@ -42,10 +43,10 @@ public class Shooter {
 
      public void configurePID() {
 
-          rightPID.setPID(0.42, 0, 0);
-          leftPID.setPID(3, 0.15, 0.4);
-         //leftPID.initDebug("Left Shooter");
-         //rightPID.initDebug("Right Shooter");
+          rightPID.setPID(0.50, 0, 0);
+          leftPID.setPID(3.25, 0.15, 0.45);
+         leftPID.initDebug("Left Shooter");
+         rightPID.initDebug("Right Shooter");
 
           rightPID.setMaxAccel(180);
           leftPID.setMaxAccel(180);
@@ -79,7 +80,7 @@ public class Shooter {
      private void setSpeed(double speed) {
           SmartDashboard.putNumber("Right Shooter RPS", rightShooter.getVelocity().getValueAsDouble());
           SmartDashboard.putNumber("Left Shooter RPS", leftShooter.getVelocity().getValueAsDouble());
-         //updatePID();
+         updatePID();
 
          double pl = leftPID.update(leftShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPS) / MAX_SHOOTER_RPS;
          SmartDashboard.putNumber("Percentage Left", pl);

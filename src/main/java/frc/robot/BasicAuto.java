@@ -8,7 +8,7 @@ public class BasicAuto {
 
     public enum StartPosition {LEFT, CENTER, RIGHT}
     public enum AutoStates {SPIN_UP, PIVOT, SHOOT, MOVE, SPIN4JEREMY, PREP, END}
-    public final static StartPosition startPosition = StartPosition.LEFT;
+    public final static StartPosition startPosition = StartPosition.CENTER;
 
     public static StateMachine<AutoStates> getStateMachine(Feeder feeder, Shooter shooter, SwerveDrive swerveDrive) {
         StateMachine<AutoStates> stateMachine = new StateMachine<>(SPIN_UP);

@@ -74,6 +74,7 @@ public class Robot extends TimedRobot {
     //check and make sure it works
     // SmartDashboard.putNumber("RobotXPos", robotPosition.getX());
     // SmartDashboard.putNumber("RobotYPos", robotPosition.getY());
+    SmartDashboard.putNumber("Robot Angle", navX.getYaw());
   }
 
 
