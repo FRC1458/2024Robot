@@ -25,6 +25,7 @@ public class Robot extends TimedRobot {
 
   private final IFS ifs;
 
+  DigitalInput irBreak;
   SwerveDrive swerveDrive;
   Pose2d robotPosition;
   Ultrasonic rangeFinder;
@@ -35,7 +36,6 @@ public class Robot extends TimedRobot {
 
 
   private final AHRS navX;
-
   StateMachine<BasicAuto.AutoStates> auto;
   private int count;
   private AddressableLED led;
@@ -55,8 +55,8 @@ public class Robot extends TimedRobot {
 
     //ifs = new IFSManual(intake, feeder, shooter, xbox);
     ifs = new IFSAuto(intake, feeder, shooter, xbox);
-    rangeFinder = new Ultrasonic(1, 2);
 
+    irBreak = new DigitalInput(9);
   }
 
   @Override
@@ -146,14 +146,24 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
-    
-    double distanceMillimeters = rangeFinder.getRangeMM();
-    SmartDashboard.putNumber("Distance", distanceMillimeters);
+    SmartDashboard.putBoolean("IR Break", irBreak.get());
+    if(irBreak.get()) {  
       for(int i = 0; i < ledBuffer.getLength(); i++) {
-      ledBuffer.setHSV(i, (count + i) % 180, 255, 255);
+        ledBuffer.setHSV(i, (count + i) % 180, 255, 255);
+        }
+        led.setData(ledBuffer);
+        count++;
+       }
+
+      if(!irBreak.get()) {
+        for(int i = 0; i < ledBuffer.getLength(); i++) {
+          ledBuffer.setRGB(i, 0,100,0);
+        }
+        led.setData(ledBuffer);
+        count++;
+      
       }
-      led.setData(ledBuffer);
-      count++;
+      */
   }
 
 }
