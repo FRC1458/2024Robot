@@ -31,15 +31,7 @@ public class IFSAuto implements IFS {
     }
 
     public void initStateMachines() {
-<<<<<<< Updated upstream
-        speakerMachine.addTimerState(SPIN_UP, 750, ANGLE, this::spinUpSpeaker);
-        speakerMachine.addBoolState(ANGLE, SHOOT, () -> {
-            shooter.shootSpeaker();
-            return shooter.pivotPointBlank();
-        });
-=======
         speakerMachine.addTimerState(SPIN_UP, 1500, SHOOT, shooter::shootSpeaker);
->>>>>>> Stashed changes
         speakerMachine.addOffState(SHOOT,  () -> {
             shooter.shootSpeaker();
             shoot();
@@ -69,19 +61,6 @@ public class IFSAuto implements IFS {
         else shooter.stop();
     }
 
-<<<<<<< Updated upstream
-    private void spinUpSpeaker() {
-        shooter.shootSpeaker();
-        shooter.pivotPointBlank();
-    }
-
-    private void spinUpAmp() {
-        shooter.shootAmp();
-        shooter.pivotToAmp();
-    }
-
-=======
->>>>>>> Stashed changes
     private void shoot() {
         feeder.feed();
         intake.slurp();

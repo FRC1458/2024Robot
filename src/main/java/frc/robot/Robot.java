@@ -24,11 +24,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-<<<<<<< Updated upstream
-=======
 import frc.robot.Trajectory.Trajectory;
 import frc.robot.Trajectory.WPITraj;
->>>>>>> Stashed changes
 import frc.robot.swervedrive.SwerveDrive;
 import frc.robot.util.StateMachine;
 
@@ -40,13 +37,10 @@ public class Robot extends TimedRobot {
 
   private final IFS ifs;
 
-<<<<<<< Updated upstream
-  DigitalInput irBreak;
-=======
   public static DigitalInput irBreak;
   int count;
+  Timer timer;
 
->>>>>>> Stashed changes
   SwerveDrive swerveDrive;
   Pose2d robotPosition;
   Ultrasonic rangeFinder;
@@ -58,13 +52,9 @@ public class Robot extends TimedRobot {
 
   private final AHRS navX;
   StateMachine<BasicAuto.AutoStates> auto;
-<<<<<<< Updated upstream
-  private int count;
-=======
 
   Trajectory trajectory;
 
->>>>>>> Stashed changes
   private AddressableLED led;
   private AddressableLEDBuffer ledBuffer;
 
@@ -83,25 +73,16 @@ public class Robot extends TimedRobot {
     //ifs = new IFSManual(intake, feeder, shooter, xbox);
     ifs = new IFSAuto(intake, feeder, shooter, xbox);
 
-<<<<<<< Updated upstream
-    irBreak = new DigitalInput(9);
-=======
     irBreak = new DigitalInput(8);
     count = 0; //for LED's
 
->>>>>>> Stashed changes
   }
 
   @Override
   public void robotInit() {
     swerveDrive.resetNavX();
-<<<<<<< Updated upstream
-    led = new AddressableLED(0);
-    ledBuffer = new AddressableLEDBuffer(300);
-=======
     led = new AddressableLED(1);
     ledBuffer = new AddressableLEDBuffer(120);
->>>>>>> Stashed changes
     led.setLength(ledBuffer.getLength());
 
     led.setData(ledBuffer);
@@ -114,8 +95,6 @@ public class Robot extends TimedRobot {
     //check and make sure it works
     // SmartDashboard.putNumber("RobotXPos", robotPosition.getX());
     // SmartDashboard.putNumber("RobotYPos", robotPosition.getY());
-<<<<<<< Updated upstream
-=======
     SmartDashboard.putNumber("Robot Angle", navX.getYaw());
     swerveDrive.displayPositions();
     Pose2d pose = swerveDrive.updateOdometry();
@@ -132,7 +111,6 @@ public class Robot extends TimedRobot {
       count++;
     }
 
->>>>>>> Stashed changes
   }
 
 
@@ -189,12 +167,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-<<<<<<< Updated upstream
-    swerveDrive.resetNavX();
-    swerveDrive.setEncoders();
-    auto = BasicAuto.getStateMachine(feeder, shooter, swerveDrive);
-    auto.reset();
-=======
     // swerveDrive.resetNavX();
     // swerveDrive.setEncoders();
     // auto = BasicAuto.getStateMachine(feeder, shooter, swerveDrive);
@@ -205,14 +177,10 @@ public class Robot extends TimedRobot {
     trajectory = new WPITraj(swerveDrive);
     timer.reset();
 
->>>>>>> Stashed changes
   }
 
   @Override
   public void autonomousPeriodic() {
-<<<<<<< Updated upstream
-    auto.run();
-=======
     // auto.run();
        
     timer.start();
@@ -277,25 +245,10 @@ public class Robot extends TimedRobot {
       absEncSim = absEnc.getSimState();
     }
 
->>>>>>> Stashed changes
   }
 
   @Override
   public void testInit() {
-<<<<<<< Updated upstream
-      for(int i = 0; i < ledBuffer.getLength(); i++) {
-      ledBuffer.setHSV(i, i % 180, 255, 255);
-      
-      }
-      led.setData(ledBuffer);
-=======
-
-    talon.clearStickyFaults();
-    talon.setPosition(0);
-
-    configs.MotorOutput
-      .withNeutralMode(NeutralModeValue.Coast)
-      .withInverted(InvertedValue.Clockwise_Positive);
 
     // configs.MotionMagic
     //   .withMotionMagicCruiseVelocity(20)
@@ -312,32 +265,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Talon I", 0.1);
     SmartDashboard.putNumber("Talon D", 0);
     SmartDashboard.putNumber("Talon Target Velocity", 0);
->>>>>>> Stashed changes
 
   }
 
   @Override
   public void testPeriodic() {
-<<<<<<< Updated upstream
-    SmartDashboard.putBoolean("IR Break", irBreak.get());
-    if(irBreak.get()) {  
-      for(int i = 0; i < ledBuffer.getLength(); i++) {
-        ledBuffer.setHSV(i, (count + i) % 180, 255, 255);
-        }
-        led.setData(ledBuffer);
-        count++;
-       }
-
-      if(!irBreak.get()) {
-        for(int i = 0; i < ledBuffer.getLength(); i++) {
-          ledBuffer.setRGB(i, 0,100,0);
-        }
-        led.setData(ledBuffer);
-        count++;
-      
-      }
-      */
-=======
 
     if (
       configs.Slot0.kS != SmartDashboard.getNumber("Talon kS", 0) ||
@@ -372,7 +304,6 @@ public class Robot extends TimedRobot {
     for (int i = 0; i < ledBuffer.getLength(); i++)
       ledBuffer.setRGB(i, 255, 80, 0);
     led.setData(ledBuffer);
->>>>>>> Stashed changes
   }
 
 }

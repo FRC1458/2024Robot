@@ -63,13 +63,8 @@ public class RobotConstants {
     public final static double intakeMotorSpeed = 0.6; //speeds between 0 and 1
     public final static double feederMotorSpeed = 0.6; //can be changed, can also possibly just use intakeMotorSpeed for feeder motor as well
     public final static double feederAssistMotorSpeed = 0.1;
-<<<<<<< Updated upstream
-    public final static double shooterSpeedSpeaker = 0.7;
-    public final static double shooterSpeedAmp = 0.175;
-=======
     public final static double shooterSpeedSpeaker = 0.85;
     public final static double shooterSpeedAmp = 0.16;
->>>>>>> Stashed changes
     public final static double PIVOT_DOWN_SPEED = 0.02;
 
     public final static double shooterPIDSpeed = 30;

@@ -36,14 +36,16 @@ public class Shooter {
 
           SmartDashboard.putNumber("AMP Pivot Position", -4.3);
           SmartDashboard.putNumber("AMP Shooter Speed", .14);
+          SmartDashboard.putNumber("Pivot Test Angle", -4.3);
+
      }
 
      public void configurePID() {
 
-          rightPID.setPID(0.42, 0, 0);
-          leftPID.setPID(3, 0.15, 0.4);
-         //leftPID.initDebug("Left Shooter");
-         //rightPID.initDebug("Right Shooter");
+          rightPID.setPID(0.50, 0, 0);
+          leftPID.setPID(3.25, 0.15, 0.45);
+         leftPID.initDebug("Left Shooter");
+         rightPID.initDebug("Right Shooter");
 
           rightPID.setMaxAccel(180);
           leftPID.setMaxAccel(180);
@@ -77,7 +79,7 @@ public class Shooter {
      private void setSpeed(double speed) {
           SmartDashboard.putNumber("Right Shooter RPS", rightShooter.getVelocity().getValueAsDouble());
           SmartDashboard.putNumber("Left Shooter RPS", leftShooter.getVelocity().getValueAsDouble());
-         //updatePID();
+         updatePID();
 
          double pl = leftPID.update(leftShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPS) / MAX_SHOOTER_RPS;
          SmartDashboard.putNumber("Percentage Left", pl);
@@ -102,6 +104,10 @@ public class Shooter {
             return true;
         }
         return false;
+     }
+
+     public boolean pivotToTest() {
+        return pivotTo(SmartDashboard.getNumber("Pivot Test Angle", -4.3));
      }
 
     public boolean pivotToSpeaker() {
