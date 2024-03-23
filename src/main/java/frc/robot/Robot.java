@@ -103,13 +103,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("R", pose.getRotation().getRotations());
     SmartDashboard.putBoolean("IR break", irBreak.get());
     
-    if(!irBreak.get()) {
-      for(int i = 0; i < ledBuffer.getLength();i++) {
-        ledBuffer.setRGB(i, 0 , 255, 0);
-      }
-      led.setData(ledBuffer);
-      count++;
-    }
 
   }
 
@@ -157,11 +150,23 @@ public class Robot extends TimedRobot {
     
     if (irBreak.get()) {
       for(int i = 0; i < ledBuffer.getLength(); i++) {
-        ledBuffer.setHSV(i, (count + i) % 180, 255, 255);
+        int green = (count + i) % 510;
+        if(green > 255) {
+          green = 510 - green; 
+        }
+        ledBuffer.setRGB(i, 255, green, 100);
       }
       led.setData(ledBuffer);
       count++;
     }
+    if(!irBreak.get()) {
+      for(int i = 0; i < ledBuffer.getLength();i++) {
+        ledBuffer.setRGB(i, 0 , 255, 150);
+      }
+      led.setData(ledBuffer);
+      count++;
+    }
+
 
   }
 
