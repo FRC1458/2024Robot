@@ -76,12 +76,6 @@ public class SwerveDrive {
 
 
     }
-    public SwerveModulePosition[] getModulePositions() {
-        return new SwerveModulePosition[]{frontLeftPosition, frontRightPosition, backLeftPosition, backRightPosition};
-    }
-    public Pose2d updateOdometry() {
-        return odometry.update(Rotation2d.fromDegrees(navX.getAngle()), getModulePositions());
-    }
 
     public void drive(double x, double y, double r, boolean fieldOriented) {
 
@@ -175,10 +169,41 @@ public class SwerveDrive {
     public Rotation2d navxAngle() {
         return Rotation2d.fromDegrees(navX.getAngle());
     }
+
     public SwerveModulePosition[] getPositions() {
-        SwerveModulePosition[] positions = {frontLeftPosition, frontRightPosition, backLeftPosition, backRightPosition};
-        return positions;
+        return new SwerveModulePosition[] {
+            frontLeft.getPosition(),
+            frontRight.getPosition(),
+            backLeft.getPosition(),
+            backRight.getPosition()
+        };
     }
 
+    public void displayPositions() {
+        frontLeft.displayPosition();
+        frontRight.displayPosition();
+        backLeft.displayPosition();
+        backRight.displayPosition();
+    }
+
+    public Pose2d updateOdometry() {
+        return odometry.update(Rotation2d.fromDegrees(navX.getAngle()), getPositions());
+    }
+
+    public void resetOdometry() {
+        resetOdometry(new Pose2d());
+    }
+
+    public void resetOdometry(Pose2d pose) {
+        frontLeft.resetOdometry();
+        frontRight.resetOdometry();
+        backLeft.resetOdometry();
+        backRight.resetOdometry();
+        odometry.resetPosition(navX.getRotation2d(), getPositions(), pose);
+    }
+
+    public Pose2d getPose() {
+        return odometry.getEstimatedPosition();
+    }
 
 }

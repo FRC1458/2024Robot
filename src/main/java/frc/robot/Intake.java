@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static frc.robot.RobotConstants.feederAssistMotorSpeed;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -13,7 +15,8 @@ public class Intake {
    }
 
    public void slurp() {
-        intakeMotor.set(-RobotConstants.intakeMotorSpeed);
+     if (!Robot.irBreak.get()) stop();
+     else intakeMotor.set(-RobotConstants.intakeMotorSpeed);
    } //intake note
     public void slurp(double speed) {intakeMotor.set(-speed);} //consistency with feeder (normal speed is slower so note doesn't get stuck as often, remove this method once that problem is fixed)
 
@@ -24,4 +27,8 @@ public class Intake {
    public void stop() {
         intakeMotor.set(0);
    } //intake doesn't move
+
+public void assist() {
+     intakeMotor.set(-feederAssistMotorSpeed);
+}
 }

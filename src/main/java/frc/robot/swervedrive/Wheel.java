@@ -88,7 +88,6 @@ public class Wheel {
         driveEnc = speedMotor.getEncoder();
         resetOdometry();
 
-
     }
 
     public void setPID(double p, double i, double d, double iScaling) {
@@ -154,7 +153,7 @@ public class Wheel {
 
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-            (driveEnc.getPosition() - ANGLE_TO_DRIVE_RATIO * (encoder.getPosition() - angleMarker)) / DRIVE_RATIO * 2 * Math.PI * WHEEL_RAD,
+            (driveEnc.getPosition() - (encoder.getPosition() - angleMarker) / ANGLE_TO_DRIVE_RATIO) / DRIVE_RATIO * 2 * Math.PI * WHEEL_RAD,
             Rotation2d.fromRotations(((encoder.getPosition() - relativeOffset) / RobotConstants.swerveDriveGearRatio))
         );
     }

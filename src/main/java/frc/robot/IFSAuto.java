@@ -12,7 +12,7 @@ public class IFSAuto implements IFS {
     private final Intake intake;
     private final Timer feederAssist = new Timer();
 
-    public enum ShootState {ANGLE, SPIN_UP, SHOOT}
+    public enum ShootState {SPIN_UP, SHOOT}
 
     private final XboxController xbox;
     private final StateMachine<ShootState> speakerMachine = new StateMachine<>(SPIN_UP);
@@ -31,23 +31,23 @@ public class IFSAuto implements IFS {
     }
 
     public void initStateMachines() {
+<<<<<<< Updated upstream
         speakerMachine.addTimerState(SPIN_UP, 750, ANGLE, this::spinUpSpeaker);
         speakerMachine.addBoolState(ANGLE, SHOOT, () -> {
             shooter.shootSpeaker();
             return shooter.pivotPointBlank();
         });
+=======
+        speakerMachine.addTimerState(SPIN_UP, 1500, SHOOT, shooter::shootSpeaker);
+>>>>>>> Stashed changes
         speakerMachine.addOffState(SHOOT,  () -> {
-            spinUpSpeaker();
+            shooter.shootSpeaker();
             shoot();
         });
 
-        ampMachine.addTimerState(SPIN_UP, 750, ANGLE, this::spinUpAmp);
-        ampMachine.addBoolState(ANGLE, SHOOT, () -> {
-            shooter.shootAmp();
-            return shooter.pivotToAmp();
-        });
+        ampMachine.addTimerState(SPIN_UP, 1500, SHOOT, shooter::shootAmp);
         ampMachine.addOffState(SHOOT, () -> {
-            spinUpAmp();
+            shooter.shootAmp();
             shoot();
         });
     }
@@ -57,7 +57,6 @@ public class IFSAuto implements IFS {
     @Override
     public void update() {
         updateIntake();
-        updatePivot();
         updateShooter();
     }
 
@@ -70,6 +69,7 @@ public class IFSAuto implements IFS {
         else shooter.stop();
     }
 
+<<<<<<< Updated upstream
     private void spinUpSpeaker() {
         shooter.shootSpeaker();
         shooter.pivotPointBlank();
@@ -80,6 +80,8 @@ public class IFSAuto implements IFS {
         shooter.pivotToAmp();
     }
 
+=======
+>>>>>>> Stashed changes
     private void shoot() {
         feeder.feed();
         intake.slurp();
@@ -87,30 +89,24 @@ public class IFSAuto implements IFS {
 
     private void updateIntake() {
         if (xbox.getAButton()) {
-            intake.slurp();
-            feeder.stop();
+            if (Robot.irBreak.get()) {
+                intake.slurp();
+                feeder.assist();
+            } else {
+                intake.stop();
+                feeder.stop();
+            }
             feederAssist.start();
             feederAssist.reset();
         } else if (!feederAssist.hasElapsed(0.1) && feederAssist.hasElapsed(0.00000001)) {
-            feeder.assist();
-            intake.slurp();
+            //feeder.assist();
+            //intake.slurp();
         } else if (xbox.getYButton()) {
             intake.spit();
             feeder.reverse();
         } else {
             intake.stop();
             feeder.stop();
-        }
-    }
-
-    private void updatePivot() {
-        shooter.displayPivot();
-        if(xbox.getPOV() == 0) {
-            shooter.moveUp();
-        } else if(xbox.getPOV() == 180) {
-            shooter.moveDown();
-        } else {
-            shooter.stopPivot();
         }
     }
   

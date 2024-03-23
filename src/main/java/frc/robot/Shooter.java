@@ -120,7 +120,7 @@ public class Shooter {
      }
 
      public void shootAmp() {
-         setSpeed(SmartDashboard.getNumber("AMP Shooter Speed", .14));
+         setSpeed(shooterSpeedAmp);
      }
 
      public void updatePID() {
