@@ -9,6 +9,7 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotConstants;
@@ -30,6 +31,7 @@ public class Wheel {
 
     public final String wheelName;
     private double offset;
+    private double offset2 = 0;
 
     private boolean diagnostic;
 
@@ -83,7 +85,8 @@ public class Wheel {
         
 
         SmartDashboard.putNumber(wheelName + " Offset", offset);
-
+        SmartDashboard.putNumber("Wheel Torque", 0);
+        SmartDashboard.putNumber("Wheel Speed", 0);
 
         driveEnc = speedMotor.getEncoder();
         resetOdometry();
@@ -125,6 +128,12 @@ public class Wheel {
         betterPID.setTarget(RobotConstants.maxSwerveSpeed * speed); //3 casualties (1/25)
         double velocity = driveEncoder.getVelocity();
 
+        DCMotor motor = DCMotor.getNEO(1);
+        double v = motor.getVoltage(
+            SmartDashboard.getNumber("Wheel Torque", 0),
+            SmartDashboard.getNumber("Wheel Speed", 0)
+        );
+        SmartDashboard.putNumber("Wheel Applied Voltage", v);
         speedMotor.set(Math.abs(speed) < .03 ? 0 : -betterPID.update(velocity));
 
     }
@@ -153,13 +162,14 @@ public class Wheel {
 
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-            (driveEnc.getPosition() - (encoder.getPosition() - angleMarker) / ANGLE_TO_DRIVE_RATIO) / DRIVE_RATIO * 2 * Math.PI * WHEEL_RAD,
+            -(offset2 + driveEnc.getPosition() - (encoder.getPosition() - angleMarker) / ANGLE_TO_DRIVE_RATIO) / DRIVE_RATIO * 2 * Math.PI * WHEEL_RAD,
             Rotation2d.fromRotations(((encoder.getPosition() - relativeOffset) / RobotConstants.swerveDriveGearRatio))
         );
     }
 
     public void resetOdometry() {
-        driveEnc.setPosition(0);
+        //driveEnc.setPosition(0);
+        offset = -driveEnc.getPosition();
         angleMarker = encoder.getPosition();
     }
 

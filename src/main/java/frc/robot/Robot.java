@@ -11,8 +11,15 @@ import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.Trajectory.State;
+import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -24,6 +31,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Trajectory.PathPlannerTraj;
 import frc.robot.Trajectory.Trajectory;
 import frc.robot.Trajectory.WPITraj;
 import frc.robot.swervedrive.SwerveDrive;
@@ -39,7 +47,7 @@ public class Robot extends TimedRobot {
 
   public static DigitalInput irBreak;
   int count;
-  Timer timer;
+  Timer timer = new Timer();
 
   SwerveDrive swerveDrive;
   Pose2d robotPosition;
@@ -73,7 +81,7 @@ public class Robot extends TimedRobot {
     //ifs = new IFSManual(intake, feeder, shooter, xbox);
     ifs = new IFSAuto(intake, feeder, shooter, xbox);
 
-    irBreak = new DigitalInput(8);
+    irBreak = new DigitalInput(5);
     count = 0; //for LED's
 
   }
@@ -101,7 +109,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("X", pose.getX());
     SmartDashboard.putNumber("Y", pose.getY());
     SmartDashboard.putNumber("R", pose.getRotation().getRotations());
-    SmartDashboard.putBoolean("IR break", irBreak.get());
+    //SmartDashboard.putBoolean("IR break", irBreak.get());
     
 
   }
@@ -179,7 +187,7 @@ public class Robot extends TimedRobot {
 
     swerveDrive.resetNavX();
     swerveDrive.setEncoders();
-    trajectory = new WPITraj(swerveDrive);
+    trajectory = new PathPlannerTraj("Test2M", swerveDrive);
     timer.reset();
 
   }
@@ -189,10 +197,10 @@ public class Robot extends TimedRobot {
     // auto.run();
        
     timer.start();
-    SmartDashboard.putBoolean("Auto Done", trajectory.sample((long)(1000*timer.get())));
+    SmartDashboard.putBoolean("Auto Done", trajectory.sample((long) (1000*timer.get())));
 
     for (int i = 0; i < ledBuffer.getLength(); i++)
-      ledBuffer.setRGB(i, (i / 5 + System.currentTimeMillis() / 1000) % 2 == 0 ? 255 : 0, 0, 0);
+      ledBuffer.setRGB(i, 255, 0, 0);
     led.setData(ledBuffer);
 
   }
@@ -239,68 +247,88 @@ public class Robot extends TimedRobot {
 
   }
 
-  static class ModuleSim {
-
-    private final TalonFXSim angleSim;
-    private final TalonFXSim driveSim;
-    private final CANcoderSimState absEncSim;
-    public ModuleSim(TalonFX angleTalon, TalonFX driveTalon, CANcoder absEnc) {
-      angleSim = new TalonFXSim(angleTalon);
-      driveSim = new TalonFXSim(driveTalon);
-      absEncSim = absEnc.getSimState();
-    }
-
-  }
+  HolonomicDriveController follower;
+  PIDController xController;
+  PIDController yController;
+  ProfiledPIDController rController;
 
   @Override
   public void testInit() {
+
+    xController = new PIDController(0, 0, 0);
+    xController.setP(0.25);
+    xController.setI(0.1);
+    xController.setD(0.0);
+
+    yController = new PIDController(0, 0, 0);
+    yController.setP(0.25);
+    yController.setI(0.1);
+    yController.setD(0.0);
+
+    rController = new ProfiledPIDController(0, 0, 0, new Constraints(0.05, 0.1));
+    rController.setP(0.5);
+    rController.setI(0.1);
+    rController.setD(0.0);
+
+    follower = new HolonomicDriveController(
+      xController,
+      yController,
+      rController
+    );
 
     // configs.MotionMagic
     //   .withMotionMagicCruiseVelocity(20)
     //   .withMotionMagicAcceleration(10)
     //   .withMotionMagicJerk(10);
 
-    talon.getConfigurator().apply(configs);
-    request.withSlot(0);
+    // talon.getConfigurator().apply(configs);
+    // request.withSlot(0);
 
-    SmartDashboard.putNumber("Talon kS", 0.135);
-    SmartDashboard.putNumber("Talon kV", 0.09);
-    SmartDashboard.putNumber("Talon kA", 0);
-    SmartDashboard.putNumber("Talon P", 0.075);
-    SmartDashboard.putNumber("Talon I", 0.1);
-    SmartDashboard.putNumber("Talon D", 0);
-    SmartDashboard.putNumber("Talon Target Velocity", 0);
+    // SmartDashboard.putNumber("Talon kS", 0.135);
+    // SmartDashboard.putNumber("Talon kV", 0.09);
+    // SmartDashboard.putNumber("Talon kA", 0);
+    // SmartDashboard.putNumber("Talon P", 0.075);
+    // SmartDashboard.putNumber("Talon I", 0.1);
+    // SmartDashboard.putNumber("Talon D", 0);
+    // SmartDashboard.putNumber("Talon Target Velocity", 0);
 
   }
+
 
   @Override
   public void testPeriodic() {
 
-    if (
-      configs.Slot0.kS != SmartDashboard.getNumber("Talon kS", 0) ||
-      configs.Slot0.kV != SmartDashboard.getNumber("Talon kV", 0) ||
-      configs.Slot0.kA != SmartDashboard.getNumber("Talon kA", 0) ||
-      configs.Slot0.kP != SmartDashboard.getNumber("Talon P", 0) ||
-      configs.Slot0.kI != SmartDashboard.getNumber("Talon I", 0) ||
-      configs.Slot0.kD != SmartDashboard.getNumber("Talon D", 0)
-    ) {
-      configs.Slot0
-        .withKS(SmartDashboard.getNumber("Talon kS", 0))
-        .withKV(SmartDashboard.getNumber("Talon kV", 0))
-        .withKA(SmartDashboard.getNumber("Talon kA", 0))
-        .withKP(SmartDashboard.getNumber("Talon P", 0))
-        .withKI(SmartDashboard.getNumber("Talon I", 0))
-        .withKD(SmartDashboard.getNumber("Talon D", 0));
-      talon.getConfigurator().apply(configs);
-    }
+    // if (
+    //   configs.Slot0.kS != SmartDashboard.getNumber("Talon kS", 0) ||
+    //   configs.Slot0.kV != SmartDashboard.getNumber("Talon kV", 0) ||
+    //   configs.Slot0.kA != SmartDashboard.getNumber("Talon kA", 0) ||
+    //   configs.Slot0.kP != SmartDashboard.getNumber("Talon P", 0) ||
+    //   configs.Slot0.kI != SmartDashboard.getNumber("Talon I", 0) ||
+    //   configs.Slot0.kD != SmartDashboard.getNumber("Talon D", 0)
+    // ) {
+    //   configs.Slot0
+    //     .withKS(SmartDashboard.getNumber("Talon kS", 0))
+    //     .withKV(SmartDashboard.getNumber("Talon kV", 0))
+    //     .withKA(SmartDashboard.getNumber("Talon kA", 0))
+    //     .withKP(SmartDashboard.getNumber("Talon P", 0))
+    //     .withKI(SmartDashboard.getNumber("Talon I", 0))
+    //     .withKD(SmartDashboard.getNumber("Talon D", 0));
+    //   talon.getConfigurator().apply(configs);
+    // }
 
-    talon.setControl(request.withVelocity(SmartDashboard.getNumber("Talon Target Velocity", 0)));
+    // talon.setControl(request.withVelocity(SmartDashboard.getNumber("Talon Target Velocity", 0)));
 
-    SmartDashboard.putNumber("Talon Position", talon.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Talon Velocity", talon.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Talon Acceleration", talon.getAcceleration().getValueAsDouble());
+    // SmartDashboard.putNumber("Talon Position", talon.getPosition().getValueAsDouble());
+    // SmartDashboard.putNumber("Talon Velocity", talon.getVelocity().getValueAsDouble());
+    // SmartDashboard.putNumber("Talon Acceleration", talon.getAcceleration().getValueAsDouble());
 
-    if (isSimulation()) sim.update();
+    // if (isSimulation()) sim.update();
+
+    ChassisSpeeds speeds = follower.calculate(swerveDrive.getPose(), new State(), new Rotation2d());
+    SmartDashboard.putNumber("VX", speeds.vxMetersPerSecond);
+    SmartDashboard.putNumber("VY", speeds.vyMetersPerSecond);
+    SmartDashboard.putNumber("W", speeds.omegaRadiansPerSecond);
+    swerveDrive.drive(-speeds.vxMetersPerSecond, -speeds.vyMetersPerSecond, -speeds.omegaRadiansPerSecond, true);
 
   }
 

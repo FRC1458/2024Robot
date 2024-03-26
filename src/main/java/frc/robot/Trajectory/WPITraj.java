@@ -41,9 +41,9 @@ public class WPITraj implements Trajectory {
         double rot = state.poseMeters.getRotation().getRadians();
         double vx = state.velocityMetersPerSecond * Math.cos(rot);
         double vy = state.velocityMetersPerSecond * Math.sin(rot);
-        SmartDashboard.putNumber("Error X", state.poseMeters.getX() - swerveDrive.getPose().getX());
-        SmartDashboard.putNumber("Error Y", state.poseMeters.getY() - swerveDrive.getPose().getY());
-        SmartDashboard.putNumber("Error R", state.poseMeters.getRotation().getRotations() - swerveDrive.getPose().getRotation().getRotations());
+        SmartDashboard.putNumber("Desired X", state.poseMeters.getY());
+        SmartDashboard.putNumber("Desired Y", state.poseMeters.getX());
+        SmartDashboard.putNumber("Desired R", state.poseMeters.getRotation().getRotations());
         swerveDrive.drive(-vx / autoSpeed, -vy / autoSpeed, 0, true);
         return false;
     }
