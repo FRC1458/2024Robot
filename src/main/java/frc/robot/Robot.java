@@ -25,10 +25,10 @@ import frc.robot.Trajectory.Trajectory;
 import frc.robot.Trajectory.WPITraj;
 import frc.robot.swervedrive.SwerveDrive;
 import frc.robot.util.StateMachine;
+import static frc.robot.RobotConstants.*;
+
 
 public class Robot extends TimedRobot {
-  
-
 
   private final XboxController xbox;
 
@@ -52,8 +52,7 @@ public class Robot extends TimedRobot {
 
   Trajectory trajectory;
 
-  private AddressableLED led;
-  private AddressableLEDBuffer ledBuffer;
+  private LED lights;
 
 
   public Robot() {
@@ -71,19 +70,13 @@ public class Robot extends TimedRobot {
     ifs = new IFSAuto(intake, feeder, shooter, xbox);
 
     irBreak = new DigitalInput(5);
-    count = 0; //for LED's
+    lights = new LED();
 
   }
 
   @Override
   public void robotInit() {
     swerveDrive.resetNavX();
-    led = new AddressableLED(1);
-    ledBuffer = new AddressableLEDBuffer(120);
-    led.setLength(ledBuffer.getLength());
-
-    led.setData(ledBuffer);
-    led.start();
   }
 
   @Override
@@ -108,6 +101,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     swerveDrive.resetOdometry();
     swerveDrive.setEncoders();
+    
   }
 
   @Override
@@ -146,25 +140,12 @@ public class Robot extends TimedRobot {
     ifs.update();
     
     if (irBreak.get()) {
-      for(int i = 0; i < ledBuffer.getLength(); i++) {
-        int green = (count + i) % 510;
-        if(green > 255) {
-          green = 510 - green; 
-        }
-        ledBuffer.setRGB(i, 255, green, 100);
-      }
-      led.setData(ledBuffer);
-      count++;
+      lights.teleopLights();
+        
     }
-    if(!irBreak.get()) {
-      for(int i = 0; i < ledBuffer.getLength();i++) {
-        ledBuffer.setRGB(i, 0 , 255, 150);
-      }
-      led.setData(ledBuffer);
-      count++;
+    else{
+      lights.noteDetectedLights();
     }
-
-
   }
 
   @Override
@@ -188,9 +169,7 @@ public class Robot extends TimedRobot {
     timer.start();
     SmartDashboard.putBoolean("Auto Done", trajectory.sample((long) (1000*timer.get())));
 
-    for (int i = 0; i < ledBuffer.getLength(); i++)
-      ledBuffer.setRGB(i, 255, 0, 0);
-    led.setData(ledBuffer);
+    lights.autoLights();
 
   }
 
@@ -239,9 +218,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    for (int i = 0; i < ledBuffer.getLength(); i++)
-      ledBuffer.setRGB(i, 255, 80, 0);
-    led.setData(ledBuffer);
+    lights.disabledLights();
   }
 
 }
