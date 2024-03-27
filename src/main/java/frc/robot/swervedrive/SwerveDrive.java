@@ -199,7 +199,7 @@ public class SwerveDrive {
         frontRight.resetOdometry();
         backLeft.resetOdometry();
         backRight.resetOdometry();
-        odometry.resetPosition(new Rotation2d().minus(navX.getRotation2d()), getPositions(), pose);
+        odometry.resetPosition(pose.getRotation().minus(navX.getRotation2d()), getPositions(), pose);
     }
 
     public Pose2d getPose() {
