@@ -6,8 +6,12 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.path.PathPlannerTrajectory.State;
 
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.swervedrive.SwerveDrive;
 
@@ -17,6 +21,7 @@ public class PathPlannerTraj implements Trajectory {
     private final PathPlannerTrajectory trajectory;
 
     public PathPlannerTraj(String name, SwerveDrive swerve) {
+
         swerveDrive = swerve;
         trajectory = PathPlannerPath.fromPathFile(name).getTrajectory(new ChassisSpeeds(), swerve.navxAngle());
         swerveDrive.resetOdometry(
@@ -26,13 +31,12 @@ public class PathPlannerTraj implements Trajectory {
                 trajectory.getInitialTargetHolonomicPose().getRotation()
             )
         );
-        SmartDashboard.putNumber("Trajectory P", 0);
-        SmartDashboard.putNumber("Trajectory I", 0);
-        SmartDashboard.putNumber("Trajectory D", 0);
+
     }
 
     @Override
     public boolean sample(long timestamp) {
+
         if (timestamp / 1000.0 > trajectory.getTotalTimeSeconds()) return true;
         State state = trajectory.sample(timestamp / 1000.0);
 
@@ -52,11 +56,13 @@ public class PathPlannerTraj implements Trajectory {
         SmartDashboard.putNumber("Error Y", ey);
         SmartDashboard.putNumber("Error R", er);
 
-        double p = SmartDashboard.getNumber("Trajectory P", 0);
-        double i = SmartDashboard.getNumber("Trajectory I", 0);
-        double d = SmartDashboard.getNumber("Trajectory D", 0);
+        swerveDrive.drive(
+            -vx / autoSpeed - 0.05 * ex,
+            -vy / autoSpeed - 0.05 * ey,
+            -0.25 * er,
+            true
+        );
 
-        swerveDrive.drive(-vx / autoSpeed + p * ex, -vy / autoSpeed + p * ey, -0.1 * er, true);
         return false;
     }
     

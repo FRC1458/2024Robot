@@ -1,14 +1,5 @@
 package frc.robot;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.mechanisms.swerve.SimSwerveDrivetrain;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.sim.CANcoderSimState;
-import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.HolonomicDriveController;
@@ -17,14 +8,12 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.Trajectory.State;
-import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -117,8 +106,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    swerveDrive.setEncoders();
     swerveDrive.resetOdometry();
+    swerveDrive.setEncoders();
   }
 
   @Override
@@ -205,48 +194,6 @@ public class Robot extends TimedRobot {
 
   }
 
-  public TalonFX talon = new TalonFX(32);
-  public TalonFXSim sim = new TalonFXSim(talon);
-  public TalonFXConfiguration configs = new TalonFXConfiguration();
-  public VelocityVoltage request = new VelocityVoltage(0);
-
-  static class TalonFXSim {
-
-    private final TalonFXSimState simState;
-
-    private final double kS = 0.135;
-    private final double kV = 0.090;
-    private final double kA = 0.030;
-
-    private double position = 0;
-    private double velocity = 0;
-    private double prev_velocity = 0;
-    private Double prev_time = null;
-
-    public TalonFXSim(TalonFX talon) {
-      simState = talon.getSimState();
-      simState.setSupplyVoltage(RobotController.getBatteryVoltage());
-      simState.setRawRotorPosition(0);
-    }
-
-    public void update() {
-
-      double v = simState.getMotorVoltage();
-
-      prev_velocity = velocity;
-      double time = System.currentTimeMillis() / 1000.0;
-      double dt = (prev_time == null) ? Robot.kDefaultPeriod : time - prev_time;
-      if (Math.abs(v) >= kS) velocity = (v - kS * Math.signum(v) + kA / dt * prev_velocity) / (kV + kA / dt);
-      
-      position += velocity * dt;
-      simState.setRawRotorPosition(position);
-      simState.setRotorVelocity(velocity);
-      simState.setRotorAcceleration((velocity - prev_velocity) / dt);
-      prev_time = time;
-    }
-
-  }
-
   HolonomicDriveController follower;
   PIDController xController;
   PIDController yController;
@@ -256,18 +203,18 @@ public class Robot extends TimedRobot {
   public void testInit() {
 
     xController = new PIDController(0, 0, 0);
-    xController.setP(0.25);
-    xController.setI(0.1);
+    xController.setP(0.025);
+    xController.setI(0.01);
     xController.setD(0.0);
 
     yController = new PIDController(0, 0, 0);
-    yController.setP(0.25);
-    yController.setI(0.1);
+    yController.setP(0.025);
+    yController.setI(0.01);
     yController.setD(0.0);
 
-    rController = new ProfiledPIDController(0, 0, 0, new Constraints(0.05, 0.1));
+    rController = new ProfiledPIDController(0, 0, 0, new Constraints(0.25, 0.25));
     rController.setP(0.5);
-    rController.setI(0.1);
+    rController.setI(0);
     rController.setD(0.0);
 
     follower = new HolonomicDriveController(
@@ -276,59 +223,17 @@ public class Robot extends TimedRobot {
       rController
     );
 
-    // configs.MotionMagic
-    //   .withMotionMagicCruiseVelocity(20)
-    //   .withMotionMagicAcceleration(10)
-    //   .withMotionMagicJerk(10);
-
-    // talon.getConfigurator().apply(configs);
-    // request.withSlot(0);
-
-    // SmartDashboard.putNumber("Talon kS", 0.135);
-    // SmartDashboard.putNumber("Talon kV", 0.09);
-    // SmartDashboard.putNumber("Talon kA", 0);
-    // SmartDashboard.putNumber("Talon P", 0.075);
-    // SmartDashboard.putNumber("Talon I", 0.1);
-    // SmartDashboard.putNumber("Talon D", 0);
-    // SmartDashboard.putNumber("Talon Target Velocity", 0);
-
   }
 
 
   @Override
   public void testPeriodic() {
 
-    // if (
-    //   configs.Slot0.kS != SmartDashboard.getNumber("Talon kS", 0) ||
-    //   configs.Slot0.kV != SmartDashboard.getNumber("Talon kV", 0) ||
-    //   configs.Slot0.kA != SmartDashboard.getNumber("Talon kA", 0) ||
-    //   configs.Slot0.kP != SmartDashboard.getNumber("Talon P", 0) ||
-    //   configs.Slot0.kI != SmartDashboard.getNumber("Talon I", 0) ||
-    //   configs.Slot0.kD != SmartDashboard.getNumber("Talon D", 0)
-    // ) {
-    //   configs.Slot0
-    //     .withKS(SmartDashboard.getNumber("Talon kS", 0))
-    //     .withKV(SmartDashboard.getNumber("Talon kV", 0))
-    //     .withKA(SmartDashboard.getNumber("Talon kA", 0))
-    //     .withKP(SmartDashboard.getNumber("Talon P", 0))
-    //     .withKI(SmartDashboard.getNumber("Talon I", 0))
-    //     .withKD(SmartDashboard.getNumber("Talon D", 0));
-    //   talon.getConfigurator().apply(configs);
-    // }
-
-    // talon.setControl(request.withVelocity(SmartDashboard.getNumber("Talon Target Velocity", 0)));
-
-    // SmartDashboard.putNumber("Talon Position", talon.getPosition().getValueAsDouble());
-    // SmartDashboard.putNumber("Talon Velocity", talon.getVelocity().getValueAsDouble());
-    // SmartDashboard.putNumber("Talon Acceleration", talon.getAcceleration().getValueAsDouble());
-
-    // if (isSimulation()) sim.update();
-
     ChassisSpeeds speeds = follower.calculate(swerveDrive.getPose(), new State(), new Rotation2d());
     SmartDashboard.putNumber("VX", speeds.vxMetersPerSecond);
     SmartDashboard.putNumber("VY", speeds.vyMetersPerSecond);
     SmartDashboard.putNumber("W", speeds.omegaRadiansPerSecond);
-    swerveDrive.drive(-speeds.vxMetersPerSecond, -speeds.vyMetersPerSecond, -speeds.omegaRadiansPerSecond, true);
+    //swerveDrive.drive(-speeds.vxMetersPerSecond, -speeds.vyMetersPerSecond, -speeds.omegaRadiansPerSecond, true);
 
   }
 
