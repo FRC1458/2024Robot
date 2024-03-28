@@ -15,12 +15,12 @@ public class LED {
         ledBuffer = new AddressableLEDBuffer(ledLength);
         count = 100; //arbritrary positive number
         led.setData(ledBuffer);
-        led.setLength(ledLength);
+        led.setLength(ledBuffer.getLength());
         led.start();
     }
 
     public void autoLights() {
-        for(int i = 18; i < ledBuffer.getLength();i++) {
+        for(int i = 18; i < 120;i++) {
             ledBuffer.setRGB(i, 255 , 0, 0);
         }
         led.setData(ledBuffer);
@@ -39,7 +39,7 @@ public class LED {
     }
 
     public void disabledLights() {
-        for (int i = 18; i < ledBuffer.getLength(); i++) {
+        for (int i = 18; i < 120; i++) {
             ledBuffer.setRGB(i, 255, 80, 0);
         }
         led.setData(ledBuffer);
@@ -52,5 +52,6 @@ public class LED {
         }
         led.setData(ledBuffer);
     }
-
+ 
 }
+ 
