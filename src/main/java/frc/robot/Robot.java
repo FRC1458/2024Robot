@@ -91,7 +91,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("X", pose.getX());
     SmartDashboard.putNumber("Y", pose.getY());
     SmartDashboard.putNumber("R", pose.getRotation().getRotations());
-    //SmartDashboard.putBoolean("IR break", irBreak.get());
+    SmartDashboard.putBoolean("IR break", irBreak.get());
     
 
   }
@@ -165,7 +165,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     // auto.run();
-       
+    
+    ifs.update();
     timer.start();
     SmartDashboard.putBoolean("Auto Done", trajectory.sample((long) (1000*timer.get())));
 
