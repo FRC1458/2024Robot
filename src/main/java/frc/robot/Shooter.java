@@ -118,9 +118,9 @@ public class Shooter {
           //double pl = leftPID.update(leftShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPS) / MAX_SHOOTER_RPS;
           //SmartDashboard.putNumber("Percentage Left", pl);
           //leftShooter.set(-pl);
-          
-          leftConfig.MotionMagic.MotionMagicCruiseVelocity = -speed * MAX_SHOOTER_RPS / MAX_SHOOTER_RPS;
-          leftConfig.MotionMagic.MotionMagicAcceleration = 160;
+          var ts = speed * MAX_SHOOTER_RPS / MAX_SHOOTER_RPS;
+          leftConfig.MotionMagic.MotionMagicCruiseVelocity = -ts;
+          leftConfig.MotionMagic.MotionMagicAcceleration = -ts * 2;
           leftConfig.MotionMagic.MotionMagicJerk = 1600;
           leftShooter.getConfigurator().apply(leftConfig);
           leftShooter.set(leftConfig.MotionMagic.MotionMagicCruiseVelocity);
@@ -129,8 +129,8 @@ public class Shooter {
           //SmartDashboard.putNumber("Percentage Right", pr);
           //rightShooter.set(pr);
 
-          rightConfig.MotionMagic.MotionMagicCruiseVelocity = speed * MAX_SHOOTER_RPS / MAX_SHOOTER_RPS;
-          rightConfig.MotionMagic.MotionMagicAcceleration = 160;
+          rightConfig.MotionMagic.MotionMagicCruiseVelocity = ts;
+          rightConfig.MotionMagic.MotionMagicAcceleration = ts * 2;
           rightConfig.MotionMagic.MotionMagicJerk = 1600;
           rightShooter.getConfigurator().apply(rightConfig);
           rightShooter.set(rightConfig.MotionMagic.MotionMagicCruiseVelocity);
