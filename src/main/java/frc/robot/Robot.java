@@ -130,7 +130,7 @@ public class Robot extends TimedRobot {
     y = yAxis * Math.abs(yAxis);
     r = -rAxis * Math.abs(rAxis);
 
-    swerveDrive.drive(x, y, r, true);
+    swerveDrive.drive(x, y, r, true, true);
 
     if(xbox.getXButton()){
       swerveDrive.resetMaxVel();
