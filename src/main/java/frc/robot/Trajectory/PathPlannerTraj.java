@@ -68,9 +68,9 @@ public class PathPlannerTraj implements Trajectory {
         SmartDashboard.putNumber("Error R", er);
 
         swerveDrive.drive(
-            -vx / autoSpeed,// + 0.25 * ex,
-            -vy / autoSpeed,// - 0.25 * ey,
-            0 * er,
+            vx / autoSpeed + 0.25 * ex,
+            -vy / autoSpeed - 0.25 * ey,
+            state.headingAngularVelocityRps / autoSpeed + 0 * er,
             false,
             false
         );
