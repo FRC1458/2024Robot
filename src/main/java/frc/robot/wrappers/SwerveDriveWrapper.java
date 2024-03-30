@@ -24,7 +24,7 @@ public class SwerveDriveWrapper extends Wrapper{
     }
 
     public void drive(double x, double y, double r, boolean fieldOriented) {
-        if (isInitialized) swervedrive.drive(x, y, r, fieldOriented);
+        if (isInitialized) swervedrive.drive(x, y, r, fieldOriented ,true);
     }
     
     public void setEncoders() {

@@ -25,10 +25,10 @@ public class BasicAuto {
         stateMachine.addTimerState(MOVE, 2250, END, () -> {
             feeder.stop();
             shooter.stop();
-            swerveDrive.drive(0, 0.3, 0, true);
+            swerveDrive.drive(0, 0.3, 0, true, false);
         });
         stateMachine.addOffState(END, () -> {
-            swerveDrive.drive(0, 0, 0, true);
+            swerveDrive.drive(0, 0, 0, true, false);
         });
         return stateMachine;
     }

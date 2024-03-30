@@ -37,16 +37,25 @@ public class PathPlannerTraj implements Trajectory {
     @Override
     public boolean sample(long timestamp) {
 
-        if (timestamp / 1000.0 > trajectory.getTotalTimeSeconds()) return true;
+        if (timestamp / 1000.0 > trajectory.getTotalTimeSeconds()) {
+            swerveDrive.drive(0, 0, 0, true, false);
+            return true;
+        } 
         State state = trajectory.sample(timestamp / 1000.0);
 
         double rot = state.heading.getRotations();
         double vx = state.velocityMps * Math.sin(rot);
         double vy = state.velocityMps * Math.cos(rot);
         
+
         SmartDashboard.putNumber("Desired X", state.positionMeters.getY());
         SmartDashboard.putNumber("Desired Y", state.positionMeters.getX());
         SmartDashboard.putNumber("Desired R", state.targetHolonomicRotation.getRotations());
+
+        SmartDashboard.putNumber("D. X", vx);
+        SmartDashboard.putNumber("D. Y", vy);
+
+        
 
         double ex = state.positionMeters.getY() - swerveDrive.getPose().getX();
         double ey = state.positionMeters.getX() - swerveDrive.getPose().getY();
@@ -57,10 +66,11 @@ public class PathPlannerTraj implements Trajectory {
         SmartDashboard.putNumber("Error R", er);
 
         swerveDrive.drive(
-            -vx / autoSpeed - 0.05 * ex,
-            -vy / autoSpeed - 0.05 * ey,
-            -0.25 * er,
-            true
+            -vx / autoSpeed,// + 0.25 * ex,
+            -vy / autoSpeed,// - 0.25 * ey,
+            0 * er,
+            false,
+            false
         );
 
         return false;

@@ -77,7 +77,7 @@ public class SwerveDrive {
 
     }
 
-    public void drive(double x, double y, double r, boolean fieldOriented) {
+    public void drive(double x, double y, double r, boolean fieldOriented, boolean clip) {
 
         SmartDashboard.putNumber("Gyro Angle", navX.getAngle());
 
@@ -111,10 +111,10 @@ public class SwerveDrive {
 
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
 
-        frontLeft.drive(states[0].speedMetersPerSecond, states[0].angle.getDegrees());
-        frontRight.drive(states[1].speedMetersPerSecond, states[1].angle.getDegrees());
-        backLeft.drive(states[2].speedMetersPerSecond, states[2].angle.getDegrees());
-        backRight.drive(states[3].speedMetersPerSecond, states[3].angle.getDegrees());
+        frontLeft.drive(states[0].speedMetersPerSecond, states[0].angle.getDegrees(), clip);
+        frontRight.drive(states[1].speedMetersPerSecond, states[1].angle.getDegrees(), clip);
+        backLeft.drive(states[2].speedMetersPerSecond, states[2].angle.getDegrees(), clip);
+        backRight.drive(states[3].speedMetersPerSecond, states[3].angle.getDegrees(), clip);
 
         double absVelocity = Math.abs(frontLeft.getVelocity());
         if(absVelocity > maxVelocity){

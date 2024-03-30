@@ -44,7 +44,7 @@ public class WPITraj implements Trajectory {
         SmartDashboard.putNumber("Desired X", state.poseMeters.getY());
         SmartDashboard.putNumber("Desired Y", state.poseMeters.getX());
         SmartDashboard.putNumber("Desired R", state.poseMeters.getRotation().getRotations());
-        swerveDrive.drive(-vx / autoSpeed, -vy / autoSpeed, 0, true);
+        swerveDrive.drive(-vx / autoSpeed, -vy / autoSpeed, 0, true, false);
         return false;
     }
 }
