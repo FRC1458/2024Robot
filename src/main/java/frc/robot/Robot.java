@@ -157,7 +157,7 @@ public class Robot extends TimedRobot {
 
     swerveDrive.resetNavX();
     swerveDrive.setEncoders();
-    trajectory = new PathPlannerTraj("Test2M", swerveDrive);
+    trajectory = new PathPlannerTraj("Diag", swerveDrive);
     timer.reset();
 
   }

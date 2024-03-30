@@ -43,19 +43,21 @@ public class PathPlannerTraj implements Trajectory {
         } 
         State state = trajectory.sample(timestamp / 1000.0);
 
-        double rot = state.heading.getRotations();
+        double rot = state.heading.getRadians();
         double vx = state.velocityMps * Math.sin(rot);
         double vy = state.velocityMps * Math.cos(rot);
-        
 
+        SmartDashboard.putNumber("Velocity", state.velocityMps);
+        SmartDashboard.putNumber("Heading", state.heading.getDegrees());
+        
         SmartDashboard.putNumber("Desired X", state.positionMeters.getY());
         SmartDashboard.putNumber("Desired Y", state.positionMeters.getX());
         SmartDashboard.putNumber("Desired R", state.targetHolonomicRotation.getRotations());
 
-        SmartDashboard.putNumber("D. X", vx);
-        SmartDashboard.putNumber("D. Y", vy);
+        SmartDashboard.putNumber("Desired VX", vx);
+        SmartDashboard.putNumber("Desired VY", vy);
 
-        
+    
 
         double ex = state.positionMeters.getY() - swerveDrive.getPose().getX();
         double ey = state.positionMeters.getX() - swerveDrive.getPose().getY();

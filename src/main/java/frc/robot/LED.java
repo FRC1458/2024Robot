@@ -14,8 +14,8 @@ public class LED {
         led = new AddressableLED(1);
         ledBuffer = new AddressableLEDBuffer(ledLength);
         count = 100; //arbritrary positive number
-        led.setData(ledBuffer);
         led.setLength(ledBuffer.getLength());
+        led.setData(ledBuffer);
         led.start();
     }
 
