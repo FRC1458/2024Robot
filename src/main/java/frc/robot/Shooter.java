@@ -169,7 +169,8 @@ public class Shooter {
     }
 
      public void shootSpeaker() {
-         setSpeed(0);
+        leftShooter.set(-shooterSpeedSpeaker);
+        rightShooter.set(shooterSpeedSpeaker);
      }
 
      public void shootAmp() {

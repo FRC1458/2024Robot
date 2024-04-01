@@ -2,28 +2,62 @@ package frc.robot.Trajectory;
 
 import static frc.robot.RobotConstants.autoSpeed;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.path.PathPlannerTrajectory.State;
 
-import edu.wpi.first.math.controller.HolonomicDriveController;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.swervedrive.SwerveDrive;
 
 public class PathPlannerTraj implements Trajectory {
 
     private final SwerveDrive swerveDrive;
+    private final List<TimedEvent> timedEvents;
     private final PathPlannerTrajectory trajectory;
+
+    @FunctionalInterface
+    public static interface TimedEvent {
+        public boolean attemptExecution(double time);
+    }
+
+    public static class WPICommandEvent implements TimedEvent {
+
+        private final Command command;
+        private final double executionTime;
+
+        public WPICommandEvent(double executionTime, Command command) {
+            this.command = command;
+            this.executionTime = executionTime;
+        }
+
+        @Override
+        public boolean attemptExecution(double time) {
+            if (time > executionTime) {
+                if (!command.isScheduled())
+                    command.schedule();
+                command.execute();
+                return command.isFinished();
+            }
+            return false;
+        }
+        
+    }
 
     public PathPlannerTraj(String name, SwerveDrive swerve) {
 
         swerveDrive = swerve;
+        timedEvents = new ArrayList<>();
         trajectory = PathPlannerPath.fromPathFile(name).getTrajectory(new ChassisSpeeds(), swerve.navxAngle());
+
+        trajectory.getEventCommands().forEach((Pair<Double, Command> x) -> timedEvents.add(new WPICommandEvent(x.getFirst(), x.getSecond())));
+        
         swerveDrive.resetOdometry(
             new Pose2d(
                 trajectory.getInitialTargetHolonomicPose().getY(),
@@ -37,11 +71,12 @@ public class PathPlannerTraj implements Trajectory {
     @Override
     public boolean sample(long timestamp) {
 
-        if (timestamp / 1000.0 > trajectory.getTotalTimeSeconds()) {
+        double time = timestamp / 1000.0;
+        if (time > trajectory.getTotalTimeSeconds()) {
             swerveDrive.drive(0, 0, 0, true, false);
             return true;
-        } 
-        State state = trajectory.sample(timestamp / 1000.0);
+        }
+        State state = trajectory.sample(time);
 
         double rot = state.heading.getRadians();
         double vx = state.velocityMps * Math.sin(rot);
@@ -74,6 +109,10 @@ public class PathPlannerTraj implements Trajectory {
             false,
             false
         );
+
+        for (int i = timedEvents.size() - 1; i >= 0; i--)
+            if (timedEvents.get(i).attemptExecution(time))
+                timedEvents.remove(i);
 
         return false;
     }

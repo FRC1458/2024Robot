@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Trajectory.PathPlannerTraj;
 import frc.robot.Trajectory.Trajectory;
 import frc.robot.Trajectory.WPITraj;
@@ -148,6 +150,10 @@ public class Robot extends TimedRobot {
     }
   }
 
+  public static boolean noteDetected() {
+    return !irBreak.get();
+  }
+
   @Override
   public void autonomousInit() {
     // swerveDrive.resetNavX();
@@ -155,9 +161,19 @@ public class Robot extends TimedRobot {
     // auto = BasicAuto.getStateMachine(feeder, shooter, swerveDrive);
     // auto.reset();
 
+    NamedCommands.registerCommand(
+      "Intake",
+      Commands
+        .runOnce(intake::slurp)
+        .andThen(feeder::assist)
+        .until(Robot::noteDetected)
+        .andThen(intake::stop)
+        .andThen(feeder::stop)
+    );
+
     swerveDrive.resetNavX();
     swerveDrive.setEncoders();
-    trajectory = new PathPlannerTraj("Diag", swerveDrive);
+    trajectory = new PathPlannerTraj("Intake", swerveDrive);
     timer.reset();
 
   }
@@ -166,7 +182,7 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     // auto.run();
     
-    ifs.update();
+    //ifs.update();
     timer.start();
     SmartDashboard.putBoolean("Auto Done", trajectory.sample((long) (1000*timer.get())));
 
