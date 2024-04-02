@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.fasterxml.jackson.core.sym.Name1;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -37,7 +38,7 @@ public class Robot extends TimedRobot {
   private final IFS ifs;
 
   public static DigitalInput irBreak;
-  int count;
+  long time;
   Timer timer = new Timer();
 
   SwerveDrive swerveDrive;
@@ -60,7 +61,7 @@ public class Robot extends TimedRobot {
   public Robot() {
     super(0.02);
     xbox = new XboxController(0);
-    count = 0;
+    time = System.currentTimeMillis();
 
     navX = new AHRS(SPI.Port.kMXP);
     swerveDrive = new SwerveDrive(navX);
@@ -161,6 +162,7 @@ public class Robot extends TimedRobot {
     // auto = BasicAuto.getStateMachine(feeder, shooter, swerveDrive);
     // auto.reset();
 
+
     NamedCommands.registerCommand(
       "Intake",
       Commands
@@ -169,12 +171,16 @@ public class Robot extends TimedRobot {
         .until(Robot::noteDetected)
         .andThen(intake::stop)
         .andThen(feeder::stop)
+        .andThen(shooter::shootSpeaker)
     );
 
     swerveDrive.resetNavX();
     swerveDrive.setEncoders();
     trajectory = new PathPlannerTraj("Intake", swerveDrive);
     timer.reset();
+
+
+    time = System.currentTimeMillis() + 500;
 
   }
 
@@ -183,9 +189,12 @@ public class Robot extends TimedRobot {
     // auto.run();
     
     //ifs.update();
-    timer.start();
-    SmartDashboard.putBoolean("Auto Done", trajectory.sample((long) (1000*timer.get())));
-
+    if(time < System.currentTimeMillis()) {
+      timer.start();
+      NamedCommands.getCommand("Intake");
+      SmartDashboard.putBoolean("Auto Done", trajectory.sample((long) (1000*timer.get())));
+    }
+    
     lights.autoLights();
 
   }

@@ -20,13 +20,6 @@ public class LED {
     }
 
     public void autoLights() {
-        for(int i = 18; i < 120;i++) {
-            ledBuffer.setRGB(i, 255 , 0, 0);
-        }
-        led.setData(ledBuffer);
-    }
-
-    public void teleopLights() {
         for(int i = ledStart; i < 53; i++) {
             ledBuffer.setHSV(i, (53 + count - i) % 180 , 255, 255);
           }
@@ -35,7 +28,13 @@ public class LED {
           }
           count++;
           led.setData(ledBuffer);
-          
+    }
+
+    public void teleopLights() {
+        for(int i = 18; i < 120;i++) {
+            ledBuffer.setRGB(i, 255 , 0, 0);
+        }
+        led.setData(ledBuffer);  
     }
 
     public void disabledLights() {
