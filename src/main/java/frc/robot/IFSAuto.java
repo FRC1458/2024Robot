@@ -76,26 +76,25 @@ public class IFSAuto implements IFS {
     private void updateIntake() {
         if (xbox.getAButtonPressed()) {
             intakeActive = !intakeActive;
-            if (intakeActive && Robot.irBreak.get()) {
-                intake.slurp();
-                feeder.assist();
-            } else {
-                intake.stop();
-                feeder.stop();
-                intakeActive = false;
-            }
-            feederAssist.start();
-            feederAssist.reset();
-        } else if (!feederAssist.hasElapsed(0.1) && feederAssist.hasElapsed(0.00000001)) {
-            //feeder.assist();
-            //intake.slurp();
-        } else if (xbox.getYButton()) {
+        }
+        if (intakeActive && Robot.irBreak.get()) {
+            intake.slurp();
+            feeder.assist();
+        }
+        else if (!Robot.irBreak.get()) {
+            intake.stop();
+            feeder.stop();
+            intakeActive = false;
+        }
+        else if (xbox.getYButton()) {
             intake.spit();
             feeder.reverse();
-        } else {
+        }
+        else {
             intake.stop();
             feeder.stop();
         }
+
     }
   
 }
