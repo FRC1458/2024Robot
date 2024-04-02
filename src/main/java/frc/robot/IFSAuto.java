@@ -81,14 +81,14 @@ public class IFSAuto implements IFS {
             intake.slurp();
             feeder.assist();
         }
+        else if (xbox.getYButton()) {
+            intake.spit();
+            feeder.reverse();
+        }
         else if (!Robot.irBreak.get()) {
             intake.stop();
             feeder.stop();
             intakeActive = false;
-        }
-        else if (xbox.getYButton()) {
-            intake.spit();
-            feeder.reverse();
         }
         else {
             intake.stop();

@@ -73,7 +73,7 @@ public class PathPlannerTraj implements Trajectory {
 
         double time = timestamp / 1000.0;
         if (time > trajectory.getTotalTimeSeconds()) {
-            swerveDrive.drive(0, 0, 0, true, false);
+            swerveDrive.drive(0, 0, 0, false, false);
             return true;
         }
         State state = trajectory.sample(time);
@@ -103,8 +103,8 @@ public class PathPlannerTraj implements Trajectory {
         SmartDashboard.putNumber("Error R", er);
 
         swerveDrive.drive(
-            vx / autoSpeed + 0.25 * ex,
-            -vy / autoSpeed - 0.25 * ey,
+            vx / autoSpeed + 0.25 * (ex * Math.signum(vx) * -1),
+            -vy / autoSpeed - 0.25 * (ey * Math.signum(vy)),
             state.headingAngularVelocityRps / autoSpeed + 0 * er,
             false,
             false

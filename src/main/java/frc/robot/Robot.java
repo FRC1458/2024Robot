@@ -208,7 +208,7 @@ public class Robot extends TimedRobot {
     //ifs.update();
     if(time < System.currentTimeMillis()) {
       timer.start();
-      NamedCommands.getCommand("Intake");
+      //NamedCommands.getCommand("Intake");
       SmartDashboard.putBoolean("Auto Done", trajectory.sample((long) (1000*timer.get())));
     }
     

@@ -16,11 +16,27 @@
     },
     {
       "anchor": {
-        "x": 2.48,
+        "x": 3.4,
         "y": 5.551187918118234
       },
       "prevControl": {
-        "x": 2.36,
+        "x": 3.1705893033297694,
+        "y": 5.551187918118234
+      },
+      "nextControl": {
+        "x": 3.6294106966702304,
+        "y": 5.551187918118234
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.4,
+        "y": 5.551187918118234
+      },
+      "prevControl": {
+        "x": 1.2799999999999998,
         "y": 5.551187918118234
       },
       "nextControl": null,
@@ -32,8 +48,8 @@
   "constraintZones": [
     {
       "name": "Generic",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 0.0,
+      "maxWaypointRelativePos": 2.0,
       "constraints": {
         "maxVelocity": 5.0,
         "maxAcceleration": 2.5,
@@ -42,25 +58,7 @@
       }
     }
   ],
-  "eventMarkers": [
-    {
-      "name": "Intake",
-      "waypointRelativePos": 0.0,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Intake"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 10.0,
     "maxAcceleration": 5.0,

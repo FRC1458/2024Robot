@@ -27,7 +27,6 @@ public class Shooter {
    private final PID leftPID;
    
      public Shooter() {
-          SmartDashboard.putNumber("amp speed", 0.14);
           rightShooter = new TalonFX(rightShooterMotorID);
           leftShooter = new TalonFX(leftShooterMotorID);
           rightConfig = new TalonFXConfiguration();
@@ -162,12 +161,12 @@ public class Shooter {
     }
 
      public void shootSpeaker() {
+        
         setSpeed(shooterSpeedSpeaker);
      }
 
      public void shootAmp() {
-
-         setSpeed(SmartDashboard.getNumber("amp speed", 0.14));
+         setSpeed(0.14);
      }
 
      public void updatePID() {
