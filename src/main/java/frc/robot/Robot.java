@@ -167,12 +167,29 @@ public class Robot extends TimedRobot {
       "Intake",
       Commands
         .runOnce(intake::slurp)
-        .andThen(feeder::assist)
+        .andThen(feeder::feed)
+        .andThen(shooter::stop)
         .until(Robot::noteDetected)
         .andThen(intake::stop)
         .andThen(feeder::stop)
-        .andThen(shooter::shootSpeaker)
     );
+
+    NamedCommands.registerCommand(
+    "SpinUp",
+      Commands
+      .runOnce(shooter::shootSpeaker)
+    );
+
+    NamedCommands.registerCommand(
+    "Shoot",
+    Commands
+    .runOnce(intake::assist)
+    .andThen(feeder::assist)
+    );
+
+    
+
+
 
     swerveDrive.resetNavX();
     swerveDrive.setEncoders();
