@@ -12,6 +12,8 @@ public class IFSAuto implements IFS {
     private final Intake intake;
     private final Timer feederAssist = new Timer();
 
+    private boolean intakeActive;
+
     public enum ShootState {SPIN_UP, SHOOT}
 
     private final XboxController xbox;
@@ -27,7 +29,7 @@ public class IFSAuto implements IFS {
 
         initStateMachines();
 
-
+        intakeActive = false;
     }
 
     public void initStateMachines() {
@@ -40,7 +42,7 @@ public class IFSAuto implements IFS {
         ampMachine.addTimerState(SPIN_UP, 1500, SHOOT, shooter::shootAmp);
         ampMachine.addOffState(SHOOT, () -> {
             shooter.shootAmp();
-            shoot();
+            shootAmp();
         });
     }
 
@@ -66,14 +68,21 @@ public class IFSAuto implements IFS {
         intake.slurp();
     }
 
+    private void shootAmp() {
+        feeder.feedSlow();
+        intake.slurp();
+    }
+
     private void updateIntake() {
-        if (xbox.getAButton()) {
-            if (Robot.irBreak.get()) {
+        if (xbox.getAButtonPressed()) {
+            intakeActive = !intakeActive;
+            if (intakeActive && Robot.irBreak.get()) {
                 intake.slurp();
                 feeder.assist();
             } else {
                 intake.stop();
                 feeder.stop();
+                intakeActive = false;
             }
             feederAssist.start();
             feederAssist.reset();
