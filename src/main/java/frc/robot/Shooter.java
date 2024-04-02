@@ -4,6 +4,7 @@ import static com.ctre.phoenix6.signals.NeutralModeValue.Coast;
 import static frc.robot.RobotConstants.*;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.*;
 
@@ -32,27 +33,15 @@ public class Shooter {
           rightConfig = new TalonFXConfiguration();
           leftConfig = new TalonFXConfiguration();
 
-          rightConfig.Slot0.kS = 0.25; // Add 0.25 V output to overcome static friction
-          rightConfig.Slot0.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-          rightConfig.Slot0.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-          rightConfig.Slot0.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
-          rightConfig.Slot0.kI = 0; // no output for integrated error
-          rightConfig.Slot0.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
-          rightConfig.MotionMagic.MotionMagicCruiseVelocity = 0; //80;
-          rightConfig.MotionMagic.MotionMagicAcceleration = 160;
-          rightConfig.MotionMagic.MotionMagicJerk = 1600;
-          rightShooter.getConfigurator().apply(rightConfig);
-          
-          leftConfig.Slot0.kS = 0.25; // Add 0.25 V output to overcome static friction
-          leftConfig.Slot0.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-          leftConfig.Slot0.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-          leftConfig.Slot0.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
-          leftConfig.Slot0.kI = 0; // no output for integrated error
-          leftConfig.Slot0.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
-          leftConfig.MotionMagic.MotionMagicCruiseVelocity = 0; //80;
-          leftConfig.MotionMagic.MotionMagicAcceleration = 160;
-          leftConfig.MotionMagic.MotionMagicJerk = 1600;
-          leftShooter.getConfigurator().apply(leftConfig);
+          Slot0Configs slot0configs = new Slot0Configs();
+          slot0configs.kS = 0.01;
+          slot0configs.kV = 0.11;
+          slot0configs.kP = 0.1;
+          slot0configs.kI = 0;
+          slot0configs.kD = 0;
+
+          rightShooter.getConfigurator().apply(slot0configs);
+          leftShooter.getConfigurator().apply(slot0configs);
 
           pivot = new Pivot();
 
@@ -111,30 +100,34 @@ public class Shooter {
      }
 
      private void setSpeed(double speed) {
-          SmartDashboard.putNumber("Left Shooter RPS", speed * MAX_SHOOTER_RPS / MAX_SHOOTER_RPS);
-          SmartDashboard.putNumber("Left Shooter RPS", speed * MAX_SHOOTER_RPS / MAX_SHOOTER_RPS);
-         updatePID();
+          //SmartDashboard.putNumber("Left Shooter RPS", speed * MAX_SHOOTER_RPS / MAX_SHOOTER_RPS);
+          //SmartDashboard.putNumber("Left Shooter RPS", speed * MAX_SHOOTER_RPS / MAX_SHOOTER_RPS);
+         //updatePID();
 
           //double pl = leftPID.update(leftShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPS) / MAX_SHOOTER_RPS;
           //SmartDashboard.putNumber("Percentage Left", pl);
           //leftShooter.set(-pl);
-          var ts = speed * MAX_SHOOTER_RPS / MAX_SHOOTER_RPS;
-          leftConfig.MotionMagic.MotionMagicCruiseVelocity = -ts;
-          leftConfig.MotionMagic.MotionMagicAcceleration = -ts * 2;
-          leftConfig.MotionMagic.MotionMagicJerk = 1600;
-          leftShooter.getConfigurator().apply(leftConfig);
-          leftShooter.set(leftConfig.MotionMagic.MotionMagicCruiseVelocity);
+          //var ts = speed * MAX_SHOOTER_RPS / MAX_SHOOTER_RPS;
+          //leftConfig.MotionMagic.MotionMagicCruiseVelocity = -ts;
+          //leftConfig.MotionMagic.MotionMagicAcceleration = -ts * 2;
+          //leftConfig.MotionMagic.MotionMagicJerk = 1600;
+          //leftShooter.getConfigurator().apply(leftConfig);
+          //leftShooter.set(leftConfig.MotionMagic.MotionMagicCruiseVelocity);
 
           //double pr = rightPID.update(rightShooter.getVelocity().getValueAsDouble(), speed * MAX_SHOOTER_RPS) / MAX_SHOOTER_RPS;
           //SmartDashboard.putNumber("Percentage Right", pr);
           //rightShooter.set(pr);
 
-          rightConfig.MotionMagic.MotionMagicCruiseVelocity = ts;
-          rightConfig.MotionMagic.MotionMagicAcceleration = ts * 2;
-          rightConfig.MotionMagic.MotionMagicJerk = 1600;
-          rightShooter.getConfigurator().apply(rightConfig);
-          rightShooter.set(rightConfig.MotionMagic.MotionMagicCruiseVelocity);
-
+          //rightConfig.MotionMagic.MotionMagicCruiseVelocity = ts;
+          //rightConfig.MotionMagic.MotionMagicAcceleration = ts * 2;
+          //rightConfig.MotionMagic.MotionMagicJerk = 1600;
+          //rightShooter.getConfigurator().apply(rightConfig);
+          //rightShooter.set(rightConfig.MotionMagic.MotionMagicCruiseVelocity);
+         double rps = speed * MAX_SHOOTER_RPS;
+         rightShooter.setControl(new VelocityVoltage(0).withSlot(0).withVelocity(-rps).withFeedForward(0));
+         leftShooter.setControl(new VelocityVoltage(0).withSlot(0).withVelocity(rps).withFeedForward(0));
+         SmartDashboard.putNumber("left shooter rps", leftShooter.getRotorVelocity().getValue());
+         SmartDashboard.putNumber("right shooter rps", rightShooter.getRotorVelocity().getValue());
      }
 
      private boolean pivotTo(double desiredPosition) {
@@ -169,12 +162,12 @@ public class Shooter {
     }
 
      public void shootSpeaker() {
-        leftShooter.set(-shooterSpeedSpeaker);
-        rightShooter.set(shooterSpeedSpeaker);
+        setSpeed(shooterSpeedSpeaker);
      }
 
      public void shootAmp() {
-         setSpeed(shooterSpeedAmp);
+
+         setSpeed(SmartDashboard.getNumber("amp speed", 0.16));
      }
 
      public void updatePID() {
