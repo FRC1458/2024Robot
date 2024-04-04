@@ -33,13 +33,15 @@ import static frc.robot.RobotConstants.*;
 
 public class Robot extends TimedRobot {
 
-  private final XboxController xbox;
+  private final XboxController xbox1;
+    private final XboxController xbox2;
 
   private final IFS ifs;
 
   public static DigitalInput irBreak;
   long time;
-  Timer timer = new Timer();
+  Timer timer1 = new Timer();
+  Timer timer2 = new Timer();
 
   SwerveDrive swerveDrive;
   Pose2d robotPosition;
@@ -53,14 +55,17 @@ public class Robot extends TimedRobot {
   private final AHRS navX;
   StateMachine<BasicAuto.AutoStates> auto;
 
-  Trajectory trajectory;
+  Trajectory trajectory1;
+  Trajectory trajectory2;
 
   private LED lights;
 
 
   public Robot() {
     super(0.02);
-    xbox = new XboxController(0);
+    xbox1 = new XboxController(0);
+    xbox2 = new XboxController(1);
+
     time = System.currentTimeMillis();
 
     navX = new AHRS(SPI.Port.kMXP);
@@ -70,7 +75,7 @@ public class Robot extends TimedRobot {
     shooter = new Shooter();
 
     //ifs = new IFSManual(intake, feeder, shooter, xbox);
-    ifs = new IFSAuto(intake, feeder, shooter, xbox);
+    ifs = new IFSAuto(intake, feeder, shooter, xbox1, xbox2);
 
     irBreak = new DigitalInput(5);
     lights = new LED();
@@ -114,9 +119,9 @@ public class Robot extends TimedRobot {
     double rAxis;
     double x,y,r;
 
-    xAxis = xbox.getLeftX();
-    yAxis = xbox.getLeftY();
-    rAxis = xbox.getRightX();
+    xAxis = xbox1.getLeftX();
+    yAxis = xbox1.getLeftY();
+    rAxis = xbox1.getRightX();
 
     //check acceleration for acceleration limiter? otherwise can delete next 4 lines
     SmartDashboard.putNumber("X Acceleration", navX.getWorldLinearAccelX());
@@ -124,30 +129,36 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Z Acceleration", navX.getWorldLinearAccelZ());
     SmartDashboard.putNumber("Total xy Acceleration", Math.sqrt(Math.pow(navX.getWorldLinearAccelX(), 2) + Math.pow(navX.getWorldLinearAccelY(), 2)));
 
-    if (xbox.getStartButton()) {
+    if (xbox1.getStartButton()) {
       swerveDrive.setEncoders();
       swerveDrive.resetNavX();
       navX.resetDisplacement();
     }
+
+
     x = -xAxis * Math.abs(xAxis);
     y = yAxis * Math.abs(yAxis);
     r = -rAxis * Math.abs(rAxis);
 
     swerveDrive.drive(x, y, r, true, true);
 
-    if(xbox.getXButton()){
+    if(xbox1.getXButton()){
       swerveDrive.resetMaxVel();
       shooter.stopPivot();
     }
 
     ifs.update();
     
-    if (irBreak.get()) {
-      lights.teleopLights();
+    if(ifs.isRampedUp()) {
+      lights.rampedUpLights();
+    }
+
+    else if (!irBreak.get()) {
+      lights.noteDetectedLights();
         
     }
     else{
-      lights.noteDetectedLights();
+      lights.teleopLights();
     }
   }
 
@@ -157,62 +168,17 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    // swerveDrive.resetNavX();
-    // swerveDrive.setEncoders();
-    // auto = BasicAuto.getStateMachine(feeder, shooter, swerveDrive);
-    // auto.reset();
-
-
-    NamedCommands.registerCommand(
-      "Intake",
-      Commands
-        .runOnce(intake::slurp)
-        .andThen(feeder::feed)
-        .andThen(shooter::stop)
-        .until(Robot::noteDetected)
-        .andThen(intake::stop)
-        .andThen(feeder::stop)
-    );
-
-    NamedCommands.registerCommand(
-    "SpinUp",
-      Commands
-      .runOnce(shooter::shootSpeaker)
-    );
-
-    NamedCommands.registerCommand(
-    "Shoot",
-    Commands
-    .runOnce(intake::assist)
-    .andThen(feeder::assist)
-    );
-
-    
-
-
-
+    lights.autoLights();
     swerveDrive.resetNavX();
     swerveDrive.setEncoders();
-    trajectory = new PathPlannerTraj("Intake", swerveDrive);
-    timer.reset();
-
-
-    time = System.currentTimeMillis() + 500;
-
+    auto = BasicAuto.getStateMachine(intake, feeder, shooter, swerveDrive);
+    auto.reset();
   }
 
   @Override
-  public void autonomousPeriodic() {
-    // auto.run();
+  public void autonomousPeriodic() {    
     
-    //ifs.update();
-    if(time < System.currentTimeMillis()) {
-      timer.start();
-      //NamedCommands.getCommand("Intake");
-      SmartDashboard.putBoolean("Auto Done", trajectory.sample((long) (1000*timer.get())));
-    }
-    
-    lights.autoLights();
+    auto.run();
 
   }
 

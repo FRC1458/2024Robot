@@ -10,24 +10,30 @@ public class IFSAuto implements IFS {
     private final Shooter shooter;
     private final Feeder feeder;
     private final Intake intake;
-    private final Timer feederAssist = new Timer();
+    
+    private Timer shooterTimer;
+    private boolean rampedUp;
 
     private boolean intakeActive;
 
     public enum ShootState {SPIN_UP, SHOOT}
 
-    private final XboxController xbox;
+    private final XboxController xbox1;
+    private final XboxController xbox2;
     private final StateMachine<ShootState> speakerMachine = new StateMachine<>(SPIN_UP);
     private final StateMachine<ShootState> ampMachine = new StateMachine<>(SPIN_UP);
 
-    public IFSAuto(Intake intake, Feeder feeder, Shooter shooter, XboxController xbox) {
+    public IFSAuto(Intake intake, Feeder feeder, Shooter shooter, XboxController xbox1, XboxController xbox2) {
 
         this.shooter = shooter;
         this.feeder = feeder;
         this.intake = intake;
-        this.xbox = xbox;
+        this.xbox1 = xbox1;
+        this.xbox2 = xbox2;
 
         initStateMachines();
+
+        shooterTimer = new Timer();
 
         intakeActive = false;
     }
@@ -39,7 +45,7 @@ public class IFSAuto implements IFS {
             shoot();
         });
 
-        ampMachine.addTimerState(SPIN_UP, 1500, SHOOT, shooter::shootAmp);
+        ampMachine.addTimerState(SPIN_UP, 1, SHOOT, shooter::shootAmp);
         ampMachine.addOffState(SHOOT, () -> {
             shooter.shootAmp();
             shootAmp();
@@ -54,13 +60,43 @@ public class IFSAuto implements IFS {
         updateShooter();
     }
 
-    public void updateShooter() {
-        if (xbox.getRightBumperPressed()) speakerMachine.reset();
-        else if (xbox.getLeftBumperPressed()) ampMachine.reset();
+    public boolean isRampedUp() {
+        return rampedUp;
+    }
 
-        if (xbox.getRightBumper()) speakerMachine.run();
-        else if (xbox.getLeftBumper()) ampMachine.run();
-        else shooter.stop();
+    public void updateShooter() {
+        
+
+
+        if (xbox1.getRightBumperPressed()) speakerMachine.reset();
+        else if (xbox1.getLeftBumperPressed()) ampMachine.reset();
+
+        if (xbox1.getRightBumper()){
+            if(rampedUp) {
+                shoot();
+            }
+            else{
+                speakerMachine.run();
+            }
+        }
+
+        else if (xbox1.getLeftBumper()){
+            ampMachine.run();
+        } 
+        
+        else if(xbox2.getAButton()) {
+            shooter.shootSpeaker();
+            shooterTimer.start();
+            if(shooterTimer.hasElapsed(1.5)) {
+                rampedUp = true;
+            }
+        }
+        
+        else {
+            shooterTimer.reset();
+            rampedUp = false;
+            shooter.stop();
+        }
     }
 
     private void shoot() {
@@ -74,14 +110,14 @@ public class IFSAuto implements IFS {
     }
 
     private void updateIntake() {
-        if (xbox.getAButtonPressed()) {
+        if (xbox1.getAButtonPressed()) {
             intakeActive = !intakeActive;
         }
         if (intakeActive && Robot.irBreak.get()) {
             intake.slurp();
             feeder.assist();
         }
-        else if (xbox.getYButton()) {
+        else if (xbox1.getYButton()) {
             intake.spit();
             feeder.reverse();
         }

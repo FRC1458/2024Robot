@@ -33,17 +33,6 @@ public class IFSManual implements IFS {
         else {
           intake.stop();
         }
-        
-        if(xbox.getPOV() == 0) {
-          shooter.moveUp();
-        }
-        else if(xbox.getPOV() == 180) {
-          shooter.moveDown();
-        }
-        else {
-          shooter.stopPivot();
-        }
-
           if(xbox.getLeftTriggerAxis() > 0.7){ //rev up shooter motors, to be changed
             shooter.shootSpeaker();
           }
@@ -67,6 +56,11 @@ public class IFSManual implements IFS {
             }
           }
           
+        }
+
+        @Override
+        public boolean isRampedUp(){
+          return false;
         }
 
 

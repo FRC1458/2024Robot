@@ -44,10 +44,16 @@ public class LED {
         led.setData(ledBuffer);
     }
 
-
     public void noteDetectedLights() {
         for(int i = 18; i < ledBuffer.getLength();i++) {
             ledBuffer.setRGB(i, 0 , 255, 0);
+        }
+        led.setData(ledBuffer);
+    }
+
+    public void rampedUpLights() {
+        for(int i = 18; i < ledBuffer.getLength();i++) {
+            ledBuffer.setRGB(i, 0 , 255, 255);
         }
         led.setData(ledBuffer);
     }
