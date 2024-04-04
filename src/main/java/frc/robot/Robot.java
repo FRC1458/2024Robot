@@ -40,8 +40,7 @@ public class Robot extends TimedRobot {
 
   public static DigitalInput irBreak;
   long time;
-  Timer timer1 = new Timer();
-  Timer timer2 = new Timer();
+  Timer timer = new Timer();
 
   SwerveDrive swerveDrive;
   Pose2d robotPosition;
@@ -171,6 +170,7 @@ public class Robot extends TimedRobot {
     lights.autoLights();
     swerveDrive.resetNavX();
     swerveDrive.setEncoders();
+    timer.reset();
     auto = BasicAuto.getStateMachine(intake, feeder, shooter, swerveDrive);
     auto.reset();
   }
