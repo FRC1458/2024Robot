@@ -47,4 +47,9 @@ public class WPITraj implements Trajectory {
         swerveDrive.drive(-vx / autoSpeed, -vy / autoSpeed, 0, true, false);
         return false;
     }
+
+    @Override
+    public boolean samplePosPID(long timestamp) {
+        return false;
+    }
 }

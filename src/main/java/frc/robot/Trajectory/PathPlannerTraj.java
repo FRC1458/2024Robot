@@ -103,7 +103,7 @@ public class PathPlannerTraj implements Trajectory {
         SmartDashboard.putNumber("Error R", er);
 
         swerveDrive.drive(
-            vx / autoSpeed + 0.25 * (ex * Math.signum(vx) * -1),
+            vx / autoSpeed - 0.25 * (ex * Math.signum(vx)),
             -vy / autoSpeed - 0.25 * (ey * Math.signum(vy)),
             state.headingAngularVelocityRps / autoSpeed + 0 * er,
             false,
@@ -116,5 +116,10 @@ public class PathPlannerTraj implements Trajectory {
 
         return false;
     }
-    
+
+    @Override
+    public boolean samplePosPID(long timestamp) {
+        return false;
+    }
+
 }
