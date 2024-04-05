@@ -44,7 +44,7 @@ public class IFSAuto implements IFS {
     }
 
     public void initStateMachines() {
-        speakerMachine.addTimerState(SPIN_UP, 1250, SHOOT, shooter::shootSpeaker);
+        speakerMachine.addTimerState(SPIN_UP, 500, SHOOT, shooter::shootSpeaker);
         speakerMachine.addOffState(SHOOT,  () -> {
             shooter.shootSpeaker();
             shoot();
@@ -88,7 +88,7 @@ public class IFSAuto implements IFS {
             shooter.stop();
         }
 
-        if(timer.hasElapsed(1)) {
+        if(timer.hasElapsed(.5)) {
             rampedUp = true;
         }
 

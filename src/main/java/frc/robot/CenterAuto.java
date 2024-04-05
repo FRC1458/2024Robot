@@ -53,7 +53,7 @@ public class CenterAuto {
         stateMachine.addTimerState(ADJUST3, 100, MOVENOTE3, () -> {
             swerveDrive.drive(-0.04,0.04,0,true,false);
         });
-        stateMachine.addTimerState(MOVENOTE3, 2000, TURN3, () -> {
+        stateMachine.addTimerState(MOVENOTE3, 1750, TURN3, () -> {
             shooter.stop();
             intake.slurp();
             feeder.assist();
@@ -64,7 +64,7 @@ public class CenterAuto {
             feeder.assist();
             swerveDrive.drive(-0.04, -0.04, 0, true, false);
         });
-        stateMachine.addTimerState(MOVEBACK3, 1750, SHOOT3, () -> {
+        stateMachine.addTimerState(MOVEBACK3, 1500, SHOOT3, () -> {
             shooter.shootSpeaker();
             intake.slurp();
             feeder.assist();

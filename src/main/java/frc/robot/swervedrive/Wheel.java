@@ -134,7 +134,7 @@ public class Wheel {
             SmartDashboard.getNumber("Wheel Speed", 0)
         );
         SmartDashboard.putNumber("Wheel Applied Voltage", v);
-        speedMotor.set(clip && Math.abs(speed) < .03 ? 0 : -betterPID.update(velocity));
+        speedMotor.set(clip && Math.abs(speed) < .01 ? 0 : -betterPID.update(velocity));
 
     }
 
@@ -147,7 +147,7 @@ public class Wheel {
         relativeOffset = encoder.getPosition() - absolutePosition;
         //SmartDashboard.putNumber(wheelName + "set pos offset", relativeOffset);
         //SmartDashboard.putNumber(wheelName + " set pos after", encoder.getPosition() + relativeOffset);
-        this.drive(0.000000000001, 0.0, true);
+        this.drive(0.000000000001, 90, true);
     }
 
     public double getAbsoluteEncoderValue() {
