@@ -53,7 +53,8 @@ public class Robot extends TimedRobot {
 
 
   private final AHRS navX;
-  StateMachine<LongSideAuto.AutoStates> auto;
+  StateMachine<CenterAuto.AutoStates> auto;
+
 
   Trajectory trajectory1;
   Trajectory trajectory2;
@@ -173,13 +174,9 @@ public class Robot extends TimedRobot {
     swerveDrive.resetNavX();
     swerveDrive.setEncoders();
     timer.reset();
-<<<<<<< Updated upstream
-    auto = LongSideAuto.getStateMachine(intake, feeder, shooter, swerveDrive);
-=======
     //AmpAuto, CenterAuto, LongSideAuto
     //Color has to be "blue" or "red", case doesn't matter
     auto = CenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "blue");
->>>>>>> Stashed changes
     auto.reset();
   }
 
