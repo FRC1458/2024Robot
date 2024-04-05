@@ -9,7 +9,7 @@ public class CenterAuto {
 
     public enum AutoStates {RESET_ENCODERS, SPIN_UP, SHOOT1, ADJUST2, MOVENOTE2, TURN2, MOVEBACK2, SHOOT2, ADJUST3, MOVENOTE3, TURN3, MOVEBACK3, SHOOT3, ADJUST4, MOVENOTE4, TURN4, MOVEBACK4, SHOOT4, MOVE, END}
 
-    public static StateMachine<AutoStates> getStateMachine(Intake intake, Feeder feeder, Shooter shooter, SwerveDrive swerveDrive) {
+    public static StateMachine<AutoStates> getStateMachine(Intake intake, Feeder feeder, Shooter shooter, SwerveDrive swerveDrive, String color) {
         StateMachine<AutoStates> stateMachine = new StateMachine<>(RESET_ENCODERS);
         stateMachine.addBoolState(RESET_ENCODERS, SPIN_UP, () -> {
             swerveDrive.resetNavX();
