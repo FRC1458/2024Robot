@@ -34,7 +34,8 @@ import static frc.robot.RobotConstants.*;
 public class Robot extends TimedRobot {
 
   private final XboxController xbox1;
-    private final XboxController xbox2;
+  private final XboxController xbox2;
+
 
   private final IFS ifs;
 
@@ -64,7 +65,6 @@ public class Robot extends TimedRobot {
     super(0.02);
     xbox1 = new XboxController(0);
     xbox2 = new XboxController(1);
-
     time = System.currentTimeMillis();
 
     navX = new AHRS(SPI.Port.kMXP);
@@ -92,15 +92,15 @@ public class Robot extends TimedRobot {
     //check and make sure it works
     // SmartDashboard.putNumber("RobotXPos", robotPosition.getX());
     // SmartDashboard.putNumber("RobotYPos", robotPosition.getY());
-    /*
+    
     SmartDashboard.putNumber("Robot Angle", navX.getYaw());
     swerveDrive.displayPositions();
-    Pose2d pose = swerveDrive.updateOdometry();
-    SmartDashboard.putNumber("X", pose.getX());
-    SmartDashboard.putNumber("Y", pose.getY());
-    SmartDashboard.putNumber("R", pose.getRotation().getRotations());
+    //Pose2d pose = swerveDrive.updateOdometry();
+    //SmartDashboard.putNumber("X", pose.getX());
+    //SmartDashboard.putNumber("Y", pose.getY());
+    //SmartDashboard.putNumber("R", pose.getRotation().getRotations());
     SmartDashboard.putBoolean("IR break", irBreak.get());
-     */
+     
 
   }
 

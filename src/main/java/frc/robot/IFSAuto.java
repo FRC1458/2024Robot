@@ -20,6 +20,9 @@ public class IFSAuto implements IFS {
 
     private final XboxController xbox1;
     private final XboxController xbox2;
+
+    private Timer timer;
+
     private final StateMachine<ShootState> speakerMachine = new StateMachine<>(SPIN_UP);
     private final StateMachine<ShootState> ampMachine = new StateMachine<>(SPIN_UP);
 
@@ -30,6 +33,8 @@ public class IFSAuto implements IFS {
         this.intake = intake;
         this.xbox1 = xbox1;
         this.xbox2 = xbox2;
+        timer = new Timer();
+
 
         initStateMachines();
 
@@ -72,6 +77,21 @@ public class IFSAuto implements IFS {
         if (xbox1.getRightBumperPressed()) speakerMachine.reset();
         else if (xbox1.getLeftBumperPressed()) ampMachine.reset();
 
+        if(xbox2.getAButton()) {
+            timer.start();
+            shooter.shootSpeaker();
+
+        }
+        else{
+            timer.reset();
+            rampedUp = false;
+            shooter.stop();
+        }
+
+        if(timer.hasElapsed(1)) {
+            rampedUp = true;
+        }
+
         if (xbox1.getRightBumper()){
             if(rampedUp) {
                 shoot();
@@ -84,17 +104,12 @@ public class IFSAuto implements IFS {
         else if (xbox1.getLeftBumper()){
             ampMachine.run();
         } 
-        
         else if(xbox2.getAButton()) {
+            timer.start();
             shooter.shootSpeaker();
-            shooterTimer.start();
-            if(shooterTimer.hasElapsed(1)) {
-                rampedUp = true;
-            }
         }
-        
         else {
-            shooterTimer.reset();
+            timer.reset();
             rampedUp = false;
             shooter.stop();
         }
