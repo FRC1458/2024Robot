@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
 
 
   private final AHRS navX;
-  StateMachine<CenterAuto.AutoStates> auto;
+  StateMachine<LongSideAuto.AutoStates> auto;
 
   Trajectory trajectory1;
   Trajectory trajectory2;
@@ -173,7 +173,7 @@ public class Robot extends TimedRobot {
     swerveDrive.resetNavX();
     swerveDrive.setEncoders();
     timer.reset();
-    auto = CenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive);
+    auto = LongSideAuto.getStateMachine(intake, feeder, shooter, swerveDrive);
     auto.reset();
   }
 

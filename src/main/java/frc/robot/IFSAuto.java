@@ -44,7 +44,7 @@ public class IFSAuto implements IFS {
     }
 
     public void initStateMachines() {
-        speakerMachine.addTimerState(SPIN_UP, 500, SHOOT, shooter::shootSpeaker);
+        speakerMachine.addTimerState(SPIN_UP, 750, SHOOT, shooter::shootSpeaker);
         speakerMachine.addOffState(SHOOT,  () -> {
             shooter.shootSpeaker();
             shoot();
@@ -72,7 +72,9 @@ public class IFSAuto implements IFS {
 
     public void updateShooter() {
         
-
+        // Add delay check
+        // if (xbox2.getPOV() == 0) shooter.increaseAmpSpeed();
+        // else if (xbox2.getPOV() == 180) shooter.decreaseAmpSpeed();
 
         if (xbox1.getRightBumperPressed()) speakerMachine.reset();
         else if (xbox1.getLeftBumperPressed()) ampMachine.reset();
@@ -88,7 +90,7 @@ public class IFSAuto implements IFS {
             shooter.stop();
         }
 
-        if(timer.hasElapsed(.5)) {
+        if(timer.hasElapsed(.75)) {
             rampedUp = true;
         }
 

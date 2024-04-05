@@ -20,7 +20,7 @@ public class Shooter {
 
    private TalonFXConfiguration rightConfig, leftConfig;
 
-
+    private double ampSpeed = 0.14;
    
 
    private final PID rightPID;
@@ -57,7 +57,7 @@ public class Shooter {
           configurePID();
 
           SmartDashboard.putNumber("AMP Pivot Position", -4.3);
-          SmartDashboard.putNumber("AMP Shooter Speed", .14);
+          SmartDashboard.putNumber("AMP Shooter Speed", ampSpeed);
           SmartDashboard.putNumber("Pivot Test Angle", -4.3);
 
      }
@@ -165,8 +165,16 @@ public class Shooter {
         setSpeed(shooterSpeedSpeaker);
      }
 
+     public void increaseAmpSpeed() {
+        ampSpeed += 0.01;
+     }
+
+     public void decreaseAmpSpeed() {
+        ampSpeed -= 0.01;
+     }
+
      public void shootAmp() {
-         setSpeed(0.14);
+         setSpeed(ampSpeed);
      }
 
      public void updatePID() {
