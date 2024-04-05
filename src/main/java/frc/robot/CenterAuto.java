@@ -2,9 +2,9 @@ package frc.robot;
 
 import frc.robot.swervedrive.SwerveDrive;
 import frc.robot.util.StateMachine;
-import static frc.robot.BasicAuto.AutoStates.*;
+import static frc.robot.CenterAuto.AutoStates.*;
 
-public class BasicAuto {
+public class CenterAuto {
     
 
     public enum AutoStates {RESET_ENCODERS, SPIN_UP, SHOOT1, ADJUST2, MOVENOTE2, TURN2, MOVEBACK2, SHOOT2, ADJUST3, MOVENOTE3, TURN3, MOVEBACK3, SHOOT3, ADJUST4, MOVENOTE4, TURN4, MOVEBACK4, SHOOT4, MOVE, END}
@@ -23,7 +23,7 @@ public class BasicAuto {
             intake.slurp();
             return Robot.irBreak.get();
         });
-        stateMachine.addTimerState(ADJUST2, 200, MOVENOTE2, () -> {
+        stateMachine.addTimerState(ADJUST2, 100, MOVENOTE2, () -> {
             swerveDrive.drive(0,0.04,0,true,false);
         });
         stateMachine.addTimerState(MOVENOTE2, 1750, TURN2, () -> {
@@ -32,7 +32,7 @@ public class BasicAuto {
             feeder.assist();
             swerveDrive.drive(0, 0.4, 0, true, false);
         });
-        stateMachine.addTimerState(TURN2, 500, MOVEBACK2, () -> {
+        stateMachine.addTimerState(TURN2, 100, MOVEBACK2, () -> {
             intake.slurp();
             feeder.assist();
             swerveDrive.drive(0, -0.04, 0, true, false);
@@ -50,7 +50,7 @@ public class BasicAuto {
             intake.slurp();
             return Robot.irBreak.get();
         });
-        stateMachine.addTimerState(ADJUST3, 200, MOVENOTE3, () -> {
+        stateMachine.addTimerState(ADJUST3, 100, MOVENOTE3, () -> {
             swerveDrive.drive(-0.04,0.04,0,true,false);
         });
         stateMachine.addTimerState(MOVENOTE3, 2250, TURN3, () -> {
@@ -59,7 +59,7 @@ public class BasicAuto {
             feeder.assist();
             swerveDrive.drive(-0.3, 0.3, 0.2, true, false);
         });
-        stateMachine.addTimerState(TURN3, 500, MOVEBACK3, () -> {
+        stateMachine.addTimerState(TURN3, 100, MOVEBACK3, () -> {
             intake.slurp();
             feeder.assist();
             swerveDrive.drive(-0.04, -0.04, 0, true, false);
@@ -78,7 +78,7 @@ public class BasicAuto {
             intake.slurp();
             return Robot.irBreak.get();
         });
-        stateMachine.addTimerState(ADJUST4, 200, MOVENOTE4, () -> {
+        stateMachine.addTimerState(ADJUST4, 100, MOVENOTE4, () -> {
             swerveDrive.drive(0.04,0.05,0,true,false);
         });
         stateMachine.addTimerState(MOVENOTE4, 2250, TURN4, () -> {
@@ -87,7 +87,7 @@ public class BasicAuto {
             feeder.assist();
             swerveDrive.drive(0.3, 0.3, -0.2, true, false);
         });
-        stateMachine.addTimerState(TURN4, 500, MOVEBACK4, () -> {
+        stateMachine.addTimerState(TURN4, 100, MOVEBACK4, () -> {
             intake.slurp();
             feeder.assist();
             swerveDrive.drive(-0.04, -0.04, 0, true, false);

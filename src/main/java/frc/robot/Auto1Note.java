@@ -1,16 +1,16 @@
-/*
+
 package frc.robot;
 
 import frc.robot.swervedrive.SwerveDrive;
 import frc.robot.util.StateMachine;
-import static frc.robot.BasicAuto.AutoStates.*;
+import static frc.robot.Auto1Note.AutoStates.*;
 
 public class Auto1Note {
 
     public enum AutoStates {RESET_ENCODERS, SPIN_UP, PIVOT, SHOOT, MOVE, END}
 
     public static StateMachine<AutoStates> getStateMachine(Feeder feeder, Shooter shooter, SwerveDrive swerveDrive) {
-        StateMachine<AutoStates> stateMachine = new StateMachine<>(RESET_ENCODERS);
+        StateMachine<AutoStates> stateMachine = new StateMachine<AutoStates>(RESET_ENCODERS);
         stateMachine.addBoolState(RESET_ENCODERS, SPIN_UP, () -> {
             return true;
         });
@@ -32,12 +32,11 @@ public class Auto1Note {
             swerveDrive.drive(0, 0, 0, true, false);
         });
         return stateMachine;
-    }
 
     // Spin Up
     // Shoot
     // Move back
     // End
-
+    }
 }
-*/
+

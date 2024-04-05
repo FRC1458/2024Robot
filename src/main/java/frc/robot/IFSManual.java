@@ -63,5 +63,10 @@ public class IFSManual implements IFS {
           return false;
         }
 
+        @Override
+        public boolean isIntakeActive() {
+          return false;
+        }
+
 
 }
