@@ -18,13 +18,12 @@ public class AmpAuto {
             return true;
         });
         stateMachine.addTimerState(SPIN_UP, 750, SHOOT1, shooter::shootSpeaker);
-        stateMachine.addBoolState(SHOOT1, WAIT, () -> {
+        stateMachine.addTimerState(SHOOT1, 500, WAIT, () -> {
             shooter.shootSpeaker();
             feeder.feed();
             intake.slurp();
-            return Robot.irBreak.get();
         });
-        stateMachine.addTimerState(WAIT, 13500, MOVEOUT, () -> {
+        stateMachine.addTimerState(WAIT, 1300, MOVEOUT, () -> {
             swerveDrive.drive(0,0,0,true,false);
             shooter.stop();
             intake.stop();

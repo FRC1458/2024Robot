@@ -5,9 +5,9 @@ import frc.robot.util.StateMachine;
 import static frc.robot.LongSideAuto.AutoStates.*;
 
 public class LongSideAuto {
-    
 
-    public enum AutoStates {RESET_ENCODERS, SPIN_UP, SHOOT1, MOVEX, MOVEY, TURN2, MOVEBACKY, MOVEBACKX, SHOOT2, MOVE, END}
+
+    public enum AutoStates {RESET_ENCODERS, SPIN_UP, SHOOT1, MOVE1, MOVE2, LAUNCH1, ROTATE90, LAUNCHREST, END}
 
     public static StateMachine<AutoStates> getStateMachine(Intake intake, Feeder feeder, Shooter shooter, SwerveDrive swerveDrive) {
         StateMachine<AutoStates> stateMachine = new StateMachine<>(RESET_ENCODERS);
@@ -17,24 +17,24 @@ public class LongSideAuto {
             return true;
         });
         stateMachine.addTimerState(SPIN_UP, 750, SHOOT1, shooter::shootSpeaker);
-        stateMachine.addBoolState(SHOOT1, MOVEX, () -> {
+        stateMachine.addBoolState(SHOOT1, MOVE1, () -> {
             shooter.shootSpeaker();
             feeder.feed();
             intake.slurp();
             return Robot.irBreak.get();
         });
-        stateMachine.addTimerState(MOVEX, 1000, MOVEY, () -> {
+        stateMachine.addTimerState(MOVE1, 1000, MOVE2, () -> {
             shooter.stop();
-            intake.slurp();
-            feeder.assist();
-            swerveDrive.drive(0.3, 0, 0, true, false);
+            intake.stop();
+            feeder.stop();
+            swerveDrive.drive(0.4, 0, 0, true, false);
         });
         stateMachine.addTimerState(MOVEY, 4000, TURN2, () -> {
             intake.slurp();
             feeder.assist();
             swerveDrive.drive(0.1, 0.4, 0, true, false);
         });
-        
+
         stateMachine.addTimerState(TURN2, 100, MOVEBACKX, () -> {
             intake.slurp();
             feeder.assist();
@@ -51,9 +51,9 @@ public class LongSideAuto {
             intake.slurp();
             feeder.assist();
             swerveDrive.drive(-0.3, 0, 0, true, false);
-        });              
+        });
         stateMachine.addBoolState(SHOOT2, MOVE, () -> {
-            swerveDrive.drive(0,-0,0, true, false); 
+            swerveDrive.drive(0,-0,0, true, false);
             shooter.shootSpeaker();
             feeder.feed();
             intake.slurp();
@@ -68,7 +68,7 @@ public class LongSideAuto {
             shooter.stop();
             feeder.stop();
             intake.stop();
-            swerveDrive.drive(0,0,0, true, false); 
+            swerveDrive.drive(0,0,0, true, false);
         });
 
         return stateMachine;
