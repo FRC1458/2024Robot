@@ -92,6 +92,7 @@ public class Robot extends TimedRobot {
     //check and make sure it works
     // SmartDashboard.putNumber("RobotXPos", robotPosition.getX());
     // SmartDashboard.putNumber("RobotYPos", robotPosition.getY());
+    /*
     SmartDashboard.putNumber("Robot Angle", navX.getYaw());
     swerveDrive.displayPositions();
     Pose2d pose = swerveDrive.updateOdometry();
@@ -99,7 +100,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Y", pose.getY());
     SmartDashboard.putNumber("R", pose.getRotation().getRotations());
     SmartDashboard.putBoolean("IR break", irBreak.get());
-    
+     */
 
   }
 
@@ -190,7 +191,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-
+    /*
     xController = new PIDController(0, 0, 0);
     xController.setP(0.025);
     xController.setI(0.01);
@@ -211,19 +212,19 @@ public class Robot extends TimedRobot {
       yController,
       rController
     );
-
+    */
   }
 
 
   @Override
   public void testPeriodic() {
-
+ /*
     ChassisSpeeds speeds = follower.calculate(swerveDrive.getPose(), new State(), new Rotation2d());
     SmartDashboard.putNumber("VX", speeds.vxMetersPerSecond);
     SmartDashboard.putNumber("VY", speeds.vyMetersPerSecond);
     SmartDashboard.putNumber("W", speeds.omegaRadiansPerSecond);
     //swerveDrive.drive(-speeds.vxMetersPerSecond, -speeds.vyMetersPerSecond, -speeds.omegaRadiansPerSecond, true);
-
+  */
   }
 
   @Override
