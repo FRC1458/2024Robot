@@ -30,6 +30,13 @@ public class LED {
           led.setData(ledBuffer);
     }
 
+    public void intakeActiveLights() {
+        for(int i = 18; i < 120;i++) {
+            ledBuffer.setRGB(i, 255 , 255, 0);
+        }
+        led.setData(ledBuffer);  
+    }
+
     public void teleopLights() {
         for(int i = 18; i < 120;i++) {
             ledBuffer.setRGB(i, 255 , 0, 0);

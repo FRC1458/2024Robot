@@ -39,13 +39,13 @@ public class IFSAuto implements IFS {
     }
 
     public void initStateMachines() {
-        speakerMachine.addTimerState(SPIN_UP, 1500, SHOOT, shooter::shootSpeaker);
+        speakerMachine.addTimerState(SPIN_UP, 1250, SHOOT, shooter::shootSpeaker);
         speakerMachine.addOffState(SHOOT,  () -> {
             shooter.shootSpeaker();
             shoot();
         });
 
-        ampMachine.addTimerState(SPIN_UP, 1, SHOOT, shooter::shootAmp);
+        ampMachine.addTimerState(SPIN_UP, 50, SHOOT, shooter::shootAmp);
         ampMachine.addOffState(SHOOT, () -> {
             shooter.shootAmp();
             shootAmp();
@@ -60,6 +60,7 @@ public class IFSAuto implements IFS {
         updateShooter();
     }
 
+    @Override
     public boolean isRampedUp() {
         return rampedUp;
     }
@@ -87,7 +88,7 @@ public class IFSAuto implements IFS {
         else if(xbox2.getAButton()) {
             shooter.shootSpeaker();
             shooterTimer.start();
-            if(shooterTimer.hasElapsed(1.5)) {
+            if(shooterTimer.hasElapsed(1)) {
                 rampedUp = true;
             }
         }
@@ -110,8 +111,11 @@ public class IFSAuto implements IFS {
     }
 
     private void updateIntake() {
-        if (xbox1.getAButtonPressed()) {
-            intakeActive = !intakeActive;
+        if (xbox1.getAButton()) {
+            intakeActive = true;
+        }
+        else {
+            intakeActive = false;
         }
         if (intakeActive && Robot.irBreak.get()) {
             intake.slurp();
@@ -132,5 +136,9 @@ public class IFSAuto implements IFS {
         }
 
     }
-  
+    
+    @Override
+    public boolean isIntakeActive() {
+        return intakeActive;
+    }
 }

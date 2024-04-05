@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
 
 
   private final AHRS navX;
-  StateMachine<BasicAuto.AutoStates> auto;
+  StateMachine<CenterAuto.AutoStates> auto;
 
   Trajectory trajectory1;
   Trajectory trajectory2;
@@ -151,10 +151,11 @@ public class Robot extends TimedRobot {
     if(ifs.isRampedUp()) {
       lights.rampedUpLights();
     }
-
     else if (!irBreak.get()) {
       lights.noteDetectedLights();
-        
+    }
+    else if (ifs.isIntakeActive()) {
+      lights.intakeActiveLights();
     }
     else{
       lights.teleopLights();
@@ -171,7 +172,7 @@ public class Robot extends TimedRobot {
     swerveDrive.resetNavX();
     swerveDrive.setEncoders();
     timer.reset();
-    auto = BasicAuto.getStateMachine(intake, feeder, shooter, swerveDrive);
+    auto = CenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive);
     auto.reset();
   }
 
