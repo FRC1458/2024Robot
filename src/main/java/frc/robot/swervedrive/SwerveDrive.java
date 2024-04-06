@@ -261,4 +261,8 @@ public class SwerveDrive {
         backRight.goofyDrive();
     }
 
+    public void stop() {
+        drive(0, 0, 0, true, false);
+    }
+
 }

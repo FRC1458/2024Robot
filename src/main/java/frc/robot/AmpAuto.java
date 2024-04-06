@@ -23,19 +23,20 @@ public class AmpAuto {
             feeder.feed();
             intake.slurp();
         });
-        stateMachine.addTimerState(WAIT, 10000, MOVEOUT, () -> {
-            swerveDrive.drive(0,0,0,true,false);
+        stateMachine.addTimerState(WAIT, 12000, MOVEOUT, () -> {
+
+            swerveDrive.stop();
             shooter.stop();
             intake.stop();
             feeder.stop();
         });
         stateMachine.addTimerState(MOVEOUT, 1500, END, () -> {
-            if (color.equalsIgnoreCase("blue")) swerveDrive.drive(-0.4 * Math.cos(Math.toRadians(60)), 0.4 * Math.sin(Math.toRadians(60)), -0.3, true, false);
-            else if (color.equalsIgnoreCase("red")) swerveDrive.drive(0.4 * Math.cos(Math.toRadians(60)), 0.4 * Math.sin(Math.toRadians(60)), 0.3, true, false);
-            else swerveDrive.drive(Math.sqrt(0.5), Math.sqrt(0.5), 0, true, false);
+            if (color.equalsIgnoreCase("blue")) swerveDrive.drive(0.4, 0.4 * (Math.sqrt(3) / 3.0), -0.3, true, false);
+            else if (color.equalsIgnoreCase("red")) swerveDrive.drive(-0.4, 0.4 * (Math.sqrt(3) / 3.0), 0.3, true, false);
+            else swerveDrive.drive(0.4 * Math.sqrt(0.5), 0.4 * Math.sqrt(0.5), 0, true, false);
         });
         stateMachine.addOffState(END, () ->{
-            swerveDrive.drive(0,0,0, true, false);
+            swerveDrive.stop();
         });
 
         return stateMachine;

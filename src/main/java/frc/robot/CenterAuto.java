@@ -115,7 +115,7 @@ public class CenterAuto {
             shooter.stop();
             feeder.stop();
             intake.stop();
-            swerveDrive.drive(0,0,0, true, false); 
+            swerveDrive.stop();
         });
 
         return stateMachine;

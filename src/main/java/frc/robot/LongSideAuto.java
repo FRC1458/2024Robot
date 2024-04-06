@@ -8,8 +8,8 @@ public class LongSideAuto {
 
 
     public enum AutoStates {RESET_ENCODERS, SPIN_UP, SHOOT1, MOVE1, MOVE2, LAUNCH1, ROTATE90, LAUNCHREST, END}
-/*
-    public static StateMachine<AutoStates> getStateMachine(Intake intake, Feeder feeder, Shooter shooter, SwerveDrive swerveDrive) {
+
+    public static StateMachine<AutoStates> getStateMachine(Intake intake, Feeder feeder, Shooter shooter, SwerveDrive swerveDrive, String color) {
         StateMachine<AutoStates> stateMachine = new StateMachine<>(RESET_ENCODERS);
         stateMachine.addBoolState(RESET_ENCODERS, SPIN_UP, () -> {
             swerveDrive.resetNavX();
@@ -17,59 +17,63 @@ public class LongSideAuto {
             return true;
         });
         stateMachine.addTimerState(SPIN_UP, 750, SHOOT1, shooter::shootSpeaker);
-        stateMachine.addBoolState(SHOOT1, MOVE1, () -> {
+        stateMachine.addTimerState(SHOOT1, 250, MOVE1, () -> {
             shooter.shootSpeaker();
             feeder.feed();
             intake.slurp();
-            return Robot.irBreak.get();
         });
-        stateMachine.addTimerState(MOVE1, 1000, MOVE2, () -> {
+        stateMachine.addTimerState(MOVE1, 2000, MOVE2, () -> {
             shooter.stop();
             intake.stop();
             feeder.stop();
-            swerveDrive.drive(0.4, 0, 0, true, false);
+            if (color.equalsIgnoreCase("blue")) swerveDrive.drive(0.4, 0, -0.2, true, false);
+            else if (color.equalsIgnoreCase("red")) swerveDrive.drive(0.4, 0, 0.2, true, false);
+            else swerveDrive.drive(0.4, 0, 0, true, false);
         });
-        
-        stateMachine.addTimerState(MOVEY, 4000, TURN2, () -> {
+        stateMachine.addTimerState(MOVE2, 4000, LAUNCH1, () -> {
             intake.slurp();
             feeder.assist();
-            swerveDrive.drive(0.1, 0.4, 0, true, false);
+            if (color.equalsIgnoreCase("blue")) swerveDrive.drive(0.4 * Math.cos(Math.toRadians(60)), 0.4 * Math.sin(Math.toRadians(60)), 0, true, false);
+            else if (color.equalsIgnoreCase("red")) swerveDrive.drive(0.4 * Math.cos(Math.toRadians(60)), -0.4 * Math.cos(Math.toRadians(60)), 0, true, false);
+            else swerveDrive.drive(0.4, 0, 0, false, false);
         });
 
-        stateMachine.addTimerState(TURN2, 100, MOVEBACKX, () -> {
+        stateMachine.addTimerState(LAUNCH1, 250, ROTATE90, () -> {
             intake.slurp();
             feeder.assist();
-            swerveDrive.drive(-0.04, -0.04, 0, true, false);
+            shooter.shootAmp();
+            if (color.equalsIgnoreCase("blue")) swerveDrive.drive(-0.1 * Math.cos(Math.toRadians(60)), 0.1 * Math.sin(Math.toRadians(60)), 0, true, false);
+            else if (color.equalsIgnoreCase("red")) swerveDrive.drive(-0.1 * Math.cos(Math.toRadians(60)), -0.1 * Math.sin(Math.toRadians(60)), 0, true, false);
+            else swerveDrive.drive(-0.1, 0, 0, false, false);
         });
-        stateMachine.addTimerState(MOVEBACKX, 1500, MOVEBACKY, () -> {
-            shooter.shootSpeaker();
+        stateMachine.addTimerState(ROTATE90, 1500, LAUNCHREST, () -> {
+            shooter.stop();
+            intake.stop();
+            feeder.stop();
+            //TEST
+            if (color.equalsIgnoreCase("blue")) swerveDrive.turnToAngle(90, 0);
+            else if (color.equalsIgnoreCase("red")) swerveDrive.turnToAngle(90, 0);
+            else swerveDrive.stop();
+        });
+        stateMachine.addTimerState(LAUNCHREST, 4500, END, () -> {
+            shooter.shootAmp();
             intake.slurp();
             feeder.assist();
-            swerveDrive.drive(-0.1, -0.4, 0, true, false);
-        });
-        stateMachine.addTimerState(MOVEBACKY, 1500, SHOOT2, () -> {
-            shooter.shootSpeaker();
-            intake.slurp();
-            feeder.assist();
-            swerveDrive.drive(-0.3, 0, 0, true, false);
-        });
-        stateMachine.addBoolState(SHOOT2, MOVE, () -> {
-            swerveDrive.drive(0,-0,0, true, false);
-            shooter.shootSpeaker();
-            feeder.feed();
-            intake.slurp();
-            return Robot.irBreak.get();
+            if (color.equalsIgnoreCase("blue")) swerveDrive.drive(-0.3, 0, 0, false, false);
+            else if (color.equalsIgnoreCase("red")) swerveDrive.drive(0.3, 0, 0 ,false, false);
+            else {
+                intake.stop();
+                feeder.stop();
+                shooter.stop();
+            }
         });
 
-        stateMachine.addTimerState(MOVE, 1500, END, () -> {
-            swerveDrive.drive(0,0.4, 0, true, false);
-        });
 
         stateMachine.addOffState(END, () ->{
             shooter.stop();
             feeder.stop();
             intake.stop();
-            swerveDrive.drive(0,0,0, true, false);
+            swerveDrive.stop();
         });
 
         return stateMachine;
@@ -79,6 +83,6 @@ public class LongSideAuto {
     // Shoot
     // Move back
     // End
- */
+
 
 }
