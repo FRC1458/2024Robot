@@ -8,7 +8,7 @@ public class LongSideAuto {
 
 
     public enum AutoStates {RESET_ENCODERS, SPIN_UP, SHOOT1, MOVE1, MOVE2, LAUNCH1, ROTATE90, LAUNCHREST, END}
-
+/*
     public static StateMachine<AutoStates> getStateMachine(Intake intake, Feeder feeder, Shooter shooter, SwerveDrive swerveDrive) {
         StateMachine<AutoStates> stateMachine = new StateMachine<>(RESET_ENCODERS);
         stateMachine.addBoolState(RESET_ENCODERS, SPIN_UP, () -> {
@@ -29,6 +29,7 @@ public class LongSideAuto {
             feeder.stop();
             swerveDrive.drive(0.4, 0, 0, true, false);
         });
+        
         stateMachine.addTimerState(MOVEY, 4000, TURN2, () -> {
             intake.slurp();
             feeder.assist();
@@ -78,5 +79,6 @@ public class LongSideAuto {
     // Shoot
     // Move back
     // End
+ */
 
 }

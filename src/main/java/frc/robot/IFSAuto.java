@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.StateMachine;
 import static frc.robot.IFSAuto.ShootState.*;
 
@@ -50,7 +51,7 @@ public class IFSAuto implements IFS {
             shoot();
         });
 
-        ampMachine.addTimerState(SPIN_UP, 50, SHOOT, shooter::shootAmp);
+        ampMachine.addTimerState(SPIN_UP, 100, SHOOT, shooter::shootAmp);
         ampMachine.addOffState(SHOOT, () -> {
             shooter.shootAmp();
             shootAmp();
@@ -71,24 +72,9 @@ public class IFSAuto implements IFS {
     }
 
     public void updateShooter() {
-        
-        // Add delay check
-        // if (xbox2.getPOV() == 0) shooter.increaseAmpSpeed();
-        // else if (xbox2.getPOV() == 180) shooter.decreaseAmpSpeed();
 
         if (xbox1.getRightBumperPressed()) speakerMachine.reset();
         else if (xbox1.getLeftBumperPressed()) ampMachine.reset();
-
-        if(xbox2.getAButton()) {
-            timer.start();
-            shooter.shootSpeaker();
-
-        }
-        else{
-            timer.reset();
-            rampedUp = false;
-            shooter.stop();
-        }
 
         if(timer.hasElapsed(.75)) {
             rampedUp = true;
@@ -115,6 +101,14 @@ public class IFSAuto implements IFS {
             rampedUp = false;
             shooter.stop();
         }
+
+        if(xbox2.getYButtonPressed()) {
+            shooter.increaseAmpSpeed();
+        }
+        else if(xbox2.getXButtonPressed()) {
+            shooter.decreaseAmpSpeed();
+        }
+        SmartDashboard.putNumber("Adjusted AMP Shooter Speed", shooter.getAmpSpeed());
     }
 
     private void shoot() {

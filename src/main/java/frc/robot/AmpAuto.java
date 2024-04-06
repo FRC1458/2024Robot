@@ -23,7 +23,7 @@ public class AmpAuto {
             feeder.feed();
             intake.slurp();
         });
-        stateMachine.addTimerState(WAIT, 1300, MOVEOUT, () -> {
+        stateMachine.addTimerState(WAIT, 10000, MOVEOUT, () -> {
             swerveDrive.drive(0,0,0,true,false);
             shooter.stop();
             intake.stop();

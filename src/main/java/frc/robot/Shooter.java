@@ -186,4 +186,8 @@ public class Shooter {
          SmartDashboard.putNumber("Pivot Position", pivot.getPosition());
      }
 
+    public double getAmpSpeed() {
+        return ampSpeed;
+    }
+
 }

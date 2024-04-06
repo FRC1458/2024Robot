@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.AmpAuto.AutoStates;
 import frc.robot.Trajectory.PathPlannerTraj;
 import frc.robot.Trajectory.Trajectory;
 import frc.robot.Trajectory.WPITraj;
@@ -53,7 +54,7 @@ public class Robot extends TimedRobot {
 
 
   private final AHRS navX;
-  StateMachine<CenterAuto.AutoStates> auto;
+  StateMachine<AutoStates> auto;
 
 
   Trajectory trajectory1;
@@ -141,7 +142,7 @@ public class Robot extends TimedRobot {
     y = yAxis * Math.abs(yAxis);
     r = -rAxis * Math.abs(rAxis);
 
-    swerveDrive.drive(x, y, r, true, true);
+    swerveDrive.driveRaw(x, y, r, true, true);
 
     if(xbox1.getXButton()){
       swerveDrive.resetMaxVel();
@@ -176,7 +177,7 @@ public class Robot extends TimedRobot {
     timer.reset();
     //AmpAuto, CenterAuto, LongSideAuto
     //Color has to be "blue" or "red", case doesn't matter
-    auto = CenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "blue");
+    auto = AmpAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "blue");
     auto.reset();
   }
 

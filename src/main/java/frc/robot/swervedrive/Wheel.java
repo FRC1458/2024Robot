@@ -98,6 +98,46 @@ public class Wheel {
         betterPID.setiScaling(iScaling);
     }
 
+    public void driveRaw(double speed, double goalAngle, boolean clip) {
+        this.speed = speed;
+
+        double processVariable = encoder.getPosition() - relativeOffset;
+        double currentAngle = (processVariable * (360 / RobotConstants.swerveDriveGearRatio));
+        double diff = (currentAngle - goalAngle) % 360;
+
+        if (Math.abs(diff) > 180) {
+            diff = diff - 360 * Math.signum(diff);
+        }
+        if (Math.abs(diff) > 90) {
+            diff = diff - 180 * Math.signum(diff);
+            speed *= -1;
+        }
+
+        double realGoalRotations = (currentAngle - diff) * RobotConstants.swerveDriveGearRatio / 360 + relativeOffset;
+
+        //SmartDashboard.putNumber("Current Angle " + wheelName, currentAngle);
+        //SmartDashboard.putNumber("Goal Angle " + wheelName, goalAngle);
+        //SmartDashboard.putNumber("difference " + wheelName, diff);
+        //SmartDashboard.putNumber("SPEED " + wheelName + wheelName, speed);
+        //SmartDashboard.putNumber("Absolute Encoder Angle " + wheelName, (offset + getAbsoluteEncoderValue()) * (360 / RobotConstants.swerveDriveGearRatio));
+
+        if (speed != 0 || diagnostic) {
+            pidController.setReference(realGoalRotations, CANSparkMax.ControlType.kPosition);
+        }
+
+        betterPID.setTarget(RobotConstants.maxSwerveSpeed * speed); //3 casualties (1/25)
+        double velocity = driveEncoder.getVelocity();
+
+        DCMotor motor = DCMotor.getNEO(1);
+        double v = motor.getVoltage(
+            SmartDashboard.getNumber("Wheel Torque", 0),
+            SmartDashboard.getNumber("Wheel Speed", 0)
+        );
+        SmartDashboard.putNumber("Wheel Applied Voltage", v);
+        speedMotor.set(clip && Math.abs(speed) < .01 ? 0 : speed);
+        SmartDashboard.putNumber(wheelName + " max speed", Math.max(SmartDashboard.getNumber(wheelName + " max speed", 0), Math.abs(speedMotor.get())));
+    }
+
     public void drive(double speed, double goalAngle, boolean clip) {
         this.speed = speed;
 
@@ -135,7 +175,7 @@ public class Wheel {
         );
         SmartDashboard.putNumber("Wheel Applied Voltage", v);
         speedMotor.set(clip && Math.abs(speed) < .01 ? 0 : -betterPID.update(velocity));
-
+        SmartDashboard.putNumber(wheelName + " max speed", Math.max(SmartDashboard.getNumber(wheelName + " max speed", 0), Math.abs(speedMotor.get())));
     }
 
     public void setEncoders(double offset) {
@@ -179,5 +219,28 @@ public class Wheel {
         SmartDashboard.putNumber(wheelName + " Angle", position.angle.getRotations());
     }
 
+    public void goofyDrive() {
+
+        double speed = 1;
+
+        double processVariable = encoder.getPosition() - relativeOffset;
+        double currentAngle = (processVariable * (360 / RobotConstants.swerveDriveGearRatio));
+        double diff = currentAngle % 360;
+
+        if (Math.abs(diff) > 180) {
+            diff = diff - 360 * Math.signum(diff);
+        }
+        if (Math.abs(diff) > 90) {
+            diff = diff - 180 * Math.signum(diff);
+            speed *= -1;
+        }
+        double realGoalRotations = (currentAngle - diff) * RobotConstants.swerveDriveGearRatio / 360 + relativeOffset;
+        
+        pidController.setReference(realGoalRotations, CANSparkMax.ControlType.kPosition);
+        speedMotor.set(speed);
+
+        // REMOVE SWERVE DRIVE PID
+
+    }
 
 }
