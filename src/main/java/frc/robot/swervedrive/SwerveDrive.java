@@ -174,19 +174,19 @@ public class SwerveDrive {
     }
 
     //delete this?
-    public double turnToAngle(double goalAngle, double angle) {
+    public double turnToAngle(double goalAngle, double currentAngle) {
         double error = 2.0;
 
-        double diff = (angle - goalAngle) % 360;
+        double diff = (currentAngle - goalAngle) % 360;
 
         if (Math.abs(diff) > 180) {
             diff = diff - 360 * Math.signum(diff);
         }
 
-        double realGoalAngle = (angle - diff);
+        double realGoalAngle = (currentAngle - diff);
 
-        if (Math.abs(angle - realGoalAngle) > error) {
-            if (angle > realGoalAngle) {
+        if (Math.abs(currentAngle - realGoalAngle) > error) {
+            if (currentAngle > realGoalAngle) {
                 return -.1;
             } else {
                 return .1;
