@@ -1,8 +1,13 @@
-package frc.robot;
+package frc.robot.Autos;
 
+import static frc.robot.Autos.CenterAuto.AutoStates.*;
+
+import frc.robot.Feeder;
+import frc.robot.Intake;
+import frc.robot.Robot;
+import frc.robot.Shooter;
 import frc.robot.swervedrive.SwerveDrive;
 import frc.robot.util.StateMachine;
-import static frc.robot.CenterAuto.AutoStates.*;
 
 public class CenterAuto {
     
@@ -53,22 +58,22 @@ public class CenterAuto {
         stateMachine.addTimerState(ADJUST3, 100, MOVENOTE3, () -> {
             swerveDrive.drive(-0.04,0.04,0,true,false);
         });
-        stateMachine.addTimerState(MOVENOTE3, 1750, TURN3, () -> {
+        stateMachine.addTimerState(MOVENOTE3, 1850, TURN3, () -> { // 1850
             shooter.stop();
             intake.slurp();
             feeder.assist();
-            swerveDrive.drive(-0.3, 0.3, 0.2, true, false);
+            swerveDrive.drive(-0.3, 0.3, 0.18, true, false); // 0.18
         });
         stateMachine.addTimerState(TURN3, 100, MOVEBACK3, () -> {
             intake.slurp();
             feeder.assist();
             swerveDrive.drive(-0.04, -0.04, 0, true, false);
         });
-        stateMachine.addTimerState(MOVEBACK3, 1350, SHOOT3, () -> {
+        stateMachine.addTimerState(MOVEBACK3, 1450, SHOOT3, () -> { // 1450
             shooter.shootSpeaker();
             intake.slurp();
             feeder.assist();
-            swerveDrive.drive(0.4, -0.3, -0.2, true, false);
+            swerveDrive.drive(0.4, -0.3, -0.18, true, false); // -0.18
         });       
 
         stateMachine.addBoolState(SHOOT3, ADJUST4, () -> {

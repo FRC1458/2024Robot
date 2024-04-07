@@ -1,11 +1,14 @@
-package frc.robot;
+package frc.robot.Autos;
 
+import static frc.robot.Autos.ShortSideAuto.AutoStates.*;
+
+import frc.robot.Feeder;
+import frc.robot.Intake;
+import frc.robot.Shooter;
 import frc.robot.swervedrive.SwerveDrive;
 import frc.robot.util.StateMachine;
 
-import static frc.robot.AmpAuto.AutoStates.*;
-
-public class AmpAuto {
+public class ShortSideAuto {
 
 
     public enum AutoStates {RESET_ENCODERS, SPIN_UP, SHOOT1, WAIT, MOVEOUT, END}

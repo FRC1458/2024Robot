@@ -1,9 +1,12 @@
 
-package frc.robot;
+package frc.robot.Autos;
 
+import static frc.robot.Autos.Auto1Note.AutoStates.*;
+
+import frc.robot.Feeder;
+import frc.robot.Shooter;
 import frc.robot.swervedrive.SwerveDrive;
 import frc.robot.util.StateMachine;
-import static frc.robot.Auto1Note.AutoStates.*;
 
 public class Auto1Note {
 

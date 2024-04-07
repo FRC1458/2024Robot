@@ -23,7 +23,9 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.AmpAuto.AutoStates;
+import frc.robot.Autos.CenterAuto;
+import frc.robot.Autos.LongSideAuto;
+import frc.robot.Autos.ShortSideAuto.AutoStates;
 import frc.robot.Trajectory.PathPlannerTraj;
 import frc.robot.Trajectory.Trajectory;
 import frc.robot.Trajectory.WPITraj;
@@ -54,7 +56,7 @@ public class Robot extends TimedRobot {
 
 
   private final AHRS navX;
-  StateMachine<AutoStates> auto;
+  StateMachine<frc.robot.Autos.CenterAuto.AutoStates> auto;
 
 
   Trajectory trajectory1;
@@ -102,8 +104,7 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putNumber("Y", pose.getY());
     //SmartDashboard.putNumber("R", pose.getRotation().getRotations());
     SmartDashboard.putBoolean("IR break", irBreak.get());
-     
-
+    intake.displayDiagnostics();
   }
 
 
@@ -151,8 +152,17 @@ public class Robot extends TimedRobot {
 
     ifs.update();
     
-    if(ifs.isRampedUp()) {
+    if(intake.goofyTemp()){
+      lights.intakeTempGoofy();
+    }
+    else if (intake.isStalled()) {
+      lights.intakeStallLights();
+    }
+    else if(ifs.isRampedUp()) {
       lights.rampedUpLights();
+    }
+    else if (ifs.isIntakeOverriden()) {
+      lights.intakeOverrideLights();
     }
     else if (!irBreak.get()) {
       lights.noteDetectedLights();
@@ -163,6 +173,7 @@ public class Robot extends TimedRobot {
     else{
       lights.teleopLights();
     }
+
   }
 
   public static boolean noteDetected() {
@@ -175,9 +186,9 @@ public class Robot extends TimedRobot {
     swerveDrive.resetNavX();
     swerveDrive.setEncoders();
     timer.reset();
-    //AmpAuto, CenterAuto, LongSideAuto
+    //ShortSideAuto, CenterAuto, LongSideAuto
     //Color has to be "blue" or "red", case doesn't matter
-    auto = AmpAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "blue");
+    auto = CenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "blue");
     auto.reset();
   }
 
@@ -222,6 +233,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
+    intake.displayConfig();
+    intake.runGoofyIntake();
  /*
     ChassisSpeeds speeds = follower.calculate(swerveDrive.getPose(), new State(), new Rotation2d());
     SmartDashboard.putNumber("VX", speeds.vxMetersPerSecond);

@@ -190,4 +190,9 @@ public class Shooter {
         return ampSpeed;
     }
 
+    public void reverse() {
+        leftShooter.set(-0.5);
+        rightShooter.set(0.5);
+    }
+
 }

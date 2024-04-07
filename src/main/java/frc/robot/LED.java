@@ -37,9 +37,37 @@ public class LED {
         led.setData(ledBuffer);  
     }
 
-    public void teleopLights() {
+    public void intakeStallLights() {
         for(int i = 18; i < 120;i++) {
             ledBuffer.setRGB(i, 255 , 0, 0);
+        }
+        led.setData(ledBuffer);  
+    }
+    
+    public void intakePanicLights() {
+        for(int i = 18; i < 120;i++) {
+            ledBuffer.setRGB(i, 255 , 0, 0);
+        }
+        led.setData(ledBuffer);  
+    }
+
+    public void intakeTempLights() {
+        for(int i = 18; i < 120; i++) {
+            ledBuffer.setRGB(i, 200 + (int)(Math.random() * 50), (int)(Math.random() * 50), (int)(Math.random() * 50));
+            led.setData(ledBuffer);  
+        }
+    }
+
+    public void sourceLights() {
+        for(int i = 18; i < 120; i++) {
+            ledBuffer.setRGB(i, 200, 200, 200);
+            led.setData(ledBuffer);
+        }
+    }
+
+    public void teleopLights() {
+        for(int i = 18; i < 120;i++) {
+            ledBuffer.setRGB(i, 255 , 255, 255);
         }
         led.setData(ledBuffer);  
     }
@@ -61,6 +89,13 @@ public class LED {
     public void rampedUpLights() {
         for(int i = 18; i < ledBuffer.getLength();i++) {
             ledBuffer.setRGB(i, 0 , 255, 255);
+        }
+        led.setData(ledBuffer);
+    }
+
+    public void intakeOverrideLights() {
+        for(int i = 18; i < ledBuffer.getLength();i++) {
+            ledBuffer.setRGB(i, 255, 0, 255);
         }
         led.setData(ledBuffer);
     }

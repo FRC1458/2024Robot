@@ -11,9 +11,9 @@ public class IFSAuto implements IFS {
     private final Shooter shooter;
     private final Feeder feeder;
     private final Intake intake;
-    
-    private Timer shooterTimer;
+   
     private boolean rampedUp;
+    private boolean source;
 
     private boolean intakeActive;
 
@@ -23,6 +23,7 @@ public class IFSAuto implements IFS {
     private final XboxController xbox2;
 
     private Timer timer;
+    private boolean intakeOverriden = false;
 
     private final StateMachine<ShootState> speakerMachine = new StateMachine<>(SPIN_UP);
     private final StateMachine<ShootState> ampMachine = new StateMachine<>(SPIN_UP);
@@ -39,9 +40,7 @@ public class IFSAuto implements IFS {
 
         initStateMachines();
 
-        shooterTimer = new Timer();
 
-        intakeActive = false;
     }
 
     public void initStateMachines() {
@@ -72,6 +71,8 @@ public class IFSAuto implements IFS {
     }
 
     public void updateShooter() {
+
+
 
         if (xbox1.getRightBumperPressed()) speakerMachine.reset();
         else if (xbox1.getLeftBumperPressed()) ampMachine.reset();
@@ -122,29 +123,49 @@ public class IFSAuto implements IFS {
     }
 
     private void updateIntake() {
-        if (xbox1.getAButton()) {
-            intakeActive = true;
+        if(xbox2.getXButtonPressed()) {
+            source = true;
         }
-        else {
-            intakeActive = false;
+
+        if (xbox2.getBButtonPressed()) intakeOverriden = !intakeOverriden;
+
+        if(source) {
+            sourceIntake();
         }
-        if (intakeActive && Robot.irBreak.get()) {
+        if (xbox1.getAButton() && (intakeOverriden || Robot.irBreak.get())) {
+            intakeActive = true;  
             intake.slurp();
             feeder.assist();
         }
         else if (xbox1.getYButton()) {
+            intakeActive = true;
             intake.spit();
             feeder.reverse();
         }
-        else if (!Robot.irBreak.get()) {
-            intake.stop();
-            feeder.stop();
-            intakeActive = false;
-        }
         else {
+            intakeActive = false;
+            intake.resetStallState();
             intake.stop();
             feeder.stop();
         }
+
+    }
+
+    @Override
+    public boolean isIntakeOverriden() {
+        return intakeOverriden;
+    }
+
+
+    @Override
+    public boolean isSource() {
+        return source;
+    }
+
+    public void sourceIntake() {
+        shooter.reverse();
+        intake.spit();
+        feeder.reverse();
 
     }
     
