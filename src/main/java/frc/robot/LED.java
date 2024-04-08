@@ -53,9 +53,9 @@ public class LED {
 
     public void intakeTempLights() {
         for(int i = 18; i < 120; i++) {
-            ledBuffer.setRGB(i, 200 + (int)(Math.random() * 50), (int)(Math.random() * 50), (int)(Math.random() * 50));
-            led.setData(ledBuffer);  
+            ledBuffer.setRGB(i, 200, 50, 50); 
         }
+        led.setData(ledBuffer); 
     }
 
     public void sourceLights() {
@@ -99,6 +99,30 @@ public class LED {
         }
         led.setData(ledBuffer);
     }
- 
+
+    public void feedNoteDetectedLights() {
+            if(count < 100) {
+                intakeActiveLights();
+            }
+            else if(count < 200) {
+                noteDetectedLights();
+            }
+            else{
+                count = 0;
+            }
+    }
+    
+    public void feedRevLights() {
+            if(count < 100) {
+                intakeActiveLights();
+            }
+            else if(count < 200) {
+                rampedUpLights();
+            }
+            else{
+                count = 0;
+            }
+    }
+
 }
  

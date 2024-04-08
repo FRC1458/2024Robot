@@ -63,7 +63,7 @@ public class Intake {
           // Move to periodic
           if (Math.abs(intakeMotor.getTorqueCurrent().getValueAsDouble()) > stallThresh) stallCounter++;
           else stallCounter = 0;
-          stalled = stalled || stallCounter > 12;
+          stalled = stalled || stallCounter > 16;
      }
 
      public boolean isStalled() {
@@ -71,7 +71,7 @@ public class Intake {
      }
 
      public boolean tempHigh() {
-          return intakeMotor.getDeviceTemp().getValueAsDouble() > 20;
+          return intakeMotor.getDeviceTemp().getValueAsDouble() > 80;
      }
 
      public void runGoofyIntake() {
@@ -86,6 +86,10 @@ public class Intake {
      public void slurp(double speed) {
           if (stalled) stop();
           else intakeMotor.set(-speed);
+     }
+
+     public void fullPow() {
+          intakeMotor.set(-1);
      }
 
      public void spit() {

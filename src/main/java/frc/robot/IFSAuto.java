@@ -14,6 +14,7 @@ public class IFSAuto implements IFS {
    
     private boolean rampedUp;
     private boolean source;
+    private boolean feederMode;
 
     private boolean intakeActive;
 
@@ -36,7 +37,7 @@ public class IFSAuto implements IFS {
         this.xbox1 = xbox1;
         this.xbox2 = xbox2;
         timer = new Timer();
-
+        feederMode = false;
 
         initStateMachines();
 
@@ -72,7 +73,9 @@ public class IFSAuto implements IFS {
 
     public void updateShooter() {
 
-
+        if(xbox2.getXButtonPressed()) {
+            feederMode = !feederMode;
+        }
 
         if (xbox1.getRightBumperPressed()) speakerMachine.reset();
         else if (xbox1.getLeftBumperPressed()) ampMachine.reset();
@@ -103,12 +106,6 @@ public class IFSAuto implements IFS {
             shooter.stop();
         }
 
-        if(xbox2.getYButtonPressed()) {
-            shooter.increaseAmpSpeed();
-        }
-        else if(xbox2.getXButtonPressed()) {
-            shooter.decreaseAmpSpeed();
-        }
         SmartDashboard.putNumber("Adjusted AMP Shooter Speed", shooter.getAmpSpeed());
     }
 
@@ -123,15 +120,9 @@ public class IFSAuto implements IFS {
     }
 
     private void updateIntake() {
-        if(xbox2.getXButtonPressed()) {
-            source = true;
-        }
 
         if (xbox2.getBButtonPressed()) intakeOverriden = !intakeOverriden;
 
-        if(source) {
-            sourceIntake();
-        }
         if (xbox1.getAButton() && (intakeOverriden || Robot.irBreak.get())) {
             intakeActive = true;  
             intake.slurp();

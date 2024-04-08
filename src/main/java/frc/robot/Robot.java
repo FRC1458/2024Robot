@@ -152,8 +152,11 @@ public class Robot extends TimedRobot {
 
     ifs.update();
     
-    if(intake.goofyTemp()){
-      lights.intakeTempGoofy();
+    if(intake.tempHigh()){
+      lights.intakeTempLights();
+    }
+    else if(ifs.isSource()) {
+      lights.sourceLights();
     }
     else if (intake.isStalled()) {
       lights.intakeStallLights();
@@ -194,7 +197,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {    
-    
+    intake.resetStallState();
     auto.run();
 
   }

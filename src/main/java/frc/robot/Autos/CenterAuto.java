@@ -51,8 +51,8 @@ public class CenterAuto {
         stateMachine.addBoolState(SHOOT2, ADJUST3, () -> {
             swerveDrive.drive(0,-0.05,0, true, false); 
             shooter.shootSpeaker();
-            feeder.feed();
-            intake.slurp();
+            feeder.fullPow();
+            intake.fullPow();
             return Robot.irBreak.get();
         });
         stateMachine.addTimerState(ADJUST3, 100, MOVENOTE3, () -> {

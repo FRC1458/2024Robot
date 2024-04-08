@@ -165,13 +165,14 @@ public class Shooter {
         setSpeed(shooterSpeedSpeaker);
      }
 
-     public void increaseAmpSpeed() {
-        ampSpeed += 0.01;
-     }
 
-     public void decreaseAmpSpeed() {
-        ampSpeed -= 0.01;
-     }
+     //public void increaseAmpSpeed() {
+       // ampSpeed += 0.01;
+     //}
+
+     //public void decreaseAmpSpeed() {
+       // ampSpeed -= 0.01;
+     //}
 
      public void shootAmp() {
          setSpeed(ampSpeed);

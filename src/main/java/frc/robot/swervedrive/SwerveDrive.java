@@ -33,6 +33,7 @@ public class SwerveDrive {
     SwerveModulePosition backRightPosition;
 
     private double maxVelocity = -1;
+    //private Rotation2d rotMarker;
 
     public SwerveDrive(AHRS navX) {
         this.navX = navX;
@@ -73,7 +74,7 @@ public class SwerveDrive {
                 VecBuilder.fill(RobotConstants.PositionStdDevX, RobotConstants.PositionStdDevY, Units.degreesToRadians(RobotConstants.PositionStdDevTheta)),
                 VecBuilder.fill(RobotConstants.LimelightStdDevX, RobotConstants.LimelightStdDevY, Units.degreesToRadians(RobotConstants.LimelightStdDevTheta)));
         speeds = new ChassisSpeeds();
-
+        //rotMarker = navxAngle();
 
     }
 
