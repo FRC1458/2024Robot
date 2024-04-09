@@ -68,5 +68,13 @@ public class IFSManual implements IFS {
           return false;
         }
 
+        @Override
+        public boolean isIntakeOverriden() {
+            return false;
+        }
 
+        @Override
+        public boolean isSource(){
+          return false;
+        }
 }

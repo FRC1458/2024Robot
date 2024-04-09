@@ -1,15 +1,20 @@
-package frc.robot;
+package frc.robot.Autos;
 
+import static frc.robot.Autos.CenterAuto.AutoStates.*;
+
+import frc.robot.Feeder;
+import frc.robot.Intake;
+import frc.robot.Robot;
+import frc.robot.Shooter;
 import frc.robot.swervedrive.SwerveDrive;
 import frc.robot.util.StateMachine;
-import static frc.robot.CenterAuto.AutoStates.*;
 
 public class CenterAuto {
     
 
     public enum AutoStates {RESET_ENCODERS, SPIN_UP, SHOOT1, ADJUST2, MOVENOTE2, TURN2, MOVEBACK2, SHOOT2, ADJUST3, MOVENOTE3, TURN3, MOVEBACK3, SHOOT3, ADJUST4, MOVENOTE4, TURN4, MOVEBACK4, SHOOT4, MOVE, END}
 
-    public static StateMachine<AutoStates> getStateMachine(Intake intake, Feeder feeder, Shooter shooter, SwerveDrive swerveDrive) {
+    public static StateMachine<AutoStates> getStateMachine(Intake intake, Feeder feeder, Shooter shooter, SwerveDrive swerveDrive, String color) {
         StateMachine<AutoStates> stateMachine = new StateMachine<>(RESET_ENCODERS);
         stateMachine.addBoolState(RESET_ENCODERS, SPIN_UP, () -> {
             swerveDrive.resetNavX();
@@ -26,7 +31,7 @@ public class CenterAuto {
         stateMachine.addTimerState(ADJUST2, 100, MOVENOTE2, () -> {
             swerveDrive.drive(0,0.04,0,true,false);
         });
-        stateMachine.addTimerState(MOVENOTE2, 1750, TURN2, () -> {
+        stateMachine.addTimerState(MOVENOTE2, 1500, TURN2, () -> {
             shooter.stop();
             intake.slurp();
             feeder.assist();
@@ -46,29 +51,29 @@ public class CenterAuto {
         stateMachine.addBoolState(SHOOT2, ADJUST3, () -> {
             swerveDrive.drive(0,-0.05,0, true, false); 
             shooter.shootSpeaker();
-            feeder.feed();
-            intake.slurp();
+            feeder.fullPow();
+            intake.fullPow();
             return Robot.irBreak.get();
         });
         stateMachine.addTimerState(ADJUST3, 100, MOVENOTE3, () -> {
             swerveDrive.drive(-0.04,0.04,0,true,false);
         });
-        stateMachine.addTimerState(MOVENOTE3, 2250, TURN3, () -> {
+        stateMachine.addTimerState(MOVENOTE3, 1850, TURN3, () -> { // 1850
             shooter.stop();
             intake.slurp();
             feeder.assist();
-            swerveDrive.drive(-0.3, 0.3, 0.2, true, false);
+            swerveDrive.drive(-0.3, 0.3, 0.18, true, false); // 0.18
         });
         stateMachine.addTimerState(TURN3, 100, MOVEBACK3, () -> {
             intake.slurp();
             feeder.assist();
             swerveDrive.drive(-0.04, -0.04, 0, true, false);
         });
-        stateMachine.addTimerState(MOVEBACK3, 2000, SHOOT3, () -> {
+        stateMachine.addTimerState(MOVEBACK3, 1450, SHOOT3, () -> { // 1450
             shooter.shootSpeaker();
             intake.slurp();
             feeder.assist();
-            swerveDrive.drive(0.4, -0.3, -0.2, true, false);
+            swerveDrive.drive(0.4, -0.3, -0.18, true, false); // -0.18
         });       
 
         stateMachine.addBoolState(SHOOT3, ADJUST4, () -> {
@@ -115,7 +120,7 @@ public class CenterAuto {
             shooter.stop();
             feeder.stop();
             intake.stop();
-            swerveDrive.drive(0,0,0, true, false); 
+            swerveDrive.stop();
         });
 
         return stateMachine;

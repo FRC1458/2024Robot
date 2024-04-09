@@ -1,4 +1,3 @@
-/*
 package frc.robot.Trajectory;
 
 import com.choreo.lib.Choreo;
@@ -52,7 +51,7 @@ public class ChoreoTraj implements Trajectory {
     @Override
     public boolean samplePosPID(long timestamp) {
         if (timestamp / 1000.0 > trajectory.getTotalTime()) {
-            swerveDrive.drive(0, 0, 0, true, false);
+            swerveDrive.stop();
             return true;
         }
         ChoreoTrajectoryState state = trajectory.sample(timestamp/1000.0);
@@ -60,7 +59,7 @@ public class ChoreoTraj implements Trajectory {
         //errorX = (-swerveOdometry.getPoseMeters().getX() - state.getPose().getX()) / 2;
         //errorY = (-swerveOdometry.getPoseMeters().getY() - state.getPose().getY()) / 2;
         //errorTheta = swerveOdometry.getPoseMeters().getRotation().getDegrees() - state.getPose().getRotation().getDegrees();
-        errorX = (-swerveDrive.getPose().getY() - state.getPose().getX()) / 2;
+        errorX = (-swerveDrive.getPose().getY() - state.getPose().getX()) / 2; //Why /2? Because it's more accurate for some reason. Ideally this can be removed later
         errorY = (-swerveDrive.getPose().getX() - state.getPose().getY()) / 2;
         errorTheta = swerveDrive.getPose().getRotation().getDegrees() - state.getPose().getRotation().getDegrees();
         SmartDashboard.putNumber("Error X", errorX);
@@ -78,4 +77,3 @@ public class ChoreoTraj implements Trajectory {
         return false;
     }
 }
- */

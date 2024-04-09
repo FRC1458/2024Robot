@@ -27,6 +27,10 @@ public class Feeder {
         motor.set(0);
    }
 
+   public void fullPow(){
+     motor.set(-1);
+   }
+
 public void assist() {
      if(Robot.irBreak.get()) {
      motor.set(-RobotConstants.feederAssistMotorSpeed);
