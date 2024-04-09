@@ -12,7 +12,7 @@ import frc.robot.swervedrive.SwerveDrive;
 import static frc.robot.RobotConstants.autoSpeed;
 import static frc.robot.RobotConstants.autoAngVel;
 
-public class ChoreoTraj implements Trajectory {
+public class PureChoreoTraj implements Trajectory {
 
     private final ChoreoTrajectory trajectory;
     private final SwerveDrive swerveDrive;
@@ -29,7 +29,7 @@ public class ChoreoTraj implements Trajectory {
     private Pose2d currentPose;
     private SwerveDriveOdometry swerveOdometry;
 
-    public ChoreoTraj(String name, SwerveDrive swerve) {
+    public PureChoreoTraj(String name, SwerveDrive swerve) {
         trajectory = Choreo.getTrajectory(name);
         swerveDrive = swerve;
         xPID = new PIDController(1, 0, 0);

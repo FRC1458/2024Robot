@@ -27,6 +27,8 @@ public class NonGoofyCenterAuto {
         trajectories.add(new PathPlannerTraj("InN1", swerveDrive));
         trajectories.add(new PathPlannerTraj("OutN1", swerveDrive));
 
+        //use trajectories.add(new ChoreoPathplannerTraj("FILENAME", swerveDrive));
+
         StateMachine<AutoStates> stateMachine = new StateMachine<>(RESET_ENCODERS);
         stateMachine.addBoolState(RESET_ENCODERS, SHOOT0, () -> {
             swerveDrive.resetNavX();
