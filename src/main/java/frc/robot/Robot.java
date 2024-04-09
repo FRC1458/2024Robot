@@ -59,6 +59,8 @@ public class Robot extends TimedRobot {
 
   private LED lights;
 
+  private Limelight limelight;
+
 
   public Robot() {
     super(0.02);
@@ -84,6 +86,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     swerveDrive.resetNavX();
+    limelight = new Limelight(5);
   }
 
   @Override
@@ -117,6 +120,9 @@ public class Robot extends TimedRobot {
     double yAxis;
     double rAxis;
     double x,y,r;
+
+    
+    limelight.readPeriodic();
 
     xAxis = xbox1.getLeftX();
     yAxis = xbox1.getLeftY();
