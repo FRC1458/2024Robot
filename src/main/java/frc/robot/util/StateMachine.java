@@ -40,6 +40,10 @@ public class StateMachine<S> {
         stateMap.put(state, (ts) -> function.get() ? nextState : state);
     }
 
+    public void addBoolState(S state, S nextState, Function<Long, Boolean> function) {
+        stateMap.put(state, (ts) -> function.apply(ts) ? nextState : state);
+    }
+
     public void addTimerState(S state, long time, S nextState, BasicState function) {
         addTimerState(state, time, nextState, () -> {
             function.run();

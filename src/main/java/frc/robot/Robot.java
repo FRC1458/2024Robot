@@ -2,29 +2,41 @@ package frc.robot;
 
 import com.fasterxml.jackson.core.sym.Name1;
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Autos.CenterAuto;
 import frc.robot.Autos.LongSideAuto;
+import frc.robot.Autos.NonGoofyCenterAuto;
 import frc.robot.Autos.ShortSideAuto.AutoStates;
 import frc.robot.Trajectory.PathPlannerTraj;
 import frc.robot.Trajectory.Trajectory;
@@ -32,6 +44,9 @@ import frc.robot.Trajectory.WPITraj;
 import frc.robot.swervedrive.SwerveDrive;
 import frc.robot.util.StateMachine;
 import static frc.robot.RobotConstants.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Robot extends TimedRobot {
@@ -56,11 +71,11 @@ public class Robot extends TimedRobot {
 
 
   private final AHRS navX;
-  StateMachine<frc.robot.Autos.CenterAuto.AutoStates> auto;
+  StateMachine<frc.robot.Autos.NonGoofyCenterAuto.AutoStates> auto;
 
 
-  Trajectory trajectory1;
-  Trajectory trajectory2;
+  private Trajectory trajectory;
+
 
   private LED lights;
 
@@ -88,6 +103,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     swerveDrive.resetNavX();
+    SmartDashboard.putNumber("Rotation kP", 0.02);
   }
 
   @Override
@@ -183,21 +199,55 @@ public class Robot extends TimedRobot {
     return !irBreak.get();
   }
 
+  // private List<Trajectory> trajectories = new ArrayList<Trajectory>();
+
   @Override
   public void autonomousInit() {
     lights.autoLights();
     swerveDrive.resetNavX();
     swerveDrive.setEncoders();
     timer.reset();
-    //ShortSideAuto, CenterAuto, LongSideAuto
-    //Color has to be "blue" or "red", case doesn't matter
-    auto = CenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "blue");
+
+    // NamedCommands.registerCommand(
+    //   "Intake",
+    //   Commands
+    //     .runOnce(intake::slurp)
+    //     .andThen(feeder::assist)
+    //     .until(Robot::noteDetected)
+    //     .andThen(intake::stop)
+    //     .andThen(feeder::stop)
+    // );
+    // trajectory = null;
+    // trajectories.add(new PathPlannerTraj("InN2", swerveDrive));
+    // trajectories.add(new PathPlannerTraj("OutN2", swerveDrive));
+    // trajectories.add(new PathPlannerTraj("InN3", swerveDrive));
+    // trajectories.add(new PathPlannerTraj("OutN3", swerveDrive));
+    // trajectories.add(new PathPlannerTraj("InN1", swerveDrive));
+    // trajectories.add(new PathPlannerTraj("OutN1", swerveDrive));
+
+    // ShortSideAuto, CenterAuto, LongSideAuto
+    // Color has to be "blue" or "red", case doesn't matter
+    auto = NonGoofyCenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "blue");
     auto.reset();
+
   }
 
   @Override
   public void autonomousPeriodic() {    
+
     intake.resetStallState();
+    timer.start();
+
+    // if (trajectory == null || trajectory.sample((long) (1000*timer.get()))) {
+    //   if (trajectories.size() == 0) SmartDashboard.putBoolean("in Auto", false);
+    //   else{ 
+    //     trajectory = trajectories.remove(0);
+    //     timer.reset();
+    //   }
+    // }
+
+
+
     auto.run();
 
   }
@@ -231,13 +281,25 @@ public class Robot extends TimedRobot {
       rController
     );
     */
+
   }
 
 
   @Override
   public void testPeriodic() {
-    intake.displayConfig();
-    intake.runGoofyIntake();
+
+    double err = Rotation2d.fromDegrees(0).minus(swerveDrive.navxAngle()).getDegrees();
+    swerveDrive.drive(
+        0,
+        0,
+        -SmartDashboard.getNumber("Rotation kP", 0) * err,
+        true,
+        false
+    );
+
+    //intake.displayConfig();
+    //intake.runGoofyIntake();
+
  /*
     ChassisSpeeds speeds = follower.calculate(swerveDrive.getPose(), new State(), new Rotation2d());
     SmartDashboard.putNumber("VX", speeds.vxMetersPerSecond);

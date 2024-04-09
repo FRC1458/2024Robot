@@ -1,19 +1,24 @@
 package frc.robot.Trajectory;
 
+import static frc.robot.RobotConstants.autoAngVel;
 import static frc.robot.RobotConstants.autoSpeed;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.path.PathPlannerTrajectory.State;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Robot;
 import frc.robot.swervedrive.SwerveDrive;
 
 public class PathPlannerTraj implements Trajectory {
@@ -54,9 +59,9 @@ public class PathPlannerTraj implements Trajectory {
 
         swerveDrive = swerve;
         timedEvents = new ArrayList<>();
-        trajectory = PathPlannerPath.fromPathFile(name).getTrajectory(new ChassisSpeeds(), swerve.navxAngle());
+        trajectory = PathPlannerPath.fromPathFile(name).getTrajectory(new ChassisSpeeds(), swerve.navxAngle().rotateBy(Rotation2d.fromDegrees(180)));
 
-        trajectory.getEventCommands().forEach((Pair<Double, Command> x) -> timedEvents.add(new WPICommandEvent(x.getFirst(), x.getSecond())));
+        //trajectory.getEventCommands().forEach((Pair<Double, Command> x) -> timedEvents.add(new WPICommandEvent(x.getFirst(), x.getSecond())));
         
         swerveDrive.resetOdometry(
             new Pose2d(
@@ -81,32 +86,34 @@ public class PathPlannerTraj implements Trajectory {
         double rot = state.heading.getRadians();
         double vx = state.velocityMps * Math.sin(rot);
         double vy = state.velocityMps * Math.cos(rot);
+        double w = state.headingAngularVelocityRps;
 
         SmartDashboard.putNumber("Velocity", state.velocityMps);
         SmartDashboard.putNumber("Heading", state.heading.getDegrees());
         
         SmartDashboard.putNumber("Desired X", state.positionMeters.getY());
         SmartDashboard.putNumber("Desired Y", state.positionMeters.getX());
-        SmartDashboard.putNumber("Desired R", state.targetHolonomicRotation.getRotations());
+        SmartDashboard.putNumber("Desired R", state.targetHolonomicRotation.getDegrees());
 
         SmartDashboard.putNumber("Desired VX", vx);
         SmartDashboard.putNumber("Desired VY", vy);
-
+        SmartDashboard.putNumber("Desired W", w);
     
 
         double ex = state.positionMeters.getY() - swerveDrive.getPose().getX();
         double ey = state.positionMeters.getX() - swerveDrive.getPose().getY();
-        double er = state.targetHolonomicRotation.getRotations() - swerveDrive.getPose().getRotation().getRotations();
+        double er = state.targetHolonomicRotation.times(-1).rotateBy(Rotation2d.fromDegrees(180)).minus(swerveDrive.getPose().getRotation()).getRotations();
 
         SmartDashboard.putNumber("Error X", ex);
         SmartDashboard.putNumber("Error Y", ey);
         SmartDashboard.putNumber("Error R", er);
 
-        swerveDrive.drive(
-            vx / autoSpeed - 0.25 * (ex * Math.signum(vx)),
-            -vy / autoSpeed - 0.25 * (ey * Math.signum(vy)),
-            state.headingAngularVelocityRps / autoSpeed + 0 * er,
-            false,
+        double err = Rotation2d.fromDegrees(0).minus(swerveDrive.navxAngle()).getDegrees();
+        swerveDrive.driveRaw(
+            -vx / 3.5 - 0.0 * (ex * Math.signum(vx)),
+            vy / autoSpeed - 0.0 * (ey * Math.signum(vy)),
+            -0.02 * err,
+            true,
             false
         );
 

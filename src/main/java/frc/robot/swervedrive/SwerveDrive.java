@@ -9,9 +9,10 @@ import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 
-public class SwerveDrive {
+public class SwerveDrive extends SubsystemBase {
     ChassisSpeeds speeds;
     public final Wheel frontLeft;
     public final Wheel frontRight;
