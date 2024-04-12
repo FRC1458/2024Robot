@@ -45,7 +45,7 @@ public class IFSManual implements IFS {
       
           if(xbox.getRightTriggerAxis() > 0.7){ //"shoot" the piece into the spinning shooter
             feeder.feed();
-            intake.slurp(RobotConstants.feederMotorSpeed);
+            intake.slurp();
             feederOn = true;
           }
           else{
