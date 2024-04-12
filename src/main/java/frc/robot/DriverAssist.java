@@ -9,7 +9,6 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class DriverAssist {
-   //commented code is waiting on some other code to be pushed
     Limelight intakeLimelight = new Limelight(0);
     //Limelight shooterLimelight = new Limelight (1);
     ArrayList<Double> txList = new ArrayList<Double>();
@@ -22,14 +21,12 @@ public class DriverAssist {
         this.intake = intake;
     }
 
-
-    //TO DO: xbox1 will not control bot while running this (but keep a backup way to cancel this from xbox1 just in case)
-    //xbox2 will control this, a button must be held for this code to run
     public void intakeAssist(double x, double y, double r) {
+        if (intakeLimelight == null) return;
         if (intakeLimelight.getTarget()) {
            txList.add(intakeLimelight.tx());
            txSum += intakeLimelight.tx();;
-           //for loop is probably a bad idea
+
            if (txList.size() > 10) {
                txSum -= txList.get(0);
 
@@ -37,10 +34,8 @@ public class DriverAssist {
            }
 
             if (Math.abs(intakeLimelight.tx()) > 0.5) {
-                swerveDrive.driveRaw(x, y, Math.min(1.0, (txSum / txList.size()) * 0.05), true, false);
+                swerveDrive.driveRaw(x, y, - intakeLimelight.tx() * 0.02, true, false);//MAKE MORE RESPONSIVE
             }
-            swerveDrive.driveRaw(0, 0.3, 0, false, false);
-            intake.slurp();
         }
     }
 

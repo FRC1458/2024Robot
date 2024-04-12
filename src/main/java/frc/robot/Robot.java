@@ -78,8 +78,6 @@ public class Robot extends TimedRobot {
 
   private LED lights;
 
-  private Limelight limelight;
-
 
   public Robot() {
     super(0.02);
@@ -140,8 +138,6 @@ public class Robot extends TimedRobot {
     double rAxis;
     double x,y,r;
 
-    
-    limelight.readPeriodic();
 
     xAxis = xbox1.getLeftX();
     yAxis = xbox1.getLeftY();
@@ -165,7 +161,7 @@ public class Robot extends TimedRobot {
     r = -rAxis * Math.abs(rAxis);
 
     //CAN CHANGE KEYBIND
-    if (xbox2.getStartButton() && !noteDetected() && Math.abs(r) < 0.1) assist.intakeAssist(x, y, r);
+    if (xbox1.getLeftTriggerAxis() > 0.7 && !noteDetected() && Math.abs(r) < 0.1) assist.intakeAssist(x, y, r);
     else swerveDrive.driveRaw(x, y, r, true, true);
 
     if(xbox1.getXButton()){

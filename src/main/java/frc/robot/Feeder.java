@@ -9,6 +9,7 @@ public class Feeder {
     DigitalInput irBreak;
    
     public Feeder(DigitalInput irBreak) {
+        this.irBreak = irBreak;
         motor = new TalonFX(RobotConstants.feederMotorID);
         motor.clearStickyFaults();
         motor.setNeutralMode(NeutralModeValue.Brake);

@@ -90,7 +90,7 @@ public class RobotConstants {
 
     public final static double MAX_PIVOT_SPEED = 0.05;
 
-    public final static double autoSpeed = 2.5; //max speed, in m/s ACTUAL VALUE: 3.074
+    public final static double autoSpeed = 3.074; //max speed, in m/s ACTUAL VALUE: 3.074 CHANGED FROM X: 3.5 Y 2.5
     public final static double autoAngVel = 720; //assuming degrees ACtUAL VALUE: 467
 
     public final static int ledStart = 18;

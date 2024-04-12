@@ -83,7 +83,7 @@ public class Intake {
      public void spit() {
           if (stalled) stop();
           else {
-               setSpeed(intakeMotorSpeed);
+               setSpeed(-intakeMotorSpeed);
           }
      }
 

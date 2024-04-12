@@ -16,7 +16,7 @@ import static frc.robot.Autos.NonGoofyCenterAuto.AutoStates.*;
 
 public class NonGoofyCenterAuto {
 
-    public enum AutoStates {RESET_ENCODERS, SHOOT0, IN1, OUT1, SHOOT1, IN2, OUT2, SHOOT2, IN3, OUT3, SHOOT3, TAXI, END}
+    public enum AutoStates {RESET_ENCODERS, SHOOT0, SPINUP1, IN1, OUT1, SHOOT1, IN2, OUT2, SHOOT2, IN3, OUT3, SHOOT3, TAXI, END}
 
     public static StateMachine<AutoStates> getStateMachine(Intake intake, Feeder feeder, Shooter shooter, SwerveDrive swerveDrive, String color, DigitalInput irBreak) {
 
@@ -31,11 +31,12 @@ public class NonGoofyCenterAuto {
         //use trajectories.add(new ChoreoPathplannerTraj("FILENAME", swerveDrive));
 
         StateMachine<AutoStates> stateMachine = new StateMachine<>(RESET_ENCODERS);
-        stateMachine.addBoolState(RESET_ENCODERS, SHOOT0, () -> {
+        stateMachine.addBoolState(RESET_ENCODERS, SPINUP1, () -> {
             swerveDrive.resetNavX();
             swerveDrive.setEncoders();
             return true;
         });
+        stateMachine.addTimerState(SPINUP1, 500, SHOOT0, shooter::shootSpeaker);
         stateMachine.addBoolState(SHOOT0, IN1, () -> {
             shooter.shootSpeaker();
             feeder.feed();
