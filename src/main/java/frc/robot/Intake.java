@@ -1,6 +1,7 @@
 package frc.robot;
 
 import static frc.robot.RobotConstants.feederAssistMotorSpeed;
+import static frc.robot.RobotConstants.intakeMotorSpeed;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
@@ -10,22 +11,26 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake {
-     private final TalonFX intakeMotor;
+     private final TalonFX intakeMotor1;
+     private final TalonFX intakeMotor2;
      private final Slot0Configs config;
-     private final MotionMagicVelocityVoltage request;
      private int stallCounter = 0;
      private final int stallThresh = 75;
      private boolean stalled = false;
 
      public Intake() {
 
-          intakeMotor = new TalonFX(RobotConstants.intakeMotorID);
-          intakeMotor.clearStickyFaults();
-          intakeMotor.setNeutralMode(NeutralModeValue.Brake);
+          intakeMotor1 = new TalonFX(RobotConstants.intakeMotorID);
+          intakeMotor1.clearStickyFaults();
+          intakeMotor1.setNeutralMode(NeutralModeValue.Coast);
+
+          
+
+          intakeMotor2 = new TalonFX(36);
+          intakeMotor2.clearStickyFaults();
+          intakeMotor2.setNeutralMode(NeutralModeValue.Coast);
 
           config = new Slot0Configs();
-          request = new MotionMagicVelocityVoltage(0);
-          request.withSlot(0);
 
           // initConfig();
 
@@ -42,26 +47,13 @@ public class Intake {
           SmartDashboard.putNumber("Intake Accel", 0);
      }
 
-     public void displayConfig() {
-          config
-               .withKS(SmartDashboard.getNumber("Intake kS", 0))
-               .withKV(SmartDashboard.getNumber("Intake kV", 0))
-               .withKA(SmartDashboard.getNumber("Intake kA", 0))
-               .withKP(SmartDashboard.getNumber("Intake kP", 0))
-               .withKI(SmartDashboard.getNumber("Intake kI", 0))
-               .withKD(SmartDashboard.getNumber("Intake kD", 0));
-          intakeMotor.getConfigurator().apply(config);
-          request
-               .withSlot(0)
-               .withVelocity(SmartDashboard.getNumber("Intake Vel", 0))
-               .withAcceleration(SmartDashboard.getNumber("Intake Accel", 0));
-     }
+
 
      public void displayDiagnostics() {
-          SmartDashboard.putNumber("Intake Motor Temp", intakeMotor.getDeviceTemp().getValueAsDouble());
-          SmartDashboard.putNumber("Intake Motor Torque Current", intakeMotor.getTorqueCurrent().getValueAsDouble());
+          SmartDashboard.putNumber("Intake Motor Temp", intakeMotor1.getDeviceTemp().getValueAsDouble());
+          SmartDashboard.putNumber("Intake Motor Torque Current", intakeMotor1.getTorqueCurrent().getValueAsDouble());
           // Move to periodic
-          if (Math.abs(intakeMotor.getTorqueCurrent().getValueAsDouble()) > stallThresh) stallCounter++;
+          if (Math.abs(intakeMotor1.getTorqueCurrent().getValueAsDouble()) > stallThresh) stallCounter++;
           else stallCounter = 0;
           stalled = stalled || stallCounter > 16;
      }
@@ -71,34 +63,32 @@ public class Intake {
      }
 
      public boolean tempHigh() {
-          return intakeMotor.getDeviceTemp().getValueAsDouble() > 80;
+          return intakeMotor1.getDeviceTemp().getValueAsDouble() > 80;
      }
 
-     public void runGoofyIntake() {
-          intakeMotor.setControl(request);
-     }
+
 
      public void slurp() {
           if (stalled) stop();
-          else intakeMotor.set(-RobotConstants.intakeMotorSpeed);
+          else {
+               setSpeed(intakeMotorSpeed);
+          }
      }
 
-     public void slurp(double speed) {
-          if (stalled) stop();
-          else intakeMotor.set(-speed);
-     }
 
      public void fullPow() {
-          intakeMotor.set(-1);
+          //intakeMotor1.set(-1);
      }
 
      public void spit() {
           if (stalled) stop();
-          else intakeMotor.set(RobotConstants.intakeMotorSpeed / 2);
+          else {
+               setSpeed(intakeMotorSpeed);
+          }
      }
 
      public void stop() {
-          intakeMotor.set(0);
+          setSpeed(0);
      }
 
      public void resetStallState() {
@@ -107,6 +97,14 @@ public class Intake {
 
      public void assist() {
           if (stalled) stop();
-          else intakeMotor.set(-feederAssistMotorSpeed);
+          else {
+               setSpeed(intakeMotorSpeed);
+          }
+     }
+
+     private void setSpeed(double speed) {
+          //DO NOT TOUCH THIS GOLLY GEE
+          intakeMotor2.set(speed);
+          intakeMotor1.set(-speed);
      }
 }
