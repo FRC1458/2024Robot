@@ -234,7 +234,7 @@ public class Robot extends TimedRobot {
 
     // ShortSideAuto, CenterAuto, LongSideAuto
     // Color has to be "blue" or "red", case doesn't matter
-    auto = NonGoofyCenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "blue");
+    auto = NonGoofyCenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "blue", irBreak);
     auto.reset();
 
   }

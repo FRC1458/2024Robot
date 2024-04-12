@@ -26,7 +26,7 @@ public class CenterAuto {
             shooter.shootSpeaker();
             feeder.feed();
             intake.slurp();
-            return Robot.irBreak.get();
+            return true;
         });
         stateMachine.addTimerState(ADJUST2, 100, MOVENOTE2, () -> {
             swerveDrive.drive(0,0.04,0,true,false);
@@ -53,7 +53,7 @@ public class CenterAuto {
             shooter.shootSpeaker();
             feeder.fullPow();
             intake.fullPow();
-            return Robot.irBreak.get();
+            return true;
         });
         stateMachine.addTimerState(ADJUST3, 100, MOVENOTE3, () -> {
             swerveDrive.drive(-0.04,0.04,0,true,false);
@@ -81,7 +81,7 @@ public class CenterAuto {
             shooter.shootSpeaker();
             feeder.feed();
             intake.slurp();
-            return Robot.irBreak.get();
+            return true;
         });
         stateMachine.addTimerState(ADJUST4, 100, MOVENOTE4, () -> {
             swerveDrive.drive(0.04,0.05,0,true,false);
@@ -109,7 +109,7 @@ public class CenterAuto {
             shooter.shootSpeaker();
             feeder.feed();
             intake.slurp();
-            return Robot.irBreak.get();
+            return true;
         });
 
         stateMachine.addTimerState(MOVE, 1500, END, () -> {

@@ -3,6 +3,7 @@ package frc.robot.Autos;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Feeder;
 import frc.robot.Intake;
 import frc.robot.Robot;
@@ -17,7 +18,7 @@ public class NonGoofyCenterAuto {
 
     public enum AutoStates {RESET_ENCODERS, SHOOT0, IN1, OUT1, SHOOT1, IN2, OUT2, SHOOT2, IN3, OUT3, SHOOT3, TAXI, END}
 
-    public static StateMachine<AutoStates> getStateMachine(Intake intake, Feeder feeder, Shooter shooter, SwerveDrive swerveDrive, String color) {
+    public static StateMachine<AutoStates> getStateMachine(Intake intake, Feeder feeder, Shooter shooter, SwerveDrive swerveDrive, String color, DigitalInput irBreak) {
 
         List<Trajectory> trajectories = new ArrayList<>();
         trajectories.add(new PathPlannerTraj("InN2", swerveDrive));
@@ -39,11 +40,11 @@ public class NonGoofyCenterAuto {
             shooter.shootSpeaker();
             feeder.feed();
             intake.slurp();
-            return Robot.irBreak.get();
+            return irBreak.get();
         });
 
         stateMachine.addBoolState(IN1, OUT1, (ts) -> {
-            if (ts > 900 && Robot.irBreak.get()) {
+            if (ts > 900 && irBreak.get()) {
                 feeder.feed();
                 intake.slurp();
             } else {
@@ -63,11 +64,11 @@ public class NonGoofyCenterAuto {
             shooter.shootSpeaker();
             feeder.feed();
             intake.slurp();
-            return Robot.irBreak.get();
+            return irBreak.get();
         });
 
         stateMachine.addBoolState(IN2, OUT2, (ts) -> {
-            if (ts > 1250 && Robot.irBreak.get()) {
+            if (ts > 1250 && irBreak.get()) {
                 feeder.feed();
                 intake.slurp();
             } else {
@@ -87,11 +88,11 @@ public class NonGoofyCenterAuto {
             shooter.shootSpeaker();
             feeder.feed();
             intake.slurp();
-            return Robot.irBreak.get();
+            return irBreak.get();
         });
 
         stateMachine.addBoolState(IN3, OUT3, (ts) -> {
-            if (ts > 1350 && Robot.irBreak.get()) {
+            if (ts > 1350 && irBreak.get()) {
                 feeder.feed();
                 intake.slurp();
             } else {
@@ -111,7 +112,7 @@ public class NonGoofyCenterAuto {
             shooter.shootSpeaker();
             feeder.feed();
             intake.slurp();
-            return Robot.irBreak.get();
+            return irBreak.get();
         });
 
         stateMachine.addOffState(END, () -> {
