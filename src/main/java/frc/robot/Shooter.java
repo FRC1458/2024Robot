@@ -50,6 +50,7 @@ public class Shooter {
           rightShooter.setNeutralMode(Coast);
           leftShooter.setNeutralMode(Coast);
 
+          //Make sure foc is disabled on shooter motors
 
           
           rightPID = new PID();

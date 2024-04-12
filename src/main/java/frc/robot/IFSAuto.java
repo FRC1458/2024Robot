@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,8 +29,9 @@ public class IFSAuto implements IFS {
 
     private final StateMachine<ShootState> speakerMachine = new StateMachine<>(SPIN_UP);
     private final StateMachine<ShootState> ampMachine = new StateMachine<>(SPIN_UP);
+    DigitalInput irBreak;
 
-    public IFSAuto(Intake intake, Feeder feeder, Shooter shooter, XboxController xbox1, XboxController xbox2) {
+    public IFSAuto(Intake intake, Feeder feeder, Shooter shooter, XboxController xbox1, XboxController xbox2, DigitalInput irBreak) {
 
         this.shooter = shooter;
         this.feeder = feeder;
@@ -38,6 +40,7 @@ public class IFSAuto implements IFS {
         this.xbox2 = xbox2;
         timer = new Timer();
         feederMode = false;
+        this.irBreak = irBreak;
 
         initStateMachines();
 
@@ -123,7 +126,7 @@ public class IFSAuto implements IFS {
 
         if (xbox2.getBButtonPressed()) intakeOverriden = !intakeOverriden;
 
-        if (xbox1.getAButton() && (intakeOverriden || Robot.irBreak.get())) {
+        if (xbox1.getAButton() && (intakeOverriden || irBreak.get())) {
             intakeActive = true;  
             intake.slurp();
             feeder.assist();

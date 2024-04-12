@@ -21,7 +21,7 @@ public class Intake {
 
           intakeMotor = new TalonFX(RobotConstants.intakeMotorID);
           intakeMotor.clearStickyFaults();
-          intakeMotor.setNeutralMode(NeutralModeValue.Brake);
+          intakeMotor.setNeutralMode(NeutralModeValue.Coast);
 
           config = new Slot0Configs();
           request = new MotionMagicVelocityVoltage(0);

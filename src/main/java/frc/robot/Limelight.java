@@ -68,7 +68,7 @@ public class Limelight {
         pipeline = newPipeline;
     }
 
-    public double getTarget() {
-        return tv.getDouble(0);
-    }
+    public boolean getTarget() {return tv.getDouble(0) != 0.0;}
+    public double tx() {return tx.getDouble(0);}
+    public double ty() {return ty.getDouble(0);}
 }

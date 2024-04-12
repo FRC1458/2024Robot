@@ -57,19 +57,18 @@ public class Robot extends TimedRobot {
 
   private final IFS ifs;
 
-  public static DigitalInput irBreak;
+  private DigitalInput irBreak;
   long time;
   Timer timer = new Timer();
 
   SwerveDrive swerveDrive;
   Pose2d robotPosition;
-  Ultrasonic rangeFinder;
 
   Intake intake;
   Feeder feeder;
   Shooter shooter;
 
-
+  DriverAssist assist;
   private final AHRS navX;
   StateMachine<frc.robot.Autos.NonGoofyCenterAuto.AutoStates> auto;
 
@@ -88,18 +87,19 @@ public class Robot extends TimedRobot {
     xbox2 = new XboxController(1);
     time = System.currentTimeMillis();
 
-    navX = new AHRS(SPI.Port.kMXP);
-    swerveDrive = new SwerveDrive(navX);
-    intake = new Intake();
-    feeder = new Feeder();
-    shooter = new Shooter();
-
-    //ifs = new IFSManual(intake, feeder, shooter, xbox);
-    ifs = new IFSAuto(intake, feeder, shooter, xbox1, xbox2);
-
     irBreak = new DigitalInput(5);
     lights = new LED();
 
+    navX = new AHRS(SPI.Port.kMXP);
+    swerveDrive = new SwerveDrive(navX);
+    intake = new Intake();
+    feeder = new Feeder(irBreak);
+    shooter = new Shooter();
+
+    //ifs = new IFSManual(intake, feeder, shooter, xbox);
+    ifs = new IFSAuto(intake, feeder, shooter, xbox1, xbox2, irBreak);
+
+    assist = new DriverAssist(swerveDrive, intake);
   }
 
   @Override
@@ -164,7 +164,9 @@ public class Robot extends TimedRobot {
     y = yAxis * Math.abs(yAxis);
     r = -rAxis * Math.abs(rAxis);
 
-    swerveDrive.driveRaw(x, y, r, true, true);
+    //CAN CHANGE KEYBIND
+    if (xbox2.getStartButton() && !noteDetected() && Math.abs(r) < 0.1) assist.intakeAssist(x, y, r);
+    else swerveDrive.driveRaw(x, y, r, true, true);
 
     if(xbox1.getXButton()){
       swerveDrive.resetMaxVel();
@@ -200,7 +202,7 @@ public class Robot extends TimedRobot {
 
   }
 
-  public static boolean noteDetected() {
+  public boolean noteDetected() {
     return !irBreak.get();
   }
 

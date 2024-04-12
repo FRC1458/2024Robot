@@ -2,14 +2,16 @@ package frc.robot;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Feeder {
     private final TalonFX motor;
+    DigitalInput irBreak;
    
-    public Feeder() {
+    public Feeder(DigitalInput irBreak) {
         motor = new TalonFX(RobotConstants.feederMotorID);
         motor.clearStickyFaults();
-        motor.setNeutralMode(NeutralModeValue.Coast);
+        motor.setNeutralMode(NeutralModeValue.Brake);
    }
 
    public void feed() {
@@ -32,7 +34,7 @@ public class Feeder {
    }
 
 public void assist() {
-     if(Robot.irBreak.get()) {
+     if(irBreak.get()) {
      motor.set(-RobotConstants.feederAssistMotorSpeed);
      }
      else{
