@@ -18,16 +18,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -121,6 +112,7 @@ public class Robot extends TimedRobot {
     //SmartDashboard.putNumber("R", pose.getRotation().getRotations());
     SmartDashboard.putBoolean("IR break", irBreak.get());
     intake.displayDiagnostics();
+    feeder.displayDiagnostics();
   }
 
 
@@ -161,7 +153,7 @@ public class Robot extends TimedRobot {
     r = -rAxis * Math.abs(rAxis);
 
     //CAN CHANGE KEYBIND
-    if (xbox1.getLeftTriggerAxis() > 0.7 && !noteDetected() && Math.abs(r) < 0.1) assist.intakeAssist(x, y, r);
+    if (xbox1.getLeftTriggerAxis() > 0.7 && !noteDetected() && Math.abs(r) < 0.1 && assist.intakeAssist(x, y, r)) {}
     else swerveDrive.driveRaw(x, y, r, true, true);
 
     if(xbox1.getXButton()){
@@ -195,6 +187,7 @@ public class Robot extends TimedRobot {
     else{
       lights.teleopLights();
     }
+    xbox1.setRumble(GenericHID.RumbleType.kBothRumble, !irBreak.get() ? 0.5 : 0);
 
   }
 
@@ -291,15 +284,6 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
 
-    double err = Rotation2d.fromDegrees(0).minus(swerveDrive.navxAngle()).getDegrees();
-    swerveDrive.drive(
-        0,
-        0,
-        -SmartDashboard.getNumber("Rotation kP", 0) * err,
-        true,
-        false
-    );
-
     //intake.displayConfig();
     //intake.runGoofyIntake();
 
@@ -310,6 +294,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("W", speeds.omegaRadiansPerSecond);
     //swerveDrive.drive(-speeds.vxMetersPerSecond, -speeds.vyMetersPerSecond, -speeds.omegaRadiansPerSecond, true);
   */
+  }
+
+  @Override
+  public void disabledInit() {
+    xbox1.setRumble(GenericHID.RumbleType.kBothRumble, 0);
   }
 
   @Override

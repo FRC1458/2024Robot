@@ -166,6 +166,10 @@ public class Shooter {
         setSpeed(shooterSpeedSpeaker);
      }
 
+    public void shootMax() {
+        setSpeed(1);
+    }
+
 
      //public void increaseAmpSpeed() {
        // ampSpeed += 0.01;

@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Feeder {
     private final TalonFX motor;
@@ -36,11 +37,16 @@ public class Feeder {
 
 public void assist() {
      if(irBreak.get()) {
-     motor.set(-RobotConstants.feederAssistMotorSpeed);
+        motor.set(-RobotConstants.feederAssistMotorSpeed);
      }
      else{
           stop();
      }
+}
+
+public void displayDiagnostics() {
+    SmartDashboard.putNumber("Feeder Motor Temp", motor.getDeviceTemp().getValueAsDouble());
+    SmartDashboard.putNumber("Feeder Motor Torque Current", motor.getTorqueCurrent().getValueAsDouble());
 }
 
 }

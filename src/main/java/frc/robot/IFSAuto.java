@@ -26,8 +26,10 @@ public class IFSAuto implements IFS {
 
     private Timer timer;
     private boolean intakeOverriden = false;
+    private boolean maxSpeed = false;
 
     private final StateMachine<ShootState> speakerMachine = new StateMachine<>(SPIN_UP);
+    private final StateMachine<ShootState> goofyMachine = new StateMachine<>(SPIN_UP);
     private final StateMachine<ShootState> ampMachine = new StateMachine<>(SPIN_UP);
     DigitalInput irBreak;
 
@@ -59,6 +61,13 @@ public class IFSAuto implements IFS {
             shooter.shootAmp();
             shootAmp();
         });
+
+        goofyMachine.addTimerState(SPIN_UP, 1500, SHOOT, shooter::shootMax);
+        goofyMachine.addOffState(SHOOT, () -> {
+            shooter.shootMax();
+            shoot();
+        });
+
     }
 
 
@@ -81,7 +90,11 @@ public class IFSAuto implements IFS {
         }
 
         if (xbox1.getRightBumperPressed()) speakerMachine.reset();
-        else if (xbox1.getLeftBumperPressed()) ampMachine.reset();
+        if (xbox1.getRightTriggerAxis() >= 0.7 && !maxSpeed) {
+            goofyMachine.reset();
+            maxSpeed = true;
+        } else if (xbox1.getRightTriggerAxis() < 0.7) maxSpeed = false;
+        if (xbox1.getLeftBumperPressed()) ampMachine.reset();
 
         if(timer.hasElapsed(.75)) {
             rampedUp = true;
@@ -90,20 +103,17 @@ public class IFSAuto implements IFS {
         if (xbox1.getRightBumper()){
             if(rampedUp) {
                 shoot();
-            }
-            else{
+            } else{
                 speakerMachine.run();
             }
-        }
-
-        else if (xbox1.getLeftBumper()){
+        } else if (xbox1.getRightTriggerAxis() >= 0.7){
+            goofyMachine.run();
+        } else if (xbox1.getLeftBumper()){
             ampMachine.run();
-        } 
-        else if(xbox2.getAButton()) {
+        } else if(xbox2.getAButton()) {
             timer.start();
             shooter.shootSpeaker();
-        }
-        else {
+        } else {
             timer.reset();
             rampedUp = false;
             shooter.stop();
@@ -115,6 +125,11 @@ public class IFSAuto implements IFS {
     private void shoot() {
         feeder.feed();
         intake.slurp();
+    }
+
+    private void goofyShoot() {
+        feeder.fullPow();
+        intake.fullPow();
     }
 
     private void shootAmp() {

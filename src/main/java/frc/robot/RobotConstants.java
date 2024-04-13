@@ -61,9 +61,9 @@ public class RobotConstants {
 
     public final static int pivotLimSwitchChannel = 0;
 
-    public final static double intakeMotorSpeed = 0.4; //speeds between 0 and 1
-    public final static double feederMotorSpeed = 0.6; //can be changed, can also possibly just use intakeMotorSpeed for feeder motor as well
-    public final static double feederAssistMotorSpeed = 0.4;
+    public final static double intakeMotorSpeed = 0.6; //speeds between 0 and 1
+    public final static double feederMotorSpeed = 0.8; //can be changed, can also possibly just use intakeMotorSpeed for feeder motor as well
+    public final static double feederAssistMotorSpeed = 0.5;
     public final static double shooterSpeedSpeaker = 0.85;
     public final static double shooterSpeedAmp = 0.16;
     public final static double PIVOT_DOWN_SPEED = 0.02;

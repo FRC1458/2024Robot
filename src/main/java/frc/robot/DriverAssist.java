@@ -21,8 +21,8 @@ public class DriverAssist {
         this.intake = intake;
     }
 
-    public void intakeAssist(double x, double y, double r) {
-        if (intakeLimelight == null) return;
+    public boolean intakeAssist(double x, double y, double r) {
+        if (intakeLimelight == null) return false;
         if (intakeLimelight.getTarget()) {
            txList.add(intakeLimelight.tx());
            txSum += intakeLimelight.tx();;
@@ -34,9 +34,11 @@ public class DriverAssist {
            }
 
             if (Math.abs(intakeLimelight.tx()) > 0.5) {
-                swerveDrive.driveRaw(x, y, - intakeLimelight.tx() * 0.02, true, false);//MAKE MORE RESPONSIVE
+                swerveDrive.driveRaw(x, y, -intakeLimelight.tx() * 0.02, true, false);//MAKE MORE RESPONSIVE
+                return true;
             }
         }
+        return false;
     }
 
     /*public boolean speakerAssist() {

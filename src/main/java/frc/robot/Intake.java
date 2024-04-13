@@ -24,8 +24,6 @@ public class Intake {
           intakeMotor1.clearStickyFaults();
           intakeMotor1.setNeutralMode(NeutralModeValue.Coast);
 
-          
-
           intakeMotor2 = new TalonFX(36);
           intakeMotor2.clearStickyFaults();
           intakeMotor2.setNeutralMode(NeutralModeValue.Coast);
@@ -50,8 +48,10 @@ public class Intake {
 
 
      public void displayDiagnostics() {
-          SmartDashboard.putNumber("Intake Motor Temp", intakeMotor1.getDeviceTemp().getValueAsDouble());
-          SmartDashboard.putNumber("Intake Motor Torque Current", intakeMotor1.getTorqueCurrent().getValueAsDouble());
+          SmartDashboard.putNumber("Intake Motor 1 Temp", intakeMotor1.getDeviceTemp().getValueAsDouble());
+          SmartDashboard.putNumber("Intake Motor 1 Torque Current", intakeMotor1.getTorqueCurrent().getValueAsDouble());
+          SmartDashboard.putNumber("Intake Motor 2 Temp", intakeMotor2.getDeviceTemp().getValueAsDouble());
+          SmartDashboard.putNumber("Intake Motor 2 Torque Current", intakeMotor2.getTorqueCurrent().getValueAsDouble());
           // Move to periodic
           if (Math.abs(intakeMotor1.getTorqueCurrent().getValueAsDouble()) > stallThresh) stallCounter++;
           else stallCounter = 0;
@@ -77,7 +77,7 @@ public class Intake {
 
 
      public void fullPow() {
-          //intakeMotor1.set(-1);
+          setSpeed(1);
      }
 
      public void spit() {
