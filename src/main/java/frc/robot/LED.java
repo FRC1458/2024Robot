@@ -19,7 +19,7 @@ public class LED {
         led.start();
     }
 
-    public void autoLights() {
+    public void rainbowPulse() {
         for(int i = ledStart; i < 53; i++) {
             ledBuffer.setHSV(i, (53 + count - i) % 180 , 255, 255);
           }
@@ -29,99 +29,45 @@ public class LED {
           count++;
           led.setData(ledBuffer);
     }
-
-    public void intakeActiveLights() {
-        for(int i = 18; i < 120;i++) {
-            ledBuffer.setRGB(i, 255 , 255, 0);
-        }
-        led.setData(ledBuffer);  
-    }
-
-    public void intakeStallLights() {
-        for(int i = 18; i < 120;i++) {
-            ledBuffer.setRGB(i, 255 , 0, 0);
-        }
-        led.setData(ledBuffer);  
-    }
     
-    public void intakePanicLights() {
-        for(int i = 18; i < 120;i++) {
-            ledBuffer.setRGB(i, 255 , 0, 0);
-        }
-        led.setData(ledBuffer);  
+
+    public void yellow() {
+        setSolidColor(255, 255, 0);
     }
 
-    public void intakeTempLights() {
-        for(int i = 18; i < 120; i++) {
-            ledBuffer.setRGB(i, 200, 50, 50); 
-        }
-        led.setData(ledBuffer); 
+    public void red() {
+        setSolidColor(255, 0, 0);
     }
 
-    public void sourceLights() {
-        for(int i = 18; i < 120; i++) {
-            ledBuffer.setRGB(i, 200, 200, 200);
-            led.setData(ledBuffer);
-        }
+    public void pink() {
+        setSolidColor(200, 50, 50);
     }
 
-    public void teleopLights() {
-        for(int i = 18; i < 120;i++) {
-            ledBuffer.setRGB(i, 255 , 255, 255);
-        }
-        led.setData(ledBuffer);  
+    public void white() {
+        setSolidColor(255, 255, 255);
     }
 
-    public void disabledLights() {
-        for (int i = 18; i < 120; i++) {
-            ledBuffer.setRGB(i, 255, 80, 0);
-        }
-        led.setData(ledBuffer);
+    public void orange() {
+        setSolidColor(255, 80, 0);
     }
 
-    public void noteDetectedLights() {
-        for(int i = 18; i < ledBuffer.getLength();i++) {
-            ledBuffer.setRGB(i, 0 , 255, 0);
+    public void green() {
+        setSolidColor(0, 255, 0);
+    }
+
+    public void lightBlue() {
+        setSolidColor(0, 255, 255);
+    }
+
+    public void purple() {
+        setSolidColor(255,0, 255);
+    }
+
+    public void setSolidColor(int r, int g, int b) {
+        for(int i = ledStart; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i, r, g, b);
         }
         led.setData(ledBuffer);
-    }
-
-    public void rampedUpLights() {
-        for(int i = 18; i < ledBuffer.getLength();i++) {
-            ledBuffer.setRGB(i, 0 , 255, 255);
-        }
-        led.setData(ledBuffer);
-    }
-
-    public void intakeOverrideLights() {
-        for(int i = 18; i < ledBuffer.getLength();i++) {
-            ledBuffer.setRGB(i, 255, 0, 255);
-        }
-        led.setData(ledBuffer);
-    }
-
-    public void feedNoteDetectedLights() {
-            if(count < 100) {
-                intakeActiveLights();
-            }
-            else if(count < 200) {
-                noteDetectedLights();
-            }
-            else{
-                count = 0;
-            }
-    }
-    
-    public void feedRevLights() {
-            if(count < 100) {
-                intakeActiveLights();
-            }
-            else if(count < 200) {
-                rampedUpLights();
-            }
-            else{
-                count = 0;
-            }
     }
 }
 

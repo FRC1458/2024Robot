@@ -164,28 +164,25 @@ public class Robot extends TimedRobot {
     ifs.update();
     
     if(intake.tempHigh()){
-      lights.intakeTempLights();
-    }
-    else if(ifs.isSource()) {
-      lights.sourceLights();
+      lights.pink();
     }
     else if (intake.isStalled()) {
-      lights.intakeStallLights();
+      lights.red();
     }
     else if(ifs.isRampedUp()) {
-      lights.rampedUpLights();
+      lights.lightBlue();
     }
     else if (ifs.isIntakeOverriden()) {
-      lights.intakeOverrideLights();
+      lights.purple();
     }
     else if (!irBreak.get()) {
-      lights.noteDetectedLights();
+      lights.green();
     }
     else if (ifs.isIntakeActive()) {
-      lights.intakeActiveLights();
+      lights.yellow();
     }
     else{
-      lights.teleopLights();
+      lights.white();
     }
     xbox1.setRumble(GenericHID.RumbleType.kBothRumble, !irBreak.get() ? 0.5 : 0);
 
@@ -199,7 +196,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    lights.autoLights();
     swerveDrive.resetNavX();
     swerveDrive.setEncoders();
     timer.reset();
@@ -230,9 +226,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {    
-
-    intake.resetStallState();
-    timer.start();
+      lights.rainbowPulse();
+      intake.resetStallState();
+      timer.start();
 
     // if (trajectory == null || trajectory.sample((long) (1000*timer.get()))) {
     //   if (trajectories.size() == 0) SmartDashboard.putBoolean("in Auto", false);
@@ -303,7 +299,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    lights.disabledLights();
+    lights.orange();
   }
 
 }

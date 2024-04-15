@@ -5,5 +5,4 @@ public interface IFS {
     boolean isRampedUp();
     boolean isIntakeActive();
     boolean isIntakeOverriden();
-    boolean isSource();
 }

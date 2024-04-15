@@ -14,7 +14,6 @@ public class IFSAuto implements IFS {
     private final Intake intake;
    
     private boolean rampedUp;
-    private boolean source;
     private boolean feederMode;
 
     private boolean intakeActive;
@@ -166,17 +165,6 @@ public class IFSAuto implements IFS {
     }
 
 
-    @Override
-    public boolean isSource() {
-        return source;
-    }
-
-    public void sourceIntake() {
-        shooter.reverse();
-        intake.spit();
-        feeder.reverse();
-
-    }
     
     @Override
     public boolean isIntakeActive() {

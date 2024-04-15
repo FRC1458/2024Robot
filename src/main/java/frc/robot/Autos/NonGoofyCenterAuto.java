@@ -16,7 +16,7 @@ import static frc.robot.Autos.NonGoofyCenterAuto.AutoStates.*;
 
 public class NonGoofyCenterAuto {
 
-    public enum AutoStates {RESET_ENCODERS, SHOOT0, SPINUP1, IN1, OUT1, SHOOT1, IN2, OUT2, SHOOT2, IN3, OUT3, SHOOT3, TAXI, END}
+    public enum AutoStates {RESET_ENCODERS, SHOOT0, SPINUP1, IN1, OUT1, SHOOT1, IN2, OUT2, SHOOT2, IN3, OUT3, SHOOT3, IN4, OUT4, SHOOT4, END}
 
     public static StateMachine<AutoStates> getStateMachine(Intake intake, Feeder feeder, Shooter shooter, SwerveDrive swerveDrive, String color, DigitalInput irBreak) {
 
@@ -27,6 +27,8 @@ public class NonGoofyCenterAuto {
         trajectories.add(new PathPlannerTraj("OutN3", swerveDrive));
         trajectories.add(new PathPlannerTraj("InN1", swerveDrive));
         trajectories.add(new PathPlannerTraj("OutN1", swerveDrive));
+        trajectories.add(new PathPlannerTraj("InN5", swerveDrive));
+        trajectories.add(new PathPlannerTraj("OutN5", swerveDrive));
 
         //use trajectories.add(new ChoreoPathplannerTraj("FILENAME", swerveDrive));
 
@@ -109,7 +111,36 @@ public class NonGoofyCenterAuto {
             shooter.shootSpeaker();
             return trajectories.get(5).sample(ts);
         });
-        stateMachine.addBoolState(SHOOT3, END, () -> {
+        stateMachine.addBoolState(SHOOT3, IN4, () -> {
+            shooter.shootSpeaker();
+            feeder.feed();
+            intake.slurp();
+            return irBreak.get();
+        });
+
+        stateMachine.addBoolState(IN4, OUT4, (ts) -> {
+            if (irBreak.get()) {
+                feeder.feed();
+                intake.slurp();
+            } else {
+                feeder.stop();
+                intake.stop();
+            }
+            shooter.stop();
+            return trajectories.get(5).sample(ts);
+        });
+        stateMachine.addBoolState(OUT4, SHOOT4, (ts) -> {
+            if (irBreak.get()) {
+                feeder.feed();
+                intake.slurp();
+            } else {
+                feeder.stop();
+                intake.stop();
+            }            
+            shooter.shootSpeaker();
+            return trajectories.get(6).sample(ts);
+        });
+        stateMachine.addBoolState(SHOOT4, END, () -> {
             shooter.shootSpeaker();
             feeder.feed();
             intake.slurp();
