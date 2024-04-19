@@ -1,5 +1,8 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SlotConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -14,6 +17,9 @@ public class Feeder {
         motor = new TalonFX(RobotConstants.feederMotorID);
         motor.clearStickyFaults();
         motor.setNeutralMode(NeutralModeValue.Brake);
+        TalonFXConfiguration x = new TalonFXConfiguration();
+        x.CurrentLimits.withSupplyCurrentLimit(30);
+        motor.getConfigurator().apply(x);
    }
 
    public void feed() {
@@ -36,7 +42,7 @@ public class Feeder {
    }
 
 public void assist() {
-     if(irBreak.get()) {
+     if (irBreak.get()) {
         motor.set(-RobotConstants.feederAssistMotorSpeed);
      }
      else{

@@ -25,9 +25,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Autos.Auto1Note;
 import frc.robot.Autos.CenterAuto;
 import frc.robot.Autos.LongSideAuto;
 import frc.robot.Autos.NonGoofyCenterAuto;
+import frc.robot.Autos.NonGoofyLongSideAuto;
 import frc.robot.Autos.ShortSideAuto.AutoStates;
 import frc.robot.Trajectory.PathPlannerTraj;
 import frc.robot.Trajectory.Trajectory;
@@ -62,7 +64,7 @@ public class Robot extends TimedRobot {
   DriverAssist assist;
   private final AHRS navX;
   StateMachine<frc.robot.Autos.NonGoofyCenterAuto.AutoStates> auto;
-
+  PowerDistribution pdp = new PowerDistribution();
 
   private Trajectory trajectory;
 
@@ -95,6 +97,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     swerveDrive.resetNavX();
     SmartDashboard.putNumber("Rotation kP", 0.02);
+    SmartDashboard.putData(pdp);
   }
 
   @Override
@@ -113,6 +116,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("IR break", irBreak.get());
     intake.displayDiagnostics();
     feeder.displayDiagnostics();
+    SmartDashboard.putData("NavX", navX);
   }
 
 
@@ -125,6 +129,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putNumber("Shooter RPM Average", shooter.shooterRPM());
     double xAxis;
     double yAxis;
     double rAxis;
@@ -154,7 +159,7 @@ public class Robot extends TimedRobot {
 
     //CAN CHANGE KEYBIND
     if (xbox1.getLeftTriggerAxis() > 0.7 && !noteDetected() && Math.abs(r) < 0.1 && assist.intakeAssist(x, y, r)) {}
-    else swerveDrive.driveRaw(x, y, r, true, true);
+    else swerveDrive.driveRaw(x, y, 3 * Math.pow(r, 3), true, true);
 
     if(xbox1.getXButton()){
       swerveDrive.resetMaxVel();
@@ -169,7 +174,7 @@ public class Robot extends TimedRobot {
     else if (intake.isStalled()) {
       lights.red();
     }
-    else if(ifs.isRampedUp()) {
+    else if(shooter.shooterRampedUp()) {
       lights.lightBlue();
     }
     else if (ifs.isIntakeOverriden()) {
@@ -219,7 +224,7 @@ public class Robot extends TimedRobot {
 
     // ShortSideAuto, CenterAuto, LongSideAuto
     // Color has to be "blue" or "red", case doesn't matter
-    auto = NonGoofyCenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "blue", irBreak);
+    auto = NonGoofyCenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "red", irBreak);//auto = NonGoofyCenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "red", irBreak);
     auto.reset();
 
   }
@@ -279,6 +284,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
+
+    shooter.setSpeedRamp(SmartDashboard.getNumber("Shooter Vel", 0));
 
     //intake.displayConfig();
     //intake.runGoofyIntake();

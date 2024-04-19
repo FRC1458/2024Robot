@@ -2,10 +2,12 @@ package frc.robot.swervedrive;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.Idle;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -91,6 +93,11 @@ public class Wheel {
         driveEnc = speedMotor.getEncoder();
         resetOdometry();
 
+        angleMotor.setSmartCurrentLimit(50);
+        speedMotor.setSmartCurrentLimit(50);
+        angleMotor.setIdleMode(IdleMode.kBrake);
+        speedMotor.setIdleMode(IdleMode.kBrake);
+
     }
 
     public void setPID(double p, double i, double d, double iScaling) {
@@ -134,7 +141,7 @@ public class Wheel {
             SmartDashboard.getNumber("Wheel Speed", 0)
         );
         SmartDashboard.putNumber("Wheel Applied Voltage", v);
-        speedMotor.set(clip && Math.abs(speed) < .01 ? 0 : speed);
+        speedMotor.set(clip && Math.abs(speed) < .075 ? 0 : speed);
         SmartDashboard.putNumber(wheelName + " max speed", Math.max(SmartDashboard.getNumber(wheelName + " max speed", 0), Math.abs(speedMotor.get())));
     }
 
@@ -187,7 +194,7 @@ public class Wheel {
         relativeOffset = encoder.getPosition() - absolutePosition;
         //SmartDashboard.putNumber(wheelName + "set pos offset", relativeOffset);
         //SmartDashboard.putNumber(wheelName + " set pos after", encoder.getPosition() + relativeOffset);
-        this.drive(0.000000000001, 90, true);
+        this.drive(0.000000000001, 90, false);
     }
 
     public double getAbsoluteEncoderValue() {

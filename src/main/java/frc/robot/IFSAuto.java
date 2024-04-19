@@ -49,9 +49,13 @@ public class IFSAuto implements IFS {
     }
 
     public void initStateMachines() {
-        speakerMachine.addTimerState(SPIN_UP, 750, SHOOT, shooter::shootSpeaker);
-        speakerMachine.addOffState(SHOOT,  () -> {
+        speakerMachine.addBoolState(SPIN_UP, SHOOT, () -> {
             shooter.shootSpeaker();
+            return shooter.shooterRampedUp();
+        });
+        // speakerMachine.addTimerState(SPIN_UP, 1500, SHOOT, shooter::debug);
+        speakerMachine.addOffState(SHOOT,  () -> {
+            shooter.shootSpeaker();//shooter.debug();//
             shoot();
         });
 
@@ -87,6 +91,11 @@ public class IFSAuto implements IFS {
         if(xbox2.getXButtonPressed()) {
             feederMode = !feederMode;
         }
+        
+        if (xbox2.getYButtonPressed()) {
+            if (xbox2.getPOV() == 0) shooter.increaseAmpSpeed();
+            if (xbox2.getPOV() == 180) shooter.decreaseAmpSpeed();
+        }
 
         if (xbox1.getRightBumperPressed()) speakerMachine.reset();
         if (xbox1.getRightTriggerAxis() >= 0.7 && !maxSpeed) {
@@ -100,11 +109,7 @@ public class IFSAuto implements IFS {
         }
 
         if (xbox1.getRightBumper()){
-            if(rampedUp) {
-                shoot();
-            } else{
-                speakerMachine.run();
-            }
+            speakerMachine.run();
         } else if (xbox1.getRightTriggerAxis() >= 0.7){
             goofyMachine.run();
         } else if (xbox1.getLeftBumper()){
@@ -124,11 +129,6 @@ public class IFSAuto implements IFS {
     private void shoot() {
         feeder.feed();
         intake.slurp();
-    }
-
-    private void goofyShoot() {
-        feeder.fullPow();
-        intake.fullPow();
     }
 
     private void shootAmp() {

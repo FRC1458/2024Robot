@@ -1,8 +1,7 @@
 package frc.robot;
 
-import static frc.robot.RobotConstants.feederAssistMotorSpeed;
-import static frc.robot.RobotConstants.intakeMotorSpeed;
 
+import static frc.robot.RobotConstants.*;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;

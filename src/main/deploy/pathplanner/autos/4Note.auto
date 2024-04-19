@@ -46,6 +46,18 @@
           "data": {
             "pathName": "OutN1"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "InN5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "OutN5"
+          }
         }
       ]
     }

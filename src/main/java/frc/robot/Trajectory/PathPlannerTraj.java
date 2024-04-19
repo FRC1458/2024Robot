@@ -110,8 +110,8 @@ public class PathPlannerTraj implements Trajectory {
 
         double err = Rotation2d.fromDegrees(0).minus(swerveDrive.navxAngle()).getDegrees();
         swerveDrive.driveRaw(
-            -vx / autoSpeed - 0.0 * (ex * Math.signum(vx)),
-            vy / autoSpeed - 0.0 * (ey * Math.signum(vy)),
+            -vx / 3.35 - 0.0 * (ex * Math.signum(vx)),
+            vy / 2.75 - 0.0 * (ey * Math.signum(vy)),
             -0.02 * err,
             true,
             false

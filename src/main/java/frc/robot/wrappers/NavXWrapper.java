@@ -9,13 +9,13 @@ public class NavXWrapper extends Wrapper{
 
     public NavXWrapper(){
         try{
-            navx = new NavX();
+            navx = NavX.getInstance();
         }
         catch (RuntimeException ex ) {
             DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
         }
     }
     public void operatorControl() {
-        if (isInitialized) navx.operatorControl();
+        //if (isInitialized) navx.operatorControl();
     }
 }

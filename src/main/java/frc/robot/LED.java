@@ -29,8 +29,11 @@ public class LED {
           count++;
           led.setData(ledBuffer);
     }
-    
 
+    public void random() {
+        setSolidColor((int)(Math.random() * 50) + 100, (int)(Math.random() * 50) + 100, (int)(Math.random() * 50) + 100);
+    }
+    
     public void yellow() {
         setSolidColor(255, 255, 0);
     }
@@ -48,7 +51,7 @@ public class LED {
     }
 
     public void orange() {
-        setSolidColor(255, 80, 0);
+        setSolidColor(255, 50, 0);
     }
 
     public void green() {
@@ -57,6 +60,10 @@ public class LED {
 
     public void lightBlue() {
         setSolidColor(0, 255, 255);
+    }
+
+    public void blue() {
+        setSolidColor(0, 0, 255);
     }
 
     public void purple() {
@@ -69,6 +76,8 @@ public class LED {
         }
         led.setData(ledBuffer);
     }
+
+    
 }
 
  

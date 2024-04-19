@@ -15,10 +15,10 @@ public class RobotConstants {
     public final static int backLeftSpeedID = 5;
     public final static int backRightSpeedID = 9;
     
-    public final static double frontLeftAngleOffset = -.15;
-    public final static double frontRightAngleOffset = 0.5;
-    public final static double backLeftAngleOffset = 4.4;
-    public final static double backRightAngleOffset = -5.05;
+    public final static double frontLeftAngleOffset = -(1129 / 4096.0 + 0.75) * 12.8;  
+    public final static double frontRightAngleOffset = -(2936 / 4096.0 + 0.25) * 12.8;
+    public final static double backLeftAngleOffset = -(3733 / 4096.0 + 0.75) * 12.8;
+    public final static double backRightAngleOffset = -(2646 / 4096.0 + 0.75) * 12.8;
 
     public final static double kP = 0.1;
     public final static double kI = 0.000001;
@@ -61,10 +61,10 @@ public class RobotConstants {
 
     public final static int pivotLimSwitchChannel = 0;
 
-    public final static double intakeMotorSpeed = 0.6; //speeds between 0 and 1
-    public final static double feederMotorSpeed = 0.8; //can be changed, can also possibly just use intakeMotorSpeed for feeder motor as well
+    public final static double intakeMotorSpeed = 0.3; //speeds between 0 and 1
+    public final static double feederMotorSpeed = 0.6; //can be changed, can also possibly just use intakeMotorSpeed for feeder motor as well
     public final static double feederAssistMotorSpeed = 0.5;
-    public final static double shooterSpeedSpeaker = 0.85;
+    public final static double shooterSpeedSpeaker = 0.95;
     public final static double shooterSpeedAmp = 0.16;
     public final static double PIVOT_DOWN_SPEED = 0.02;
 
@@ -86,7 +86,7 @@ public class RobotConstants {
     public final static double LimelightStdDevX = 5;
     public final static double LimelightStdDevY = 5;
     public final static double LimelightStdDevTheta = 500;
-    public static final double MAX_SHOOTER_RPS = 88;
+    public static final double MAX_SHOOTER_RPS = 6380.0 / 60;
 
     public final static double MAX_PIVOT_SPEED = 0.05;
 
