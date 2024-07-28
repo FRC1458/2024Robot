@@ -9,9 +9,10 @@ import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants;
 
-public class SwerveDrive {
+public class SwerveDrive extends SubsystemBase {
     ChassisSpeeds speeds;
     public final Wheel frontLeft;
     public final Wheel frontRight;
@@ -33,6 +34,7 @@ public class SwerveDrive {
     SwerveModulePosition backRightPosition;
 
     private double maxVelocity = -1;
+    //private Rotation2d rotMarker;
 
     public SwerveDrive(AHRS navX) {
         this.navX = navX;
@@ -73,17 +75,11 @@ public class SwerveDrive {
                 VecBuilder.fill(RobotConstants.PositionStdDevX, RobotConstants.PositionStdDevY, Units.degreesToRadians(RobotConstants.PositionStdDevTheta)),
                 VecBuilder.fill(RobotConstants.LimelightStdDevX, RobotConstants.LimelightStdDevY, Units.degreesToRadians(RobotConstants.LimelightStdDevTheta)));
         speeds = new ChassisSpeeds();
-
+        //rotMarker = navxAngle();
 
     }
-    public SwerveModulePosition[] getModulePositions() {
-        return new SwerveModulePosition[]{frontLeftPosition, frontRightPosition, backLeftPosition, backRightPosition};
-    }
-    public Pose2d updateOdometry() {
-        return odometry.update(Rotation2d.fromDegrees(navX.getAngle()), getModulePositions());
-    }
 
-    public void drive(double x, double y, double r, boolean fieldOriented) {
+    public void drive(double x, double y, double r, boolean fieldOriented, boolean clip) {
 
         SmartDashboard.putNumber("Gyro Angle", navX.getAngle());
 
@@ -117,10 +113,58 @@ public class SwerveDrive {
 
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
 
-        frontLeft.drive(states[0].speedMetersPerSecond, states[0].angle.getDegrees());
-        frontRight.drive(states[1].speedMetersPerSecond, states[1].angle.getDegrees());
-        backLeft.drive(states[2].speedMetersPerSecond, states[2].angle.getDegrees());
-        backRight.drive(states[3].speedMetersPerSecond, states[3].angle.getDegrees());
+        frontLeft.drive(states[0].speedMetersPerSecond, states[0].angle.getDegrees(), clip);
+        frontRight.drive(states[1].speedMetersPerSecond, states[1].angle.getDegrees(), clip);
+        backLeft.drive(states[2].speedMetersPerSecond, states[2].angle.getDegrees(), clip);
+        backRight.drive(states[3].speedMetersPerSecond, states[3].angle.getDegrees(), clip);
+
+        double absVelocity = Math.abs(frontLeft.getVelocity());
+        if(absVelocity > maxVelocity){
+            maxVelocity = absVelocity;
+        }
+        SmartDashboard.putNumber("(FL) Max Velocity: ", maxVelocity);
+        SmartDashboard.putNumber("(FL) Abs Enc Val", frontLeft.getAbsoluteEncoderValue());
+
+    }
+    
+    public void driveRaw(double x, double y, double r, boolean fieldOriented, boolean clip) {
+
+        SmartDashboard.putNumber("Gyro Angle", navX.getAngle());
+
+        speeds.vxMetersPerSecond = x;
+        speeds.vyMetersPerSecond = y;
+        speeds.omegaRadiansPerSecond = r;
+
+        double KP = SmartDashboard.getNumber("SwerveKP: ", 0.0001);
+        double KI = SmartDashboard.getNumber("SwerveKI: ", 0);
+        double KD = SmartDashboard.getNumber("SwerveKD: ", 0.0001);
+        double iScaling = SmartDashboard.getNumber("Swerve iScaling: ", 20);
+
+
+
+
+        frontLeft.setPID(KP, KI, KD, iScaling);
+        frontRight.setPID(KP, KI, KD, iScaling);
+        backRight.setPID(KP, KI, KD, iScaling);
+        backLeft.setPID(KP, KI, KD, iScaling);
+
+        if (fieldOriented) {
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(x, y, r, Rotation2d.fromDegrees(-(navX.getYaw())));
+        }
+        //SmartDashboard.putNumber("angle from navx", navX.getYaw());
+
+        //SmartDashboard.putNumber("X", x);
+        //SmartDashboard.putNumber("Y", y);
+        //SmartDashboard.putNumber("R", r);
+        //SmartDashboard.putNumber("Robot Angle", navX.getYaw());
+        //SmartDashboard.putNumber("Robot Angle (pitch)", navX.getPitch());
+
+        SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
+
+        frontLeft.driveRaw(states[0].speedMetersPerSecond, states[0].angle.getDegrees(), clip);
+        frontRight.driveRaw(states[1].speedMetersPerSecond, states[1].angle.getDegrees(), clip);
+        backLeft.driveRaw(states[2].speedMetersPerSecond, states[2].angle.getDegrees(), clip);
+        backRight.driveRaw(states[3].speedMetersPerSecond, states[3].angle.getDegrees(), clip);
 
         double absVelocity = Math.abs(frontLeft.getVelocity());
         if(absVelocity > maxVelocity){
@@ -132,19 +176,19 @@ public class SwerveDrive {
     }
 
     //delete this?
-    public double turnToAngle(double goalAngle, double angle) {
+    public double turnToAngle(double goalAngle, double currentAngle) {
         double error = 2.0;
 
-        double diff = (angle - goalAngle) % 360;
+        double diff = (currentAngle - goalAngle) % 360;
 
         if (Math.abs(diff) > 180) {
             diff = diff - 360 * Math.signum(diff);
         }
 
-        double realGoalAngle = (angle - diff);
+        double realGoalAngle = (currentAngle - diff);
 
-        if (Math.abs(angle - realGoalAngle) > error) {
-            if (angle > realGoalAngle) {
+        if (Math.abs(currentAngle - realGoalAngle) > error) {
+            if (currentAngle > realGoalAngle) {
                 return -.1;
             } else {
                 return .1;
@@ -161,14 +205,66 @@ public class SwerveDrive {
         backRight.setEncoders(RobotConstants.backRightAngleOffset);
     }
 
-    public void resetNavX(Pose2d currentRobotPosition) {
+    public void resetNavX() {
         navX.reset();
-        odometry.resetPosition(Rotation2d.fromDegrees(navX.getAngle()), getModulePositions(), currentRobotPosition);
-        SmartDashboard.putNumber("Swervedrive position: " + odometry.getEstimatedPosition());
     }
 
     public void resetMaxVel() {
         maxVelocity = -1;
+    }
+
+    public SwerveDriveKinematics getKinematics() {
+        return kinematics;
+    }
+    public Rotation2d navxAngle() {
+        return Rotation2d.fromDegrees(navX.getAngle());
+    }
+
+    public SwerveModulePosition[] getPositions() {
+        return new SwerveModulePosition[] {
+            frontLeft.getPosition(),
+            frontRight.getPosition(),
+            backLeft.getPosition(),
+            backRight.getPosition()
+        };
+    }
+
+    public void displayPositions() {
+        frontLeft.displayPosition();
+        frontRight.displayPosition();
+        backLeft.displayPosition();
+        backRight.displayPosition();
+    }
+
+    public Pose2d updateOdometry() {
+        return odometry.update(Rotation2d.fromDegrees(navX.getAngle()), getPositions());
+    }
+
+    public void resetOdometry() {
+        resetOdometry(new Pose2d());
+    }
+
+    public void resetOdometry(Pose2d pose) {
+        frontLeft.resetOdometry();
+        frontRight.resetOdometry();
+        backLeft.resetOdometry();
+        backRight.resetOdometry();
+        odometry.resetPosition(pose.getRotation().minus(navX.getRotation2d()), getPositions(), pose);
+    }
+
+    public Pose2d getPose() {
+        return odometry.getEstimatedPosition();
+    }
+
+    public void goofyDrive() {
+        frontLeft.goofyDrive();
+        frontRight.goofyDrive();
+        backLeft.goofyDrive();
+        backRight.goofyDrive();
+    }
+
+    public void stop() {
+        drive(0, 0, 0, true, false);
     }
 
 }

@@ -1,23 +1,24 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RobotConstants {
     //swerve stuff
-    public final static int frontLeftAngleID = 19;
-    public final static int frontRightAngleID = 15;
-    public final static int backLeftAngleID = 13;
-    public final static int backRightAngleID = 4;
+    public final static int frontLeftAngleID = 17;
+    public final static int frontRightAngleID = 13;
+    public final static int backLeftAngleID = 15;
+    public final static int backRightAngleID = 19;
     
-    public final static int frontLeftSpeedID = 9;
-    public final static int frontRightSpeedID = 5;
-    public final static int backLeftSpeedID = 3;
-    public final static int backRightSpeedID = 7;
+    public final static int frontLeftSpeedID = 7;
+    public final static int frontRightSpeedID = 3;
+    public final static int backLeftSpeedID = 5;
+    public final static int backRightSpeedID = 9;
     
-    public final static double frontLeftAngleOffset = -5.05;
-    public final static double frontRightAngleOffset = 4.4;
-    public final static double backLeftAngleOffset = 0.5;
-    public final static double backRightAngleOffset = -.15;
+    public final static double frontLeftAngleOffset = -(1129 / 4096.0 + 0.75) * 12.8;  
+    public final static double frontRightAngleOffset = -(2936 / 4096.0 + 0.25) * 12.8;
+    public final static double backLeftAngleOffset = -(3733 / 4096.0 + 0.75) * 12.8;
+    public final static double backRightAngleOffset = -(2646 / 4096.0 + 0.75) * 12.8;
 
     public final static double kP = 0.1;
     public final static double kI = 0.000001;
@@ -34,12 +35,10 @@ public class RobotConstants {
 
     public final static double swerveDriveGearRatio = 12.8;
 
-    public final static double speed = 1;
-
-    public final static int frontLeftAbsoluteEncoderID = 13;//13?
-    public final static int frontRightAbsoluteEncoderID = 26;//26?
-    public final static int backLeftAbsoluteEncoderID = 11;//???
-    public final static int backRightAbsoluteEncoderID = 15;//???
+    public final static int frontLeftAbsoluteEncoderID = 27;
+    public final static int frontRightAbsoluteEncoderID = 23;
+    public final static int backLeftAbsoluteEncoderID = 25;
+    public final static int backRightAbsoluteEncoderID = 29;
 
     // CHANGE ALL THESE VALUES TO REAL NUMBERS
     public final static double frontLeftDistance = 0;
@@ -54,14 +53,23 @@ public class RobotConstants {
 
     public final static double maxSwerveSpeed = 6200;
 
-    public final static int intakeMotorID = 30;
-    public final static int plumbingMotorID = 31;
-    public final static int rightShooterMotorID = 32;
-    public final static int leftShooterMotorID = 33;
+    public final static int intakeMotorID = 33;
+    public final static int feederMotorID = 34;
+    public final static int rightShooterMotorID = 31;
+    public final static int leftShooterMotorID = 32;
+    public final static int pivotMotorID = 35;
 
-    public final static double intakeMotorSpeed = 0.25; //speeds between 0 and 1
-    public final static double plumbingMotorSpeed = 0.25; //can be changed, can also possibly just use intakeMotorSpeed for plumbing motor as well
-    public final static double shooterSpeed = 0.75;
+    public final static int pivotLimSwitchChannel = 0;
+
+    public final static double intakeMotorSpeed = 0.3; //speeds between 0 and 1
+    public final static double feederMotorSpeed = 0.6; //can be changed, can also possibly just use intakeMotorSpeed for feeder motor as well
+    public final static double feederAssistMotorSpeed = 0.5;
+    public final static double shooterSpeedSpeaker = 0.95;
+    public final static double shooterSpeedAmp = 0.16;
+    public final static double PIVOT_DOWN_SPEED = 0.02;
+
+    public final static double shooterPIDSpeed = 30;
+    
 
     public final static double shooterRampUpTime = 1; //in seconds
 
@@ -78,4 +86,13 @@ public class RobotConstants {
     public final static double LimelightStdDevX = 5;
     public final static double LimelightStdDevY = 5;
     public final static double LimelightStdDevTheta = 500;
+    public static final double MAX_SHOOTER_RPS = 6380.0 / 60;
+
+    public final static double MAX_PIVOT_SPEED = 0.05;
+
+    public final static double autoSpeed = 3.074; //max speed, in m/s ACTUAL VALUE: 3.074 CHANGED FROM X: 3.5 Y 2.5
+    public final static double autoAngVel = 720; //assuming degrees ACtUAL VALUE: 467
+
+    public final static int ledStart = 18;
+    public final static int ledLength = 120;
 }

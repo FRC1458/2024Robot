@@ -21,11 +21,13 @@ public class LimelightWrapper extends Wrapper {
     public LimelightWrapper() {
         try{
             limelight = NetworkTableInstance.getDefault().getTable("limelight");
+
             tx = limelight.getEntry("tx");
             ty = limelight.getEntry("ty");
             ta = limelight.getEntry("ta");
 
             isInitialized = true;
+            SmartDashboard.putBoolean("AprilTag detected: ", isInitialized);
         }
         catch (RuntimeException ex) {
             DriverStation.reportError("Error Initiating Limelight:  " + ex.getMessage(), true);

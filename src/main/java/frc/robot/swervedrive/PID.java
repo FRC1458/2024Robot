@@ -1,22 +1,25 @@
 package frc.robot.swervedrive;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class PID {
     private double kP;
     private double kI;
     private double kD;
-    private double target;
+    private double target = 0;
     private double iScaling = 20;
-    
-    private long previousTime = -1;
+
     private double previousDistance = -1;
     private double accumError = 0;
+    private double previousOutput = 0;
+    private double maxAccel;
     
 
     public PID() {
 
     }
 
-
+//why can't all the setter methods also be included in an overloaded constructor??
     public void setPID(double kP, double kI, double kD) {
         this.kP = kP;
         this.kI = kI;
@@ -30,23 +33,58 @@ public class PID {
     public void setiScaling(double iScaling) {
         this.iScaling = iScaling;
     }
+
+    public void setMaxAccel(double maxAccel) {
+        this.maxAccel = maxAccel * 0.02;
+    }
+
+
     
     public double update(double current){
         double distance = current - target;
-        long time = System.currentTimeMillis();
-        accumError = accumError * (1 - 1/iScaling) + distance;
+        accumError = accumError * (1 - 1 / Math.max(1, iScaling)) + distance;
         
-        if (previousTime == -1){
-            previousTime = time;
-            previousDistance  = distance;    
+        if (previousDistance == -1) {
+            previousDistance = distance;
         }
 
-        double output = distance * kP + accumError * kI - (distance - previousDistance) / (time - previousTime) * kD;
+        double output = distance * kP + accumError * kI - (distance - previousDistance) / 20 * kD;
         
-        previousTime = time;    
-        previousDistance  = distance;
-        
+        if(maxAccel > 0) {
+            output = Math.min(Math.abs(output), Math.abs(previousOutput) + maxAccel) * Math.signum(output);
+        }
+
+        previousDistance = distance;
+        previousOutput = output;
+        SmartDashboard.putNumber("Final Prev Output", previousOutput);
 
         return output;
+    }
+
+
+    public double update(double current, double target) {
+        setTarget(target);
+        return update(current);
+    }
+
+    public void initDebug(String name) {
+        SmartDashboard.putNumber(name + " P", kP);
+        SmartDashboard.putNumber(name + " I", kI);
+        SmartDashboard.putNumber(name + " D", kD);
+        SmartDashboard.putNumber(name + " iScaling", iScaling);
+    }
+
+    public void updatePID(String name) {
+        kP = SmartDashboard.getNumber(name + " P", kP);
+        kI = SmartDashboard.getNumber(name + " I", kI);
+        kD = SmartDashboard.getNumber(name + " D", kD);
+        iScaling = SmartDashboard.getNumber(name + " iScaling", iScaling);
+    }
+
+    public void reset() {
+        previousDistance = -1;
+        accumError = 0;
+        previousOutput = 0;
+        target = 0;
     }
 }
