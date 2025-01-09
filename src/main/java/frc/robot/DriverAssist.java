@@ -9,7 +9,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class DriverAssist {
-    Limelight intakeLimelight = new Limelight(0);
+    //Limelight intakeLimelight = new Limelight(0);
     //Limelight shooterLimelight = new Limelight (1);
     ArrayList<Double> txList = new ArrayList<Double>();
     double txSum;
@@ -20,7 +20,7 @@ public class DriverAssist {
         swerveDrive = swerve;
         this.intake = intake;
     }
-
+/* 
     public boolean intakeAssist(double x, double y, double r) {
         if (intakeLimelight == null) return false;
         if (intakeLimelight.getTarget()) {
@@ -40,7 +40,7 @@ public class DriverAssist {
         }
         return false;
     }
-
+*/
     /*public boolean speakerAssist() {
         //Get position from shooterLimelight and use botpose/megapose/whatever to get a good reading,
         //only update values here if they are above some (noise) threshold

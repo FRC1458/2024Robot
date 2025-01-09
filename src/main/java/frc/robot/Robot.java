@@ -2,11 +2,7 @@ package frc.robot;
 
 import com.fasterxml.jackson.core.sym.Name1;
 import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
+
 
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
@@ -28,10 +24,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Autos.Auto1Note;
 import frc.robot.Autos.CenterAuto;
 import frc.robot.Autos.LongSideAuto;
-import frc.robot.Autos.NonGoofyCenterAuto;
-import frc.robot.Autos.NonGoofyLongSideAuto;
+//import frc.robot.Autos.NonGoofyCenterAuto;
+//import frc.robot.Autos.NonGoofyLongSideAuto;
 import frc.robot.Autos.ShortSideAuto.AutoStates;
-import frc.robot.Trajectory.PathPlannerTraj;
 import frc.robot.Trajectory.Trajectory;
 import frc.robot.Trajectory.WPITraj;
 import frc.robot.swervedrive.SwerveDrive;
@@ -63,7 +58,7 @@ public class Robot extends TimedRobot {
 
   DriverAssist assist;
   private final AHRS navX;
-  StateMachine<frc.robot.Autos.NonGoofyCenterAuto.AutoStates> auto;
+ // StateMachine<frc.robot.Autos.NonGoofyCenterAuto.AutoStates> auto;
   PowerDistribution pdp = new PowerDistribution();
 
   private Trajectory trajectory;
@@ -158,7 +153,7 @@ public class Robot extends TimedRobot {
     r = -rAxis * Math.abs(rAxis);
 
     //CAN CHANGE KEYBIND
-    if (xbox1.getLeftTriggerAxis() > 0.7 && !noteDetected() && Math.abs(r) < 0.1 && assist.intakeAssist(x, y, r)) {}
+    if (xbox1.getLeftTriggerAxis() > 0.7 && !noteDetected() && Math.abs(r) < 0.1) {}
     else swerveDrive.driveRaw(x, y, 3 * Math.pow(r, 3), true, true);
 
     if(xbox1.getXButton()){
@@ -224,8 +219,8 @@ public class Robot extends TimedRobot {
 
     // ShortSideAuto, CenterAuto, LongSideAuto
     // Color has to be "blue" or "red", case doesn't matter
-    auto = NonGoofyCenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "red", irBreak);//auto = NonGoofyCenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "red", irBreak);
-    auto.reset();
+   // auto = NonGoofyCenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "red", irBreak);//auto = NonGoofyCenterAuto.getStateMachine(intake, feeder, shooter, swerveDrive, "red", irBreak);
+   // auto.reset();
 
   }
 
@@ -245,7 +240,7 @@ public class Robot extends TimedRobot {
 
 
 
-    auto.run();
+    //auto.run();
 
   }
 
@@ -306,7 +301,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    lights.orange();
+    lights.ChristmasStream();
   }
 
 }

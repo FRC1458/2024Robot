@@ -1,15 +1,10 @@
-package frc.robot.Trajectory;
+/*package frc.robot.Trajectory;
 
 import static frc.robot.RobotConstants.autoAngVel;
 import static frc.robot.RobotConstants.autoSpeed;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.PathPlannerTrajectory;
-import com.pathplanner.lib.path.PathPlannerTrajectory.State;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -130,3 +125,4 @@ public class PathPlannerTraj implements Trajectory {
     }
 
 }
+*/

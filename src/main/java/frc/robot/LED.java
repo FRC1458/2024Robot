@@ -4,16 +4,19 @@ import static frc.robot.RobotConstants.*;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LED {
     private AddressableLED led;
     private AddressableLEDBuffer ledBuffer;
     private int count;
+    private long timer;
     
     public LED() {
         led = new AddressableLED(1);
         ledBuffer = new AddressableLEDBuffer(ledLength);
         count = 100; //arbritrary positive number
+        timer = System.currentTimeMillis();
         led.setLength(ledBuffer.getLength());
         led.setData(ledBuffer);
         led.start();
@@ -29,6 +32,30 @@ public class LED {
           count++;
           led.setData(ledBuffer);
     }
+
+    public void ChristmasStream() {
+        int red = 0, green = 0,blue = 0;
+        for(int i = ledStart; i < 106; i++) {
+            if(i % 53 < 26) {
+                red = 255;
+                green = 0;
+                blue = 0;
+            }
+            else {
+                red = 0;
+                green = 255;
+                blue = 0;
+            }
+
+            if(timer < System.currentTimeMillis()) {
+                timer = System.currentTimeMillis() + 100;
+                count++;
+            }
+            ledBuffer.setRGB((i + count) % 108, red, green ,blue);
+        }
+          led.setData(ledBuffer);
+    }
+
 
     public void random() {
         setSolidColor((int)(Math.random() * 50) + 100, (int)(Math.random() * 50) + 100, (int)(Math.random() * 50) + 100);
